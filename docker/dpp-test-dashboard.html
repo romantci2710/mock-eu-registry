@@ -1779,11 +1779,339 @@ graph TB
     }
 
     // --- VOCABULARY HUB & ONTOLOGIES RENDERER (EN & VI) ---
+        const CIRPASS2_FOOTWEAR_FIELDS = [
+      {
+        tree: '|-- taricCode',
+        groupEn: 'Root',
+        groupVi: 'Gốc (Root)',
+        type: 'string',
+        card: '1..1',
+        inReg: true,
+        descEn: 'Customs declaration code. Example: <code>64041100</code> (Sports footwear with rubber soles and textile uppers)',
+        descVi: 'Mã khai báo hải quan (mã HS). Ví dụ: <code>64041100</code> (Giày thể thao có đế ngoài cao su và mũ giày bằng vải)',
+        kw: 'taricCode customs hs commodity 64041100 hai quan ma hang'
+      },
+      {
+        tree: '|-- productId',
+        groupEn: 'Root',
+        groupVi: 'Gốc (Root)',
+        type: 'anyURI',
+        card: '0..1',
+        inReg: false,
+        descEn: 'Product identifier (GS1 Digital Link URI). Example: <code>https://id.brand.com/01/09506000134352/21/SN123456</code>',
+        descVi: 'Định danh duy nhất của sản phẩm (URI chuẩn GS1 Digital Link). Ví dụ: <code>https://id.brand.com/01/09506000134352/21/SN123456</code>',
+        kw: 'productId gs1 digital link uri serial sgtin dinh danh san pham'
+      },
+      {
+        tree: '|-- productIdentifierScheme',
+        groupEn: 'Root',
+        groupVi: 'Gốc (Root)',
+        type: 'string',
+        card: '0..1',
+        inReg: false,
+        descEn: 'Scheme used for product identifier (e.g. <code>GS1_GTIN</code>, <code>GS1_SGTIN</code>)',
+        descVi: 'Hệ thống quy chuẩn mã định danh sản phẩm (ví dụ: <code>GS1_GTIN</code>, <code>GS1_SGTIN</code>)',
+        kw: 'productIdentifierScheme gs1 gtin sku he thong quy chuan dinh danh'
+      },
+      {
+        tree: '|-- conformityDeclaration',
+        groupEn: 'Root',
+        groupVi: 'Gốc (Root)',
+        type: 'anyURI',
+        card: '0..1',
+        inReg: false,
+        descEn: 'Link to official EU Declaration of Conformity PDF documentation. Example: <code>https://brand.com/doc-xb100.pdf</code>',
+        descVi: 'Đường dẫn đến tài liệu Tuyên bố Hợp chuẩn EU (DoC) bản PDF chính thức. Ví dụ: <code>https://brand.com/doc-xb100.pdf</code>',
+        kw: 'conformityDeclaration doc ce compliance certificate hop chuan chung chi tuyen bo'
+      },
+      {
+        tree: '|--|-- companyIdentifier',
+        groupEn: 'Manufacturer_BrandOwner',
+        groupVi: 'Nhà sản xuất / Thương hiệu',
+        type: 'string',
+        card: '1..1',
+        inReg: true,
+        descEn: 'Unique company identifier (GLN or customs EORI). Example: <code>DE1234567890</code>',
+        descVi: 'Mã định danh doanh nghiệp duy nhất (mã GLN hoặc mã hải quan EORI). Ví dụ: <code>DE1234567890</code>',
+        kw: 'Manufacturer_BrandOwner companyIdentifier gln eori legal vat ma doanh nghiep thue'
+      },
+      {
+        tree: '|--|-- companyIdentifierScheme',
+        groupEn: 'Manufacturer_BrandOwner',
+        groupVi: 'Nhà sản xuất / Thương hiệu',
+        type: 'string',
+        card: '1..1',
+        inReg: true,
+        descEn: 'Scheme for company identifier (<code>EORI</code>, <code>GLN</code>, or <code>VAT</code>). Example: <code>EORI</code>',
+        descVi: 'Hệ thống quy chuẩn mã doanh nghiệp (<code>EORI</code>, <code>GLN</code>, hoặc <code>VAT</code>). Ví dụ: <code>EORI</code>',
+        kw: 'Manufacturer_BrandOwner companyIdentifierScheme eori gln vat quy chuan doanh nghiep'
+      },
+      {
+        tree: '|--|-- brandName',
+        groupEn: 'Manufacturer_BrandOwner',
+        groupVi: 'Nhà sản xuất / Thương hiệu',
+        type: 'string',
+        card: '0..1',
+        inReg: false,
+        descEn: 'The commercial brand name on the shoe tongue/upper. Example: <code>EcoStride Circular</code>',
+        descVi: 'Tên nhãn hiệu thương mại in trên lưỡi gà/mũ giày. Ví dụ: <code>EcoStride Circular</code>',
+        kw: 'Manufacturer_BrandOwner brandName trade name nhan hieu thuong hieu giay'
+      },
+      {
+        tree: '|--|-- companyName',
+        groupEn: 'Manufacturer_BrandOwner',
+        groupVi: 'Nhà sản xuất / Thương hiệu',
+        type: 'string',
+        card: '0..1',
+        inReg: false,
+        descEn: 'Full legal registered name of the enterprise. Example: <code>EcoStride Footwear AG</code>',
+        descVi: 'Tên pháp nhân đã đăng ký kinh doanh chính thức của doanh nghiệp. Ví dụ: <code>EcoStride Footwear AG</code>',
+        kw: 'Manufacturer_BrandOwner companyName legal name ten cong ty phap nhan'
+      },
+      {
+        tree: '|--|-- companyRegistration',
+        groupEn: 'Manufacturer_BrandOwner',
+        groupVi: 'Nhà sản xuất / Thương hiệu',
+        type: 'string',
+        card: '0..1',
+        inReg: false,
+        descEn: 'National commercial register / VAT tax number. Example: <code>HRB-987654</code>',
+        descVi: 'Số đăng ký kinh doanh quốc gia / Mã số thuế GTGT (VAT). Ví dụ: <code>HRB-987654</code>',
+        kw: 'Manufacturer_BrandOwner companyRegistration org vat registration dang ky kinh doanh'
+      },
+      {
+        tree: '|--|--|-- postalAddress',
+        groupEn: 'Manufacturer_BrandOwner/Contact',
+        groupVi: 'Nhà sản xuất / Liên hệ',
+        type: 'string',
+        card: '0..1',
+        inReg: false,
+        descEn: 'Headquarters address. Example: <code>Koenigsallee 45, 40212 Duesseldorf, Germany</code>',
+        descVi: 'Địa chỉ bưu chính trụ sở chính của doanh nghiệp. Ví dụ: <code>Koenigsallee 45, 40212 Duesseldorf, Germany</code>',
+        kw: 'Manufacturer_BrandOwner ContactDetails postalAddress street zip city dia chi tru so'
+      },
+      {
+        tree: '|--|--|-- emailAddress',
+        groupEn: 'Manufacturer_BrandOwner/Contact',
+        groupVi: 'Nhà sản xuất / Liên hệ',
+        type: 'string',
+        card: '0..1',
+        inReg: false,
+        descEn: 'Official compliance email. Example: <code>compliance@ecostride-footwear.eu</code>',
+        descVi: 'Email chính thức tiếp nhận thông tin tuân thủ quy chuẩn. Ví dụ: <code>compliance@ecostride-footwear.eu</code>',
+        kw: 'Manufacturer_BrandOwner ContactDetails emailAddress email mail thu dien tu'
+      },
+      {
+        tree: '|--|--|-- phoneNumber',
+        groupEn: 'Manufacturer_BrandOwner/Contact',
+        groupVi: 'Nhà sản xuất / Liên hệ',
+        type: 'string',
+        card: '0..1',
+        inReg: false,
+        descEn: 'Telephone contact. Example: <code>+49 211 555 0199</code>',
+        descVi: 'Số điện thoại đường dây nóng liên hệ. Ví dụ: <code>+49 211 555 0199</code>',
+        kw: 'Manufacturer_BrandOwner ContactDetails phoneNumber phone telephone so dien thoai'
+      },
+      {
+        tree: '|--|--|-- operatorIdentifier',
+        groupEn: 'Supply_chain/Operator',
+        groupVi: 'Chuỗi cung ứng / Nhà điều hành',
+        type: 'string',
+        card: '1..1',
+        inReg: true,
+        descEn: 'Commercial supplier Tier-1 identifier (GLN or EORI). Example: <code>7031234000015</code>',
+        descVi: 'Mã định danh nhà cung ứng cấp 1 (Tier-1) (mã GLN hoặc EORI). Ví dụ: <code>7031234000015</code>',
+        kw: 'Supply_chain Operator operatorIdentifier supplier gln eori t1 tier1 nha cung cap doi tac'
+      },
+      {
+        tree: '|--|--|-- operatorIdentifierScheme',
+        groupEn: 'Supply_chain/Operator',
+        groupVi: 'Chuỗi cung ứng / Nhà điều hành',
+        type: 'string',
+        card: '0..1',
+        inReg: false,
+        descEn: 'Scheme for operator identifier (<code>GLN</code>, <code>EORI</code>, or <code>DUNS</code>). Example: <code>GLN</code>',
+        descVi: 'Hệ thống quy chuẩn mã nhà điều hành (<code>GLN</code>, <code>EORI</code>, hoặc <code>DUNS</code>). Ví dụ: <code>GLN</code>',
+        kw: 'Supply_chain Operator operatorIdentifierScheme gln eori duns quy chuan nha cung ung'
+      },
+      {
+        tree: '|--|--|-- operatorName',
+        groupEn: 'Supply_chain/Operator',
+        groupVi: 'Chuỗi cung ứng / Nhà điều hành',
+        type: 'string',
+        card: '0..1',
+        inReg: false,
+        descEn: 'Name of Tier-1 vendor entity. Example: <code>Global Footwear Tier-1 Manufacturing Ltd.</code>',
+        descVi: 'Tên pháp nhân của đối tác gia công sản xuất Tier-1. Ví dụ: <code>Global Footwear Tier-1 Manufacturing Ltd.</code>',
+        kw: 'Supply_chain Operator operatorName supplier tier1 commercial entity ten nha cung cap'
+      },
+      {
+        tree: '|--|--|-- facilityIdentifier',
+        groupEn: 'Supply_chain/Facility',
+        groupVi: 'Chuỗi cung ứng / Nhà máy',
+        type: 'string',
+        card: '1..1',
+        inReg: true,
+        descEn: 'Manufacturing assembly facility unique GLN code. Example: <code>8931234567890</code>',
+        descVi: 'Mã GLN duy nhất định danh nhà máy lắp ráp hoàn thiện. Ví dụ: <code>8931234567890</code>',
+        kw: 'Supply_chain Facility facilityIdentifier manufacturing plant gln t1 tier1 ma nha may xuong'
+      },
+      {
+        tree: '|--|--|-- facilityIdentifierScheme',
+        groupEn: 'Supply_chain/Facility',
+        groupVi: 'Chuỗi cung ứng / Nhà máy',
+        type: 'string',
+        card: '0..1',
+        inReg: false,
+        descEn: 'Scheme for facility identifier (usually <code>GLN</code>). Example: <code>GLN</code>',
+        descVi: 'Hệ thống quy chuẩn mã định danh nhà máy (thường là <code>GLN</code>). Ví dụ: <code>GLN</code>',
+        kw: 'Supply_chain Facility facilityIdentifierScheme gln quy chuan ma nha may'
+      },
+      {
+        tree: '|--|--|-- facilityName',
+        groupEn: 'Supply_chain/Facility',
+        groupVi: 'Chuỗi cung ứng / Nhà máy',
+        type: 'string',
+        card: '0..1',
+        inReg: false,
+        descEn: 'Name of the physical assembly plant. Example: <code>Dong Nai Eco Assembly Plant #2</code>',
+        descVi: 'Tên nhà máy lắp ráp vật lý. Ví dụ: <code>Nhà máy lắp ráp sinh thái Đồng Nai #2</code>',
+        kw: 'Supply_chain Facility facilityName assembly factory plant vietnam ten phan xuong'
+      },
+      {
+        tree: '|--|--|-- countryOfOrigin',
+        groupEn: 'Supply_chain/Facility',
+        groupVi: 'Chuỗi cung ứng / Nhà máy',
+        type: 'string',
+        card: '0..1',
+        inReg: false,
+        descEn: 'Country of assembly / origin. Example: <code>Vietnam</code>',
+        descVi: 'Quốc gia lắp ráp hoàn thiện / xuất xứ sản phẩm. Ví dụ: <code>Việt Nam</code>',
+        kw: 'Supply_chain Facility countryOfOrigin origin country vietnam tier1 quoc gia xuat xu'
+      },
+      {
+        tree: '|--|-- materialComponent',
+        groupEn: 'MaterialComposition',
+        groupVi: 'Thành phần vật liệu',
+        type: 'string',
+        card: '1..1',
+        inReg: false,
+        descEn: 'Shoe structural component: <code>Upper Mesh</code>, <code>Midsole Foam</code>, <code>Outsole Rubber</code>, <code>Lining</code>',
+        descVi: 'Cấu phần kết cấu giày: <code>Lưới mũ giày (Upper Mesh)</code>, <code>Đệm giữa (Midsole Foam)</code>, <code>Đế ngoài (Outsole Rubber)</code>, <code>Lót giày (Lining)</code>',
+        kw: 'MaterialComposition materialComponent upper sole midsole outsole lining thanh phan bo phan de giay'
+      },
+      {
+        tree: '|--|-- materialType',
+        groupEn: 'MaterialComposition',
+        groupVi: 'Thành phần vật liệu',
+        type: 'string',
+        card: '1..1',
+        inReg: false,
+        descEn: 'Specific material type: <code>Recycled Ocean PET</code>, <code>Bio-based Sugarcane EVA</code>, <code>Natural Rubber</code>',
+        descVi: 'Chủng loại vật liệu cụ thể: <code>Sợi PET tái chế từ rác đại dương</code>, <code>Xốp EVA sinh học từ cây mía</code>, <code>Cao su thiên nhiên</code>',
+        kw: 'MaterialComposition materialType recycled ocean polyester eva rubber loai vat lieu soi pet'
+      },
+      {
+        tree: '|--|-- materialPercentage',
+        groupEn: 'MaterialComposition',
+        groupVi: 'Thành phần vật liệu',
+        type: 'decimal',
+        card: '1..1',
+        inReg: false,
+        descEn: 'Fractional weight ratio: <code>0.42</code> (42% upper), <code>0.35</code> (35% midsole), <code>0.23</code> (23% outsole)',
+        descVi: 'Tỷ lệ phần trăm theo trọng lượng: <code>0.42</code> (42% mũ giày), <code>0.35</code> (35% đệm giữa), <code>0.23</code> (23% đế ngoài)',
+        kw: 'MaterialComposition materialPercentage ratio percent weight ty le phan tram khoi luong'
+      },
+      {
+        tree: '|--|-- recycledContent',
+        groupEn: 'MaterialComposition',
+        groupVi: 'Thành phần vật liệu',
+        type: 'decimal',
+        card: '0..1',
+        inReg: false,
+        descEn: 'Verified post-consumer recycled ratio: <code>0.78</code> (78% certified recycled material)',
+        descVi: 'Tỷ lệ tái chế sau tiêu dùng (PCR) đã chứng nhận: <code>0.78</code> (78% vật liệu tái chế có chứng chỉ)',
+        kw: 'MaterialComposition recycledContent post-consumer recycling percentage tai che sau tieu dung pcr'
+      },
+      {
+        tree: '|--|-- passportId',
+        groupEn: 'DPP_metadata',
+        groupVi: 'Siêu dữ liệu DPP',
+        type: 'anyURI',
+        card: '1..1',
+        inReg: true,
+        descEn: 'Unique product passport identifier URI for the required granularity level. Example: <code>https://dpp-mockup.erx.vn/dpp/model/09506000134352</code>',
+        descVi: 'URI định danh duy nhất của hộ chiếu sản phẩm theo cấp độ chi tiết quy định. Ví dụ: <code>https://dpp-mockup.erx.vn/dpp/model/09506000134352</code>',
+        kw: 'DPP_metadata passportId unique upi gtin model batch item uri ma ho chieu dpp dinh danh'
+      },
+      {
+        tree: '|--|-- registryIdentifier',
+        groupEn: 'DPP_metadata',
+        groupVi: 'Siêu dữ liệu DPP',
+        type: 'string',
+        card: '1..1',
+        inReg: true,
+        descEn: 'Official registration handle returned by EU Registry. Example: <code>EUREG-XB100-MOD-2026</code>',
+        descVi: 'Mã định danh đăng ký chính thức do Sổ Đăng Ký EU cấp về. Ví dụ: <code>EUREG-XB100-MOD-2026</code>',
+        kw: 'DPP_metadata registryIdentifier eureg id returned registry ma so dang ky so eu'
+      },
+      {
+        tree: '|--|-- dppUrl',
+        groupEn: 'DPP_metadata',
+        groupVi: 'Siêu dữ liệu DPP',
+        type: 'anyURI',
+        card: '1..1',
+        inReg: true,
+        descEn: 'Permanent link to live decentralized product passport carrier. Example: <code>https://dpp-mockup.erx.vn/dpp/model/09506000134352</code>',
+        descVi: 'Liên kết cố định đến vật mang hộ chiếu sản phẩm phi tập trung trực tiếp. Ví dụ: <code>https://dpp-mockup.erx.vn/dpp/model/09506000134352</code>',
+        kw: 'DPP_metadata dppUrl live carrier url endpoint link lien ket vat mang dpp'
+      },
+      {
+        tree: '|--|-- dppBackupUrl',
+        groupEn: 'DPP_metadata',
+        groupVi: 'Siêu dữ liệu DPP',
+        type: 'anyURI',
+        card: '1..1',
+        inReg: true,
+        descEn: 'Mandatory statutory backup repository in case of brand cessation. Example: <code>https://dpp-backup.erx.vn/archive/09506000134352</code>',
+        descVi: 'Kho lưu trữ sao lưu luật định bắt buộc dự phòng khi thương hiệu giải thể/chấm dứt hoạt động. Ví dụ: <code>https://dpp-backup.erx.vn/archive/09506000134352</code>',
+        kw: 'DPP_metadata dppBackupUrl backup statutory archive cease operations sao luu du phong giai the'
+      },
+      {
+        tree: '|--|-- lifecycleState',
+        groupEn: 'DPP_metadata',
+        groupVi: 'Siêu dữ liệu DPP',
+        type: 'string',
+        card: '1..1',
+        inReg: true,
+        descEn: 'DPP lifecycle state: <code>Active</code>, <code>Inactive</code>, or <code>Decommissioned</code>',
+        descVi: 'Trạng thái vòng đời DPP: <code>Active</code> (Hoạt động), <code>Inactive</code> (Tạm ngưng), hoặc <code>Decommissioned</code> (Hết hiệu lực/Hủy)',
+        kw: 'DPP_metadata lifecycleState status active inactive decommissioned trang thai vong doi'
+      }
+    ];
+
     function renderVocab() {
       const area = document.getElementById('vocabContentArea');
       if (!area) return;
 
       const isEn = currentLang === 'en';
+
+      const treeRowsHtml = CIRPASS2_FOOTWEAR_FIELDS.map(f => {
+        const group = isEn ? f.groupEn : f.groupVi;
+        const desc = isEn ? f.descEn : f.descVi;
+        const regBadge = f.inReg 
+          ? `<span class="badge-registry-yes">${isEn ? 'YES' : 'CÓ'}</span>` 
+          : `<span class="badge-registry-no">${isEn ? 'NO' : 'KHÔNG'}</span>`;
+        return `
+                <tr data-kw="${f.kw}">
+                  <td><code>${f.tree}</code></td>
+                  <td>${group}</td>
+                  <td><code>${f.type}</code></td>
+                  <td>${f.card}</td>
+                  <td>${regBadge}</td>
+                  <td>${desc}</td>
+                </tr>`;
+      }).join('');
 
       area.innerHTML = `
         <!-- Hero Header -->
@@ -1991,11 +2319,11 @@ graph TB
               <input type="text" id="treeSearchInput" placeholder="${isEn ? '🔍 Search field name, group, or keyword...' : '🔍 Tìm tên trường, nhóm hoặc từ khóa...'}" 
                      style="padding:10px 16px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:#fff;font-size:13px;width:320px;" 
                      oninput="filterDataTree(this.value)">
-              <span id="treeMatchCount" style="font-size:12.5px;color:var(--text-dim)">Showing 28 canonical pilot fields</span>
+              <span id="treeMatchCount" style="font-size:12.5px;color:var(--text-dim)">${isEn ? 'Showing 28 canonical pilot fields' : 'Hiển thị 28 trường dữ liệu chuẩn ngành'}</span>
             </div>
             <div style="display:flex;gap:8px">
-              <span class="badge-registry-yes">EU Registry: YES (9 Fields)</span>
-              <span class="badge-registry-no">DPP Carrier: YES (Full 28+ Fields)</span>
+              <span class="badge-registry-yes">${isEn ? 'EU Registry: YES (9 Fields)' : 'Sổ Đăng Ký EU: CÓ (9 Trường)'}</span>
+              <span class="badge-registry-no">${isEn ? 'DPP Carrier: YES (Full 28+ Fields)' : 'Vật Mang DPP: CÓ (Đầy đủ 28+ trường)'}</span>
             </div>
           </div>
 
@@ -2003,140 +2331,16 @@ graph TB
             <table class="tree-table" id="canonicalTreeTable">
               <thead>
                 <tr>
-                  <th>Field Name (Tree)</th>
-                  <th>Logical Group</th>
-                  <th>Data Type</th>
-                  <th>Cardinality</th>
-                  <th>EU Registry?</th>
-                  <th>Description & Footwear Pilot Example</th>
+                  <th>${isEn ? 'FIELD NAME (TREE)' : 'TÊN TRƯỜNG (CÂY)'}</th>
+                  <th>${isEn ? 'LOGICAL GROUP' : 'NHÓM LOGIC'}</th>
+                  <th>${isEn ? 'DATA TYPE' : 'KIỂU DỮ LIỆU'}</th>
+                  <th>${isEn ? 'CARDINALITY' : 'SỐ LƯỢNG (CARDINALITY)'}</th>
+                  <th>${isEn ? 'EU REGISTRY?' : 'SỔ EU?'}</th>
+                  <th>${isEn ? 'DESCRIPTION & FOOTWEAR PILOT EXAMPLE' : 'MÔ TẢ QUY CHUẨN & VÍ DỤ THỰC TẾ NGÀNH GIÀY'}</th>
                 </tr>
               </thead>
               <tbody>
-                <tr data-kw="taricCode customs hs commodity 64041100">
-                  <td><code>|-- taricCode</code></td><td>Root</td><td><code>string</code></td><td>1..1</td>
-                  <td><span class="badge-registry-yes">YES</span></td>
-                  <td>Customs declaration code. Example: <code>64041100</code> (Sports footwear with rubber soles and textile uppers)</td>
-                </tr>
-                <tr data-kw="productId gs1 digital link uri serial sgtin">
-                  <td><code>|-- productId</code></td><td>Root</td><td><code>anyURI</code></td><td>0..1</td>
-                  <td><span class="badge-registry-no">NO</span></td>
-                  <td>Product identifier (GS1 Digital Link URI). Example: <code>https://id.brand.com/01/09506000134352/21/SN123456</code></td>
-                </tr>
-                <tr data-kw="productIdentifierScheme gs1 gtin sku">
-                  <td><code>|-- productIdentifierScheme</code></td><td>Root</td><td><code>string</code></td><td>0..1</td>
-                  <td><span class="badge-registry-no">NO</span></td>
-                  <td>Scheme used for product identifier (e.g. <code>GS1_GTIN</code>, <code>GS1_SGTIN</code>)</td>
-                </tr>
-                <tr data-kw="conformityDeclaration doc ce compliance certificate">
-                  <td><code>|-- conformityDeclaration</code></td><td>Root</td><td><code>anyURI</code></td><td>0..1</td>
-                  <td><span class="badge-registry-no">NO</span></td>
-                  <td>Link to official EU Declaration of Conformity PDF documentation. Example: <code>https://brand.com/doc-xb100.pdf</code></td>
-                </tr>
-                <tr data-kw="Manufacturer_BrandOwner companyIdentifier gln eori legal vat">
-                  <td><code>|--|-- companyIdentifier</code></td><td>Manufacturer_BrandOwner</td><td><code>string</code></td><td>1..1</td>
-                  <td><span class="badge-registry-yes">YES</span></td>
-                  <td>Unique company identifier (GLN or customs EORI). Example: <code>DE1234567890</code></td>
-                </tr>
-                <tr data-kw="Manufacturer_BrandOwner brandName trade name">
-                  <td><code>|--|-- brandName</code></td><td>Manufacturer_BrandOwner</td><td><code>string</code></td><td>0..1</td>
-                  <td><span class="badge-registry-no">NO</span></td>
-                  <td>The commercial brand name on the shoe tongue/upper. Example: <code>EcoStride Circular</code></td>
-                </tr>
-                <tr data-kw="Manufacturer_BrandOwner companyName legal name">
-                  <td><code>|--|-- companyName</code></td><td>Manufacturer_BrandOwner</td><td><code>string</code></td><td>0..1</td>
-                  <td><span class="badge-registry-no">NO</span></td>
-                  <td>Full legal registered name of the enterprise. Example: <code>EcoStride Footwear AG</code></td>
-                </tr>
-                <tr data-kw="Manufacturer_BrandOwner companyRegistration org vat registration">
-                  <td><code>|--|-- companyRegistration</code></td><td>Manufacturer_BrandOwner</td><td><code>string</code></td><td>0..1</td>
-                  <td><span class="badge-registry-no">NO</span></td>
-                  <td>National commercial register / VAT tax number. Example: <code>HRB-987654</code></td>
-                </tr>
-                <tr data-kw="Manufacturer_BrandOwner ContactDetails postalAddress street zip city">
-                  <td><code>|--|--|-- postalAddress</code></td><td>Manufacturer_BrandOwner/Contact</td><td><code>string</code></td><td>0..1</td>
-                  <td><span class="badge-registry-no">NO</span></td>
-                  <td>Headquarters address. Example: <code>Koenigsallee 45, 40212 Duesseldorf, Germany</code></td>
-                </tr>
-                <tr data-kw="Manufacturer_BrandOwner ContactDetails emailAddress email mail">
-                  <td><code>|--|--|-- emailAddress</code></td><td>Manufacturer_BrandOwner/Contact</td><td><code>string</code></td><td>0..1</td>
-                  <td><span class="badge-registry-no">NO</span></td>
-                  <td>Official compliance email. Example: <code>compliance@ecostride-footwear.eu</code></td>
-                </tr>
-                <tr data-kw="Manufacturer_BrandOwner ContactDetails phoneNumber phone telephone">
-                  <td><code>|--|--|-- phoneNumber</code></td><td>Manufacturer_BrandOwner/Contact</td><td><code>string</code></td><td>0..1</td>
-                  <td><span class="badge-registry-no">NO</span></td>
-                  <td>Telephone contact. Example: <code>+49 211 555 0199</code></td>
-                </tr>
-                <tr data-kw="Supply_chain Operator operatorIdentifier supplier gln eori t1 tier1">
-                  <td><code>|--|--|-- operatorIdentifier</code></td><td>Supply_chain/Operator</td><td><code>string</code></td><td>1..1</td>
-                  <td><span class="badge-registry-yes">YES</span></td>
-                  <td>Commercial supplier Tier-1 identifier (GLN or EORI). Example: <code>7031234000015</code></td>
-                </tr>
-                <tr data-kw="Supply_chain Operator operatorName supplier tier1 commercial entity">
-                  <td><code>|--|--|-- operatorName</code></td><td>Supply_chain/Operator</td><td><code>string</code></td><td>0..1</td>
-                  <td><span class="badge-registry-no">NO</span></td>
-                  <td>Name of Tier-1 vendor entity. Example: <code>Global Footwear Tier-1 Manufacturing Ltd.</code></td>
-                </tr>
-                <tr data-kw="Supply_chain Facility facilityIdentifier manufacturing plant gln t1 tier1">
-                  <td><code>|--|--|-- facilityIdentifier</code></td><td>Supply_chain/Facility</td><td><code>string</code></td><td>1..1</td>
-                  <td><span class="badge-registry-yes">YES</span></td>
-                  <td>Manufacturing assembly facility unique GLN code. Example: <code>8931234567890</code></td>
-                </tr>
-                <tr data-kw="Supply_chain Facility facilityName assembly factory plant vietnam">
-                  <td><code>|--|--|-- facilityName</code></td><td>Supply_chain/Facility</td><td><code>string</code></td><td>0..1</td>
-                  <td><span class="badge-registry-no">NO</span></td>
-                  <td>Name of the physical assembly plant. Example: <code>Dong Nai Eco Assembly Plant #2</code></td>
-                </tr>
-                <tr data-kw="Supply_chain Facility countryOfOrigin origin country vietnam tier1">
-                  <td><code>|--|--|-- countryOfOrigin</code></td><td>Supply_chain/Facility</td><td><code>string</code></td><td>0..1</td>
-                  <td><span class="badge-registry-no">NO</span></td>
-                  <td>Country of assembly / origin. Example: <code>Vietnam</code></td>
-                </tr>
-                <tr data-kw="MaterialComposition materialComponent upper sole midsole outsole lining">
-                  <td><code>|--|-- materialComponent</code></td><td>MaterialComposition</td><td><code>string</code></td><td>1..1</td>
-                  <td><span class="badge-registry-no">NO</span></td>
-                  <td>Shoe structural component: <code>Upper Mesh</code>, <code>Midsole Foam</code>, <code>Outsole Rubber</code>, <code>Lining</code></td>
-                </tr>
-                <tr data-kw="MaterialComposition materialType recycled ocean polyester eva rubber">
-                  <td><code>|--|-- materialType</code></td><td>MaterialComposition</td><td><code>string</code></td><td>1..1</td>
-                  <td><span class="badge-registry-no">NO</span></td>
-                  <td>Specific material type: <code>Recycled Ocean PET</code>, <code>Bio-based Sugarcane EVA</code>, <code>Natural Rubber</code></td>
-                </tr>
-                <tr data-kw="MaterialComposition materialPercentage ratio percent weight">
-                  <td><code>|--|-- materialPercentage</code></td><td>MaterialComposition</td><td><code>decimal</code></td><td>1..1</td>
-                  <td><span class="badge-registry-no">NO</span></td>
-                  <td>Fractional weight ratio: <code>0.42</code> (42% upper), <code>0.35</code> (35% midsole), <code>0.23</code> (23% outsole)</td>
-                </tr>
-                <tr data-kw="MaterialComposition recycledContent post-consumer recycling percentage">
-                  <td><code>|--|-- recycledContent</code></td><td>MaterialComposition</td><td><code>decimal</code></td><td>0..1</td>
-                  <td><span class="badge-registry-no">NO</span></td>
-                  <td>Verified post-consumer recycled ratio: <code>0.78</code> (78% certified recycled material)</td>
-                </tr>
-                <tr data-kw="DPP_metadata passportId unique upi gtin model batch item uri">
-                  <td><code>|--|-- passportId</code></td><td>DPP_metadata</td><td><code>anyURI</code></td><td>1..1</td>
-                  <td><span class="badge-registry-yes">YES</span></td>
-                  <td>Unique product passport identifier URI for the required granularity level. Example: <code>https://dpp-mockup.erx.vn/dpp/model/09506000134352</code></td>
-                </tr>
-                <tr data-kw="DPP_metadata registryIdentifier eureg id returned registry">
-                  <td><code>|--|-- registryIdentifier</code></td><td>DPP_metadata</td><td><code>string</code></td><td>1..1</td>
-                  <td><span class="badge-registry-yes">YES</span></td>
-                  <td>Official registration handle returned by EU Registry. Example: <code>EUREG-XB100-MOD-2026</code></td>
-                </tr>
-                <tr data-kw="DPP_metadata dppUrl live carrier url endpoint link">
-                  <td><code>|--|-- dppUrl</code></td><td>DPP_metadata</td><td><code>anyURI</code></td><td>1..1</td>
-                  <td><span class="badge-registry-yes">YES</span></td>
-                  <td>Permanent link to live decentralized product passport carrier. Example: <code>https://dpp-mockup.erx.vn/dpp/model/09506000134352</code></td>
-                </tr>
-                <tr data-kw="DPP_metadata dppBackupUrl backup statutory archive cease operations">
-                  <td><code>|--|-- dppBackupUrl</code></td><td>DPP_metadata</td><td><code>anyURI</code></td><td>1..1</td>
-                  <td><span class="badge-registry-yes">YES</span></td>
-                  <td>Mandatory statutory backup repository in case of brand cessation. Example: <code>https://dpp-backup.erx.vn/archive/09506000134352</code></td>
-                </tr>
-                <tr data-kw="DPP_metadata lifecycleState status active inactive decommissioned">
-                  <td><code>|--|-- lifecycleState</code></td><td>DPP_metadata</td><td><code>string</code></td><td>1..1</td>
-                  <td><span class="badge-registry-yes">YES</span></td>
-                  <td>DPP lifecycle state: <code>Active</code>, <code>Inactive</code>, or <code>Decommissioned</code></td>
-                </tr>
+${treeRowsHtml}
               </tbody>
             </table>
           </div>
@@ -2262,7 +2466,9 @@ graph TB
       });
       const lbl = document.getElementById('treeMatchCount');
       if (lbl) {
-        lbl.textContent = `Showing ${matches} of ${rows.length} fields`;
+        lbl.textContent = currentLang === 'en' 
+          ? `Showing ${matches} of ${rows.length} canonical pilot fields`
+          : `Hiển thị ${matches} trong tổng số ${rows.length} trường chuẩn ngành`;
       }
     }
 
