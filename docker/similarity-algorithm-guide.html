@@ -7,6 +7,11 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+  <script>
+    if (window.self !== window.top || location.search.includes('embedded=true')) {
+      document.documentElement.classList.add('is-embedded');
+    }
+  </script>
   <style>
     :root {
       --bg: #090d16;
@@ -429,6 +434,18 @@
       height: 100%;
       width: 0%;
       transition: width 0.4s ease, background 0.4s ease;
+    }
+
+    /* Embedded Mode in Iframe */
+    html.is-embedded .top-header,
+    body.is-embedded .top-header,
+    .is-embedded .top-header {
+      display: none !important;
+    }
+    html.is-embedded .container,
+    body.is-embedded .container,
+    .is-embedded .container {
+      padding-top: 16px !important;
     }
 
     /* Responsive */
@@ -1009,13 +1026,18 @@ return candidates
 
     function switchLang(lang) {
       currentLang = lang;
-      document.getElementById('btnEn').classList.toggle('active', lang === 'en');
-      document.getElementById('btnVi').classList.toggle('active', lang === 'vi');
+      try { localStorage.setItem('dpp_lang', lang); } catch (e) {}
+      const btnEn = document.getElementById('btnEn');
+      const btnVi = document.getElementById('btnVi');
+      if (btnEn) btnEn.classList.toggle('active', lang === 'en');
+      if (btnVi) btnVi.classList.toggle('active', lang === 'vi');
 
       const dict = i18n[lang];
-      for (const [id, text] of Object.entries(dict)) {
-        const el = document.getElementById(id);
-        if (el) el.innerHTML = text;
+      if (dict) {
+        for (const [id, text] of Object.entries(dict)) {
+          const el = document.getElementById(id);
+          if (el) el.innerHTML = text;
+        }
       }
       updateSimScore();
     }
@@ -1218,8 +1240,26 @@ return candidates
       updateSimScore();
     }
 
-    // Initialize
-    updateSimScore();
+    // --- IFRAME EMBEDDED MODE & UNIFIED LANGUAGE SYNC ---
+    if (window.self !== window.top || location.search.includes('embedded=true')) {
+      document.body.classList.add('is-embedded');
+      const hdr = document.querySelector('.top-header');
+      if (hdr) hdr.style.display = 'none';
+    }
+
+    // Listen to language synchronization messages from parent window
+    window.addEventListener('message', (event) => {
+      if (event.data && (event.data.type === 'SET_LANGUAGE' || event.data.lang)) {
+        const targetLang = event.data.lang || event.data;
+        if (targetLang === 'en' || targetLang === 'vi') {
+          switchLang(targetLang);
+        }
+      }
+    });
+
+    // Initialize with shared language state
+    const storedLang = localStorage.getItem('dpp_lang') || 'en';
+    switchLang(storedLang);
   </script>
 </body>
 </html>

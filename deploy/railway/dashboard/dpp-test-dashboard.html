@@ -801,7 +801,7 @@
 
   <!-- ==================== VIEW 4: SIMILARITY & MRO ENGINE ==================== -->
   <div id="viewMro" class="view-container view-hidden" style="padding:0;background:var(--bg)">
-    <iframe id="mroIframe" src="/similarity-algorithm-guide.html" style="width:100%;height:calc(100vh - 65px);border:none;display:block"></iframe>
+    <iframe id="mroIframe" src="/similarity-algorithm-guide.html?embedded=true" style="width:100%;height:calc(100vh - 65px);border:none;display:block"></iframe>
   </div>
 
   <script>
@@ -835,8 +835,13 @@
       if (view === 'vocab') renderVocab();
       if (view === 'mro') {
         const frame = document.getElementById('mroIframe');
-        if (frame && frame.contentWindow && frame.contentWindow.switchLang) {
-          frame.contentWindow.switchLang(currentLang);
+        if (frame && frame.contentWindow) {
+          try {
+            if (frame.contentWindow.switchLang) {
+              frame.contentWindow.switchLang(currentLang);
+            }
+          } catch (e) {}
+          frame.contentWindow.postMessage({ type: 'SET_LANGUAGE', lang: currentLang }, '*');
         }
       }
     }
@@ -1185,6 +1190,17 @@
         renderBlueprint();
       } else if (currentView === 'vocab') {
         renderVocab();
+      }
+
+      // Synchronize language to embedded MRO Guide iframe
+      const mroFrame = document.getElementById('mroIframe');
+      if (mroFrame && mroFrame.contentWindow) {
+        try {
+          if (mroFrame.contentWindow.switchLang) {
+            mroFrame.contentWindow.switchLang(lang);
+          }
+        } catch (e) {}
+        mroFrame.contentWindow.postMessage({ type: 'SET_LANGUAGE', lang: lang }, '*');
       }
     }
 
@@ -2985,6 +3001,21 @@ graph LR
       restoreAuth();
       setInterval(updateAuthUI, 5000);
       checkSystem();
+
+      // Keep MRO iframe language synchronized on load
+      const mroFrame = document.getElementById('mroIframe');
+      if (mroFrame) {
+        mroFrame.addEventListener('load', () => {
+          try {
+            if (mroFrame.contentWindow && mroFrame.contentWindow.switchLang) {
+              mroFrame.contentWindow.switchLang(currentLang);
+            }
+          } catch (e) {}
+          if (mroFrame.contentWindow) {
+            mroFrame.contentWindow.postMessage({ type: 'SET_LANGUAGE', lang: currentLang }, '*');
+          }
+        });
+      }
     });
   </script>
 </body>
