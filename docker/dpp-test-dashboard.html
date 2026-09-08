@@ -374,6 +374,9 @@
       <button class="nav-tab-btn" id="tabBtnVocab" onclick="switchView('vocab')">
         <span>📚</span> <span id="tabLabelVocab">Vocabulary Hub & Ontologies</span>
       </button>
+      <button class="nav-tab-btn" id="tabBtnMro" onclick="switchView('mro')">
+        <span>🧠</span> <span id="tabLabelMro">SIMILARITY & MRO Engine</span>
+      </button>
     </div>
 
     <div class="header-right">
@@ -796,6 +799,11 @@
     </div>
   </div>
 
+  <!-- ==================== VIEW 4: SIMILARITY & MRO ENGINE ==================== -->
+  <div id="viewMro" class="view-container view-hidden" style="padding:0;background:var(--bg)">
+    <iframe id="mroIframe" src="/similarity-algorithm-guide.html" style="width:100%;height:calc(100vh - 65px);border:none;display:block"></iframe>
+  </div>
+
   <script>
     // --- APP STATE & ROUTING ---
     const isProxy = location.port === '9090' || !location.hostname.includes('localhost') || location.hostname.includes('railway');
@@ -816,13 +824,21 @@
       document.getElementById('viewLab').classList.toggle('view-hidden', view !== 'lab');
       document.getElementById('viewBlueprint').classList.toggle('view-hidden', view !== 'blueprint');
       document.getElementById('viewVocab').classList.toggle('view-hidden', view !== 'vocab');
+      document.getElementById('viewMro').classList.toggle('view-hidden', view !== 'mro');
 
       document.getElementById('tabBtnLab').classList.toggle('active', view === 'lab');
       document.getElementById('tabBtnBlueprint').classList.toggle('active', view === 'blueprint');
       document.getElementById('tabBtnVocab').classList.toggle('active', view === 'vocab');
+      document.getElementById('tabBtnMro').classList.toggle('active', view === 'mro');
 
       if (view === 'blueprint') renderBlueprint();
       if (view === 'vocab') renderVocab();
+      if (view === 'mro') {
+        const frame = document.getElementById('mroIframe');
+        if (frame && frame.contentWindow && frame.contentWindow.switchLang) {
+          frame.contentWindow.switchLang(currentLang);
+        }
+      }
     }
 
     function activateBpLink(el) {
@@ -979,7 +995,8 @@
         bpNav10: "10. Public URLs Cheat Sheet",
         bpNav11: "11. Vocabulary Hub & EUDPP CORE",
         bpNav12: "12. CIRPASS-2 Footwear Data Model",
-        tabLabelVocab: "Vocabulary Hub & Ontologies"
+        tabLabelVocab: "Vocabulary Hub & Ontologies",
+        tabLabelMro: "SIMILARITY & MRO Engine"
       },
       vi: {
         hdrTitle: "Nền tảng DPP — Bàn Thử Nghiệm & Toàn Tập Blueprint",
@@ -987,6 +1004,7 @@
         tabLabelLab: "Bàn Thử Nghiệm",
         tabLabelBlueprint: "Toàn Tập Blueprint",
         tabLabelVocab: "Từ điển & Bản thể luận DPP",
+        tabLabelMro: "Thuật toán & Vật tư MRO",
         sbTitle: "Kịch bản Thử nghiệm",
         sbStep0: "Kiểm tra hệ thống",
         sbStep1: "Đăng nhập (Token)",
