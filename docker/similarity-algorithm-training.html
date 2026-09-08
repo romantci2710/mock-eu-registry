@@ -1,0 +1,1836 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Khóa Học Toàn Diện: Thuật Toán SIMILARITY_MATCH Từ Con Số 0</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #090d16;
+      --surface: #0f172a;
+      --surface-2: #1e293b;
+      --surface-3: #334155;
+      --border: #334155;
+      --border-light: rgba(255, 255, 255, 0.1);
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+      --primary: #3b82f6;
+      --primary-hover: #2563eb;
+      --primary-glow: rgba(59, 130, 246, 0.25);
+      --accent: #8b5cf6;
+      --accent-glow: rgba(139, 92, 246, 0.25);
+      --eu-gold: #fbbf24;
+      --emerald: #10b981;
+      --emerald-glow: rgba(16, 185, 129, 0.25);
+      --rose: #f43f5e;
+      --cyan: #06b6d4;
+      --code-bg: #030712;
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --radius-xl: 24px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+      font-size: 15px;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Scroll progress bar */
+    #readingProgress {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #3b82f6, #8b5cf6, #10b981);
+      width: 0%;
+      z-index: 9999;
+      transition: width 0.1s ease;
+    }
+
+    /* Top Sticky Navigation */
+    .top-nav {
+      position: sticky;
+      top: 0;
+      background: rgba(15, 23, 42, 0.92);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+      z-index: 1000;
+      padding: 12px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: inherit;
+    }
+    .nav-badge {
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      box-shadow: 0 4px 14px var(--primary-glow);
+    }
+    .nav-title {
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: -0.2px;
+    }
+    .nav-subtitle {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-decoration: none;
+      border: 1px solid transparent;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      color: white;
+      box-shadow: 0 2px 10px var(--primary-glow);
+    }
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 16px var(--primary-glow);
+    }
+    .btn-secondary {
+      background: var(--surface-2);
+      color: var(--text);
+      border-color: var(--border);
+    }
+    .btn-secondary:hover {
+      background: var(--surface-3);
+      border-color: var(--primary);
+    }
+    .btn-outline {
+      background: transparent;
+      border-color: var(--border);
+      color: var(--text-muted);
+    }
+    .btn-outline:hover {
+      color: var(--text);
+      border-color: var(--text-muted);
+    }
+
+    /* Container Layout */
+    .course-layout {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 32px 24px 80px;
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 40px;
+    }
+    @media (max-width: 1024px) {
+      .course-layout { grid-template-columns: 1fr; }
+      .course-sidebar { display: none; }
+    }
+
+    /* Sticky Sidebar Navigation */
+    .course-sidebar {
+      position: sticky;
+      top: 80px;
+      height: fit-content;
+      max-height: calc(100vh - 100px);
+      overflow-y: auto;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+    }
+    .sidebar-header {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-dim);
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+    .sidebar-menu {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .sidebar-link {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 12px;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+    .sidebar-link:hover {
+      color: var(--text);
+      background: var(--surface-2);
+    }
+    .sidebar-link.active {
+      color: #93c5fd;
+      background: rgba(59, 130, 246, 0.15);
+      border-left: 3px solid var(--primary);
+      font-weight: 600;
+    }
+    .sidebar-num {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--surface-3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text);
+      flex-shrink: 0;
+    }
+    .sidebar-link.active .sidebar-num {
+      background: var(--primary);
+      color: white;
+    }
+
+    /* Main Course Content */
+    .course-main {
+      min-width: 0;
+    }
+
+    /* Hero Banner */
+    .course-hero {
+      background: radial-gradient(circle at 10% 20%, rgba(59, 130, 246, 0.15) 0%, rgba(139, 92, 246, 0.1) 50%, transparent 80%), var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      padding: 44px 36px;
+      margin-bottom: 40px;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      background: rgba(59, 130, 246, 0.15);
+      border: 1px solid rgba(59, 130, 246, 0.3);
+      border-radius: 30px;
+      color: #93c5fd;
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 20px;
+    }
+    .hero-title {
+      font-size: 34px;
+      font-weight: 800;
+      letter-spacing: -0.8px;
+      line-height: 1.25;
+      margin-bottom: 16px;
+      background: linear-gradient(135deg, #ffffff 30%, #cbd5e1 70%, #93c5fd 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero-desc {
+      font-size: 16px;
+      color: var(--text-muted);
+      line-height: 1.7;
+      max-width: 840px;
+      margin-bottom: 28px;
+    }
+    .hero-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 24px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border-light);
+      font-size: 13px;
+      color: var(--text-dim);
+    }
+    .hero-meta-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .hero-meta-item strong {
+      color: var(--text);
+    }
+
+    /* Modules */
+    .module-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      padding: 36px 32px;
+      margin-bottom: 40px;
+      transition: border-color 0.2s ease;
+      position: relative;
+    }
+    .module-card:hover {
+      border-color: rgba(59, 130, 246, 0.4);
+    }
+    .module-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--primary);
+      margin-bottom: 8px;
+    }
+    .module-title {
+      font-size: 26px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .module-lead {
+      font-size: 16px;
+      color: #cbd5e1;
+      margin-bottom: 24px;
+      line-height: 1.7;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    h3 {
+      font-size: 19px;
+      font-weight: 700;
+      color: #f1f5f9;
+      margin: 28px 0 12px;
+      letter-spacing: -0.3px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    h4 {
+      font-size: 16px;
+      font-weight: 600;
+      color: #e2e8f0;
+      margin: 20px 0 10px;
+    }
+    p {
+      margin-bottom: 16px;
+      color: #cbd5e1;
+    }
+    ul, ol {
+      margin: 0 0 20px 24px;
+      color: #cbd5e1;
+    }
+    li {
+      margin-bottom: 8px;
+    }
+
+    /* Analogy Box (Ẩn dụ đời thường) */
+    .analogy-box {
+      background: linear-gradient(135deg, rgba(251, 191, 36, 0.08), rgba(245, 158, 11, 0.03));
+      border: 1px solid rgba(251, 191, 36, 0.3);
+      border-left: 4px solid var(--eu-gold);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      margin: 20px 0;
+    }
+    .analogy-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--eu-gold);
+      margin-bottom: 8px;
+    }
+
+    /* Concept Callout */
+    .concept-box {
+      background: linear-gradient(135deg, rgba(59, 130, 246, 0.08), rgba(139, 92, 246, 0.04));
+      border: 1px solid rgba(59, 130, 246, 0.3);
+      border-left: 4px solid var(--primary);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      margin: 20px 0;
+    }
+    .concept-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 14px;
+      font-weight: 700;
+      color: #93c5fd;
+      margin-bottom: 8px;
+    }
+
+    /* Formula Breakdown Card */
+    .formula-card {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      margin: 24px 0;
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+    }
+    .math-display {
+      font-family: 'Fira Code', monospace;
+      font-size: 19px;
+      text-align: center;
+      padding: 18px;
+      background: var(--code-bg);
+      border-radius: var(--radius-sm);
+      border: 1px dashed var(--primary);
+      color: #38bdf8;
+      margin: 14px 0;
+      font-weight: 600;
+      overflow-x: auto;
+    }
+    .formula-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin-top: 20px;
+    }
+    .formula-item {
+      background: var(--surface-3);
+      padding: 14px;
+      border-radius: var(--radius-sm);
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+    .formula-item strong {
+      display: block;
+      color: #f8fafc;
+      font-size: 14px;
+      margin-bottom: 4px;
+    }
+    .formula-item span {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    /* Comparison Table */
+    .comp-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+    .comp-table th, .comp-table td {
+      padding: 12px 16px;
+      text-align: left;
+      font-size: 14px;
+      border-bottom: 1px solid var(--border);
+    }
+    .comp-table th {
+      background: var(--surface-2);
+      color: #f1f5f9;
+      font-weight: 600;
+    }
+    .comp-table tr:hover td {
+      background: rgba(255,255,255,0.02);
+    }
+
+    /* Code Blocks */
+    .code-wrapper {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      margin: 20px 0;
+      overflow: hidden;
+    }
+    .code-header {
+      background: #0d131f;
+      padding: 8px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border);
+      font-size: 12px;
+      color: var(--text-muted);
+      font-family: 'Fira Code', monospace;
+    }
+    .code-lang-tag {
+      background: var(--surface-2);
+      padding: 2px 8px;
+      border-radius: 4px;
+      color: #93c5fd;
+      font-weight: 600;
+    }
+    pre code {
+      font-family: 'Fira Code', monospace;
+      font-size: 13.5px;
+      display: block;
+      padding: 18px 20px;
+      overflow-x: auto;
+      line-height: 1.65;
+      color: #e2e8f0;
+    }
+
+    /* Code Syntax Highlighting Simulation */
+    .c-kw { color: #f472b6; font-weight: 600; } /* keyword */
+    .c-fn { color: #60a5fa; font-weight: 600; } /* function */
+    .c-str { color: #a7f3d0; } /* string */
+    .c-num { color: #fbbf24; } /* number */
+    .c-cm { color: #64748b; font-style: italic; } /* comment */
+
+    /* Step by step diagram container */
+    .step-flow {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin: 24px 0;
+    }
+    .flow-card {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 18px;
+      position: relative;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+    .flow-card:hover {
+      transform: translateY(-3px);
+      border-color: var(--primary);
+    }
+    .flow-step-num {
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      color: white;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      margin-bottom: 12px;
+    }
+    .flow-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: #f1f5f9;
+      margin-bottom: 6px;
+    }
+    .flow-desc {
+      font-size: 12.5px;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* Interactive Simulator */
+    .sim-container {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      padding: 28px;
+      margin: 30px 0;
+    }
+    .sim-presets {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .sim-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+    @media (max-width: 800px) {
+      .sim-grid { grid-template-columns: 1fr; }
+    }
+    .sim-box {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 16px;
+    }
+    .sim-box-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .sim-textarea {
+      width: 100%;
+      height: 220px;
+      background: transparent;
+      border: none;
+      color: #e2e8f0;
+      font-family: 'Fira Code', monospace;
+      font-size: 12.5px;
+      line-height: 1.5;
+      resize: vertical;
+      outline: none;
+    }
+    .sim-controls {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      background: var(--surface-3);
+      padding: 18px;
+      border-radius: var(--radius-md);
+      margin-bottom: 20px;
+    }
+    @media (max-width: 600px) {
+      .sim-controls { grid-template-columns: 1fr; }
+    }
+    .control-label {
+      font-size: 13px;
+      font-weight: 600;
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+    .slider-input {
+      width: 100%;
+      accent-color: var(--primary);
+    }
+    .sim-results {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 24px;
+    }
+    .score-meter-wrap {
+      height: 14px;
+      background: var(--surface-3);
+      border-radius: 8px;
+      overflow: hidden;
+      margin: 14px 0;
+    }
+    .score-meter-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #3b82f6, #10b981);
+      transition: width 0.4s ease, background 0.4s ease;
+    }
+    .verdict-badge {
+      display: inline-block;
+      padding: 8px 16px;
+      border-radius: 30px;
+      font-weight: 700;
+      font-size: 14px;
+      margin-top: 10px;
+      border: 1px solid transparent;
+    }
+    .verdict-pass {
+      background: rgba(16, 185, 129, 0.15);
+      border-color: rgba(16, 185, 129, 0.3);
+      color: #34d399;
+    }
+    .verdict-fail {
+      background: rgba(244, 63, 94, 0.15);
+      border-color: rgba(244, 63, 94, 0.3);
+      color: #fb7185;
+    }
+
+    /* Step-by-Step Inspector */
+    .step-inspector {
+      background: #0a0f1d;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      margin-top: 20px;
+    }
+    .step-nav-bar {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+    .step-btn-pill {
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      background: var(--surface-2);
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+      cursor: pointer;
+    }
+    .step-btn-pill.active {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+    .step-content-area {
+      background: var(--code-bg);
+      padding: 16px;
+      border-radius: var(--radius-sm);
+      font-family: 'Fira Code', monospace;
+      font-size: 13px;
+      line-height: 1.6;
+      border: 1px solid #1e293b;
+      white-space: pre-wrap;
+    }
+
+    /* Quiz Card */
+    .quiz-card {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      margin: 20px 0;
+    }
+    .quiz-q {
+      font-size: 15px;
+      font-weight: 700;
+      color: #f8fafc;
+      margin-bottom: 14px;
+    }
+    .quiz-options {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .quiz-opt {
+      padding: 12px 16px;
+      background: var(--surface-3);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      font-size: 13.5px;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .quiz-opt:hover {
+      border-color: var(--primary);
+      background: rgba(59, 130, 246, 0.1);
+    }
+    .quiz-opt.selected-correct {
+      background: rgba(16, 185, 129, 0.2);
+      border-color: var(--emerald);
+      color: #34d399;
+      font-weight: 600;
+    }
+    .quiz-opt.selected-wrong {
+      background: rgba(244, 63, 94, 0.2);
+      border-color: var(--rose);
+      color: #fb7185;
+    }
+    .quiz-explanation {
+      margin-top: 12px;
+      padding: 12px;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      display: none;
+    }
+
+    /* Accordion Details */
+    details {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      margin: 16px 0;
+      overflow: hidden;
+    }
+    summary {
+      padding: 14px 18px;
+      font-weight: 600;
+      cursor: pointer;
+      color: #f1f5f9;
+      background: var(--surface-2);
+      user-select: none;
+      transition: background 0.2s;
+    }
+    summary:hover {
+      background: var(--surface-3);
+    }
+    details[open] summary {
+      border-bottom: 1px solid var(--border);
+      color: #93c5fd;
+    }
+    .details-content {
+      padding: 18px;
+      background: var(--surface);
+    }
+
+    /* Footer */
+    .course-footer {
+      text-align: center;
+      padding: 40px 20px;
+      border-top: 1px solid var(--border);
+      color: var(--text-dim);
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Reading Progress Bar -->
+  <div id="readingProgress"></div>
+
+  <!-- Top Sticky Navigation -->
+  <header class="top-nav">
+    <a href="#" class="nav-brand">
+      <div class="nav-badge">🧠</div>
+      <div>
+        <div class="nav-title">Chương Trình Đào Tạo SIMILARITY_MATCH Từ Con Số 0</div>
+        <div class="nav-subtitle">CIRPASS-2 DPP Validator • Dành Cho Người Chưa Biết Lập Trình</div>
+      </div>
+    </a>
+    <div class="nav-actions">
+      <button class="btn btn-outline" onclick="window.print()">🖨️ Lưu Ghi Chú PDF</button>
+      <a href="#lab" class="btn btn-primary">⚡ Phòng Thí Nghiệm</a>
+    </div>
+  </header>
+
+  <!-- Layout -->
+  <div class="course-layout">
+
+    <!-- Sticky Table of Contents -->
+    <aside class="course-sidebar">
+      <div class="sidebar-header">Mục Lục Khóa Học</div>
+      <ul class="sidebar-menu">
+        <li><a href="#ch1" class="sidebar-link active"><span class="sidebar-num">1</span> Vấn Đề Lớn Cần Giải Quyết</a></li>
+        <li><a href="#ch2" class="sidebar-link"><span class="sidebar-num">2</span> Dữ Liệu JSON Cho Người Mới</a></li>
+        <li><a href="#ch3" class="sidebar-link"><span class="sidebar-num">3</span> Mô Tả Thuật Toán Bằng Lời</a></li>
+        <li><a href="#ch4" class="sidebar-link"><span class="sidebar-num">4</span> Giải Mã Công Thức Toán Học</a></li>
+        <li><a href="#ch5" class="sidebar-link"><span class="sidebar-num">5</span> Bóc Tách Từng Dòng Code</a></li>
+        <li><a href="#ch6" class="sidebar-link"><span class="sidebar-num">6</span> Mã Nguồn Gốc Trong Validator</a></li>
+        <li><a href="#lab" class="sidebar-link"><span class="sidebar-num">7</span> Phòng Thí Nghiệm Tương Tác</a></li>
+        <li><a href="#ch8" class="sidebar-link"><span class="sidebar-num">8</span> Ứng Dụng DPP & MRO Thực Tế</a></li>
+        <li><a href="#ch9" class="sidebar-link"><span class="sidebar-num">9</span> Bài Tập & Trắc Nghiệm</a></li>
+      </ul>
+    </aside>
+
+    <!-- Main Course Articles -->
+    <main class="course-main">
+
+      <!-- Hero Header -->
+      <section class="course-hero">
+        <div class="hero-tag">
+          <span>🎓 Masterclass Tự Học Toàn Diện</span> • <span>Offline Ready</span>
+        </div>
+        <h1 class="hero-title">Thuật Toán SIMILARITY_MATCH: Nhận Diện Cấu Trúc Dữ Liệu & Ghép Nối Thông Minh</h1>
+        <p class="hero-desc">
+          Chương trình đào tạo này được thiết kế dành riêng cho bạn — dù bạn <strong>chưa từng viết một dòng code Python nào</strong> hay chưa từng học qua lý thuyết thuật toán. Khóa học sẽ dẫn dắt bạn qua những ví dụ đời thường sinh động, từng phép tính số học cụ thể, và cách thuật toán này giải quyết bài toán hàng triệu Euro trong Hộ chiếu sản phẩm số Châu Âu (DPP) cũng như Sourcing vật tư MRO.
+        </p>
+        <div class="hero-meta">
+          <div class="hero-meta-item">⏱️ Thời lượng: <strong>30 - 45 phút</strong></div>
+          <div class="hero-meta-item">🎯 Đối tượng: <strong>Người mới bắt đầu, Quản lý dự án, Chuyên viên Sourcing</strong></div>
+          <div class="hero-meta-item">💡 Phương pháp: <strong>Trực quan hóa 100% + Thực hành tương tác</strong></div>
+        </div>
+      </section>
+
+      <!-- CHƯƠNG 1 -->
+      <section id="ch1" class="module-card">
+        <div class="module-badge">Chương 1</div>
+        <h2 class="module-title">🎯 Vấn Đề Lớn Cần Giải Quyết: Tại Sao Chúng Ta Cần Thuật Toán Này?</h2>
+        <div class="module-lead">
+          Trước khi nhìn vào công thức hay dòng code nào, hãy tự hỏi: <em>Nếu không có thuật toán này, loài người đang gặp rắc rối gì trong cuộc sống và công việc hàng ngày?</em>
+        </div>
+
+        <div class="analogy-box">
+          <div class="analogy-header">🧳 Câu chuyện đời thường: Chiếc vali vô chủ tại sân bay</div>
+          <p>
+            Tưởng tượng bạn là nhân viên an ninh sân bay. Bạn nhặt được một chiếc vali bị bỏ quên, trên vali <strong>không dán tem nhãn ghi tên hay số điện thoại</strong> của chủ nhân.
+          </p>
+          <p>Khi mở vali ra kiểm tra, bạn thấy các đồ vật sau:</p>
+          <ul>
+            <li>Một đôi giày chạy bộ hiệu Nike size 42.</li>
+            <li>Một cuốn hộ chiếu mang quốc tịch Việt Nam.</li>
+            <li>Một chiếc áo len màu hạt dẻ.</li>
+            <li>Một thẻ tập gym tại quận Hoàn Kiếm, Hà Nội.</li>
+            <li>Một hộp kẹo sô-cô-la Bỉ mua tại siêu thị Duty Free sân bay.</li>
+          </ul>
+          <p>
+            Lúc này, quầy dịch vụ có 3 hành khách đang làm thủ tục báo mất hành lý:
+          </p>
+          <ol>
+            <li><strong>Ông John (Mỹ):</strong> Khai báo vali có áo vest đen, tài liệu tiếng Anh, visa du lịch Thái Lan.</li>
+            <li><strong>Anh Nam (Việt Nam):</strong> Khai báo vali có hộ chiếu VN, đồ thể thao size 42, quà mua tại sân bay châu Âu.</li>
+            <li><strong>Chị Sakura (Nhật Bản):</strong> Khai báo vali có mỹ phẩm, áo kimono, quà lưu niệm Tokyo.</li>
+          </ol>
+          <p>
+            <strong>Bộ não của bạn sẽ làm gì?</strong> Bạn sẽ so sánh từng món đồ tìm thấy trong vali với lời khai của 3 người. Mặc dù anh Nam không thể nhớ hết 100% từng sợi chỉ trong vali, nhưng số đặc điểm trùng khớp (hộ chiếu VN, giày size 42, quà sân bay) quá áp đảo so với 2 người kia. Bạn kết luận ngay: <em>Chiếc vali này 98% là của anh Nam!</em>
+          </p>
+        </div>
+
+        <h3>🤖 Bài toán tương tự trong thế giới máy tính:</h3>
+        
+        <h4>1. Cơn đau đầu của Cổng Hải Quan EU (Digital Product Passport - DPP):</h4>
+        <p>
+          Liên minh Châu Âu (EU) ban hành quy chế bắt buộc mọi sản phẩm (từ Giày dép, Pin xe điện, đến Dệt may) khi nhập khẩu vào EU phải có một file dữ liệu <strong>Hộ chiếu số (DPP)</strong>.
+        </p>
+        <p>
+          Vấn đề là: Mỗi nhà máy sản xuất tại Việt Nam, Trung Quốc hay Ấn Độ đều sử dụng phần mềm ERP riêng. Khi gửi file dữ liệu JSON lên hệ thống của EU, <strong>họ thường quên ghi hoặc không thống nhất tên chuẩn schema</strong> (ví dụ: họ không ghi rõ đây là file dành cho Giày thể thao hay Áo khoác hay Pin lithium).
+        </p>
+        <p>
+          Nếu máy tính bắt buộc phải biết chính xác tên mã mới chịu đọc, hàng triệu lô hàng sẽ bị tắc nghẽn ở cảng! Hệ thống thẩm định (Validator) của EU bắt buộc phải <strong>tự động "nhìn mặt bắt hình dong"</strong>: Mở file JSON ra, đếm các trường thuộc tính bên trong (như <code>soleMaterial</code>, <code>upperMesh</code>, <code>taricCode</code>) và tự suy luận: <em>"A! File này 95% là Hộ chiếu Giày dép (Footwear)!"</em>.
+        </p>
+
+        <h4>2. Cơn đau đầu của Doanh Nghiệp Thương Mại & MRO (Phụ tùng nhà máy):</h4>
+        <p>
+          Trong ngành vật tư bảo trì nhà máy (MRO), khách hàng gửi yêu cầu báo giá (RFQ):
+          <br>
+          <code style="color:#fbbf24">"Cần mua gấp 20 vòng bi lỗ trục 25mm, đường kính ngoài 52mm, dày 15mm, có 2 nắp chắn cao su chống bụi"</code>.
+        </p>
+        <p>
+          Trong kho bạn có 500.000 linh kiện. Nhà cung cấp SKF thì ghi là <code>6205-2RSH</code>, hãng NSK thì ghi là <code>6205 DDU</code>, hãng FAG thì ghi là <code>6205-2RSR</code>. Nếu dùng cách tìm kiếm chữ chính xác (Exact Text Match), máy tính sẽ báo <strong>"Không tìm thấy"</strong>!
+        </p>
+        <p>
+          Thuật toán <strong>SIMILARITY_MATCH</strong> sinh ra để giải quyết đúng nỗi đau này: Bóc tách thuộc tính và so sánh mức độ tương đồng cấu trúc để ghép nối chính xác tuyệt đối.
+        </p>
+      </section>
+
+      <!-- CHƯƠNG 2 -->
+      <section id="ch2" class="module-card">
+        <div class="module-badge">Chương 2</div>
+        <h2 class="module-title">📦 Nhập Môn Cấu Trúc Dữ Liệu JSON (Dành Cho Người Mới)</h2>
+        <div class="module-lead">
+          Để hiểu thuật toán so khớp, trước tiên chúng ta phải biết "vật liệu" mà nó xử lý là gì. Đó chính là <strong>JSON</strong>.
+        </div>
+
+        <h3>1. JSON là gì? Không có gì cao siêu cả!</h3>
+        <p>
+          <strong>JSON</strong> (viết tắt của <em>JavaScript Object Notation</em>) thực chất chỉ là một cách viết thông tin dạng chữ cái đơn giản, giống như bạn điền vào một tờ phiếu thông tin cá nhân.
+        </p>
+        <p>Quy tắc duy nhất của JSON là: <strong>TÊN THUỘC TÍNH (Khóa - Key) : NỘI DUNG (Giá trị - Value)</strong>.</p>
+
+        <div class="code-wrapper">
+          <div class="code-header">
+            <span>Ví dụ: Một tờ phiếu JSON miêu tả Đôi Giày Thể Thao</span>
+            <span class="code-lang-tag">JSON</span>
+          </div>
+          <pre><code>{
+  <span class="c-str">"tenSanPham"</span>: <span class="c-str">"Giày Chạy Bộ Siêu Nhẹ EcoStride"</span>,
+  <span class="c-str">"maSoHaiQuan"</span>: <span class="c-str">"64041100"</span>,
+  <span class="c-str">"khoiLuongGram"</span>: <span class="c-num">285</span>,
+  <span class="c-str">"nhaSanXuat"</span>: {
+    <span class="c-str">"tenCongTy"</span>: <span class="c-str">"Tập Đoàn Giày Da Bình Dương"</span>,
+    <span class="c-str">"quocGia"</span>: <span class="c-str">"VN"</span>
+  },
+  <span class="c-str">"thanhPhan"</span>: [
+    { <span class="c-str">"viTri"</span>: <span class="c-str">"Mũi giày"</span>, <span class="c-str">"vatLieu"</span>: <span class="c-str">"Vải dệt tái chế"</span> },
+    { <span class="c-str">"viTri"</span>: <span class="c-str">"Đế giày"</span>, <span class="c-str">"vatLieu"</span>: <span class="c-str">"Cao su tự nhiên"</span> }
+  ]
+}</code></pre>
+        </div>
+
+        <h3>2. Khái niệm "Đường Dẫn Thuộc Tính" (JSON Path)</h3>
+        <div class="analogy-box">
+          <div class="analogy-header">📮 Ẩn dụ: Địa chỉ gửi thư bưu điện</div>
+          <p>
+            Khi bạn gửi thư, bạn không thể ghi chung chung là "Nhà ông Ba". Bạn phải ghi:
+            <br>
+            <strong style="color:var(--eu-gold)">Việt Nam &gt; Tỉnh Bình Dương &gt; Huyện Dĩ An &gt; Xã An Bình &gt; Số Nhà 42</strong>.
+          </p>
+          <p>
+            Trong JSON cũng y hệt như vậy! Muốn chỉ đến <strong>"Tên Công Ty"</strong> của nhà sản xuất, máy tính sẽ đọc từ ngoài vào trong:
+            <br>
+            <code style="color:#60a5fa">nhaSanXuat.tenCongTy</code>
+          </p>
+          <p>
+            Nếu gặp danh sách mảng (chứa nhiều phần tử như thành phần các bộ phận giày), máy tính dùng ký hiệu <code>[]</code>:
+            <br>
+            <code style="color:#60a5fa">thanhPhan[].vatLieu</code>
+          </p>
+        </div>
+
+        <h3>3. Phép thuật "Làm Phẳng" (Flattening)</h3>
+        <p>
+          Con người nhìn vào cây JSON lồng nhau nhiều tầng thì thấy đẹp mắt. Nhưng máy tính khi cần so sánh hàng vạn dữ liệu thì <strong>cực kỳ ghét sự lồng nhau ngoằn ngoèo</strong> vì nó phải tốn bộ nhớ để nhảy vào từng ngóc ngách.
+        </p>
+        <p>
+          Vì vậy, bước đầu tiên của thuật toán Similarity là: <strong>Lấy một chiếc bàn ủi, ủi phẳng toàn bộ cây JSON</strong> thành một danh sách các đường dẫn duy nhất!
+        </p>
+
+        <div class="code-wrapper">
+          <div class="code-header">
+            <span>Kết quả sau khi "Làm Phẳng" cây JSON đôi giày ở trên</span>
+            <span class="code-lang-tag">DANH SÁCH ĐƯỜNG DẪN PHẲNG (FLAT PATHS)</span>
+          </div>
+          <pre><code>[
+  <span class="c-str">"tenSanPham"</span>,
+  <span class="c-str">"maSoHaiQuan"</span>,
+  <span class="c-str">"khoiLuongGram"</span>,
+  <span class="c-str">"nhaSanXuat.tenCongTy"</span>,
+  <span class="c-str">"nhaSanXuat.quocGia"</span>,
+  <span class="c-str">"thanhPhan[].viTri"</span>,
+  <span class="c-str">"thanhPhan[].vatLieu"</span>
+]</code></pre>
+        </div>
+
+        <div class="concept-box">
+          <div class="concept-header">💡 Bài học cốt lõi cần nhớ:</div>
+          <p>
+            Sau khi làm phẳng, mọi cây dữ liệu phức tạp (dù có 10 tầng lồng nhau) đều trở về một <strong>danh sách các chuỗi chữ đơn giản</strong>. Lúc này, bài toán so sánh độ giống nhau của 2 file JSON được chuyển hóa thành: <strong>So sánh 2 danh sách từ ngữ xem có bao nhiêu từ giống nhau!</strong>
+          </p>
+        </div>
+      </section>
+
+      <!-- CHƯƠNG 3 -->
+      <section id="ch3" class="module-card">
+        <div class="module-badge">Chương 3</div>
+        <h2 class="module-title">🧩 Mô Tả Thuật Toán Bằng Lời Kể & Hình Ảnh Trực Quan</h2>
+        <div class="module-lead">
+          Thuật toán SIMILARITY_MATCH vận hành qua 4 bước cực kỳ logic và tự nhiên, giống hệt cách một vị giám khảo chấm thi tốt nghiệp.
+        </div>
+
+        <div class="step-flow">
+          <div class="flow-card">
+            <div class="flow-step-num">1</div>
+            <div class="flow-title">Trích Xuất Đặc Điểm</div>
+            <div class="flow-desc">Bóc tách toàn bộ đường dẫn của dữ liệu người dùng gửi lên thành tập hợp <strong>Input Paths (I)</strong>.</div>
+          </div>
+          <div class="flow-card">
+            <div class="flow-step-num">2</div>
+            <div class="flow-title">Lấy Hồ Sơ Chuẩn</div>
+            <div class="flow-desc">Lấy ra danh sách các trường bắt buộc của mẫu chuẩn quy định trong kho dữ liệu: <strong>Required Paths (R)</strong>.</div>
+          </div>
+          <div class="flow-card">
+            <div class="flow-step-num">3</div>
+            <div class="flow-title">Đếm Phần Trùng Khớp</div>
+            <div class="flow-desc">Tìm điểm giao nhau giữa 2 tập hợp: những trường nào cả hai bên cùng có: <strong>Matched (M)</strong>.</div>
+          </div>
+          <div class="flow-card">
+            <div class="flow-step-num">4</div>
+            <div class="flow-title">Chấm Điểm & Ra Quyết Định</div>
+            <div class="flow-desc">Áp dụng công thức tính điểm tương đồng. Nếu điểm đạt từ <strong>0.30 (30%)</strong> trở lên thì kết luận: HỢP LỆ!</div>
+          </div>
+        </div>
+
+        <h3>🎨 Minh họa trực quan qua Biểu đồ Tập Hợp (Venn Diagram)</h3>
+        <p>Hãy hình dung 2 vòng tròn dưới đây:</p>
+        <div style="background:var(--code-bg);padding:30px;border-radius:var(--radius-lg);text-align:center;margin:20px 0;border:1px solid var(--border)">
+          <svg viewBox="0 0 600 240" style="max-width:100%;height:auto;font-family:'Inter',sans-serif">
+            <circle cx="230" cy="120" r="95" fill="rgba(59, 130, 246, 0.25)" stroke="#3b82f6" stroke-width="2" stroke-dasharray="5 5" />
+            <circle cx="370" cy="120" r="95" fill="rgba(16, 185, 129, 0.25)" stroke="#10b981" stroke-width="2" />
+            
+            <text x="170" y="85" fill="#93c5fd" font-size="13" font-weight="700">SCHEMA CHUẨN (R)</text>
+            <text x="170" y="105" fill="#94a3b8" font-size="11">Các trường bắt buộc</text>
+            <text x="160" y="140" fill="#f8fafc" font-size="14" font-weight="600">Trường bị thiếu (R - M)</text>
+
+            <text x="430" y="85" fill="#6ee7b7" font-size="13" font-weight="700">DỮ LIỆU GỬI LÊN (I)</text>
+            <text x="430" y="105" fill="#94a3b8" font-size="11">Các trường người gửi mang đến</text>
+            <text x="420" y="140" fill="#f8fafc" font-size="14" font-weight="600">Trường dư thừa (I - M)</text>
+
+            <text x="300" y="115" fill="#fbbf24" font-size="16" font-weight="800" text-anchor="middle">TRÙNG NHAU (M)</text>
+            <text x="300" y="135" fill="#e2e8f0" font-size="11" text-anchor="middle">Điểm cộng trung tâm</text>
+          </svg>
+          <div style="font-size:13px;color:var(--text-muted);margin-top:10px">
+            Biểu đồ tương quan: Vùng màu vàng ở giữa chính là số trường trùng khớp <strong>(M)</strong> mà cả hai bên cùng sở hữu.
+          </div>
+        </div>
+      </section>
+
+      <!-- CHƯƠNG 4 -->
+      <section id="ch4" class="module-card">
+        <div class="module-badge">Chương 4</div>
+        <h2 class="module-title">📐 Giải Mã Công Thức Toán Học Bằng Những Con Số Đời Thường</h2>
+        <div class="module-lead">
+          Đừng để các ký hiệu toán học làm bạn bối rối. Hãy xem đây là cách tính điểm bài thi của học sinh!
+        </div>
+
+        <h3>1. Chỉ số thứ nhất: Độ chuẩn xác (Precision)</h3>
+        <p>
+          Độ chuẩn xác trả lời câu hỏi giản dị: <em>"Trong số những thông tin anh mang đến, có bao nhiêu phần trăm là trúng đích?"</em>.
+        </p>
+
+        <div class="formula-card">
+          <div class="math-display">Precision = M / I</div>
+          <div class="formula-grid">
+            <div class="formula-item">
+              <strong>M (Matched)</strong>
+              <span>Số trường trùng khớp với mẫu chuẩn</span>
+            </div>
+            <div class="formula-item">
+              <strong>I (Input Count)</strong>
+              <span>Tổng số trường trong dữ liệu gửi lên</span>
+            </div>
+          </div>
+        </div>
+        <p>
+          <em>Ví dụ:</em> Bạn khai báo 10 trường thông tin (I = 10). Có 9 trường trùng khớp hoàn toàn với mẫu chuẩn (M = 9).
+          <br>
+          Thì Precision = 9 / 10 = 0.90 <strong>(Độ chuẩn xác 90%)</strong>.
+        </p>
+
+        <h3>2. Chỉ số thứ hai: Chỉ số Jaccard có trọng số (Weighted Jaccard)</h3>
+        <p>
+          Trong toán học xác suất cổ điển, chỉ số Jaccard đo độ tương đồng giữa 2 tập hợp bằng công thức: Giao / Hợp = M / (R + I - M).
+        </p>
+        <p>
+          <strong>Tuy nhiên, công thức cổ điển có một nhược điểm chí mạng:</strong> Nếu một nhà sản xuất giày gửi một file dữ liệu rất chi tiết, có thêm 30 trường thông tin mở rộng (như tên nhà thiết kế, màu dây giày, link video TikTok...), thì mẫu số (R + I - M) sẽ phình to ra tới 40, khiến điểm số tụt dốc thảm hại xuống chỉ còn 0.20 và bị hệ thống đánh rớt oan uổng!
+        </p>
+        <p>
+          Vì vậy, các kỹ sư Liên minh Châu Âu đã phát minh ra <strong>Hệ số giảm phạt ma thuật: 0.25 (Penalty Factor)</strong>:
+        </p>
+
+        <div class="formula-card">
+          <div class="math-display">Weighted Jaccard = M / ( R + 0.25 × (I - M) )</div>
+          <div class="formula-grid">
+            <div class="formula-item">
+              <strong>R (Required)</strong>
+              <span>Số trường bắt buộc của khuôn mẫu chuẩn</span>
+            </div>
+            <div class="formula-item">
+              <strong>(I - M)</strong>
+              <span>Số trường gửi thừa ra ngoài lề</span>
+            </div>
+            <div class="formula-item">
+              <strong>0.25</strong>
+              <span>Hệ số giảm phạt: Gửi thừa trường chỉ bị phạt 1/4 điểm!</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="analogy-box">
+          <div class="analogy-header">🍜 Ẩn dụ: Gọi một bát phở bò tái</div>
+          <p>
+            Quy chuẩn của một bát phở bò (R = 3 thứ bắt buộc: Bánh phở, Nước dùng, Thịt bò).
+          </p>
+          <ul>
+            <li>
+              <strong>Trường hợp A:</strong> Bạn gọi thêm quẩy, thêm hành trần, thêm ớt (I = 6 món, thừa 3 món ngoài lề). Hệ số <code>0.25</code> nói rằng: <em>"Bát này vẫn là phở bò 100%! Khách gọi thêm đồ ăn kèm thì không sao cả, chỉ tính một chút phí phụ gia thôi."</em> Do đó <strong>Điểm tương đồng vẫn rất cao!</strong>
+            </li>
+            <li>
+              <strong>Trường hợp B:</strong> Bạn mang ra một bát có bánh phở, có quẩy, có tương ớt, nhưng <strong>quên không cho thịt bò</strong> (M = 2, thiếu mất 1 thứ cốt lõi). Bát này lập tức bị từ chối vì không còn là phở bò nữa!
+            </li>
+          </ul>
+        </div>
+
+        <h3>3. Điểm số quyết định cuối cùng (Final Score)</h3>
+        <p>
+          Thuật toán cực kỳ ưu ái người dùng: Nó tính cả 2 chỉ số trên và <strong>chọn điểm số cao nhất</strong> làm điểm thi chính thức:
+        </p>
+        <div class="formula-card">
+          <div class="math-display">Final Score = MAX( Precision, Weighted Jaccard )</div>
+        </div>
+        <p>
+          Nếu <code>Final Score &gt;= 0.30</code> (30%), cánh cổng mở ra: File dữ liệu được chuyển tiếp sang bộ thẩm định chuyên sâu của Liên minh Châu Âu.
+        </p>
+
+        <h3>📝 Bài tập tính nhẩm bằng tay từng bước (Step-by-Step Walkthrough)</h3>
+        <p>Hãy cùng làm một bài toán thực tế nhé:</p>
+        <div style="background:var(--surface-2);border-radius:var(--radius-md);padding:20px;margin:16px 0;border-left:4px solid #3b82f6">
+          <p><strong>Đề bài:</strong></p>
+          <ul>
+            <li>Khuôn mẫu chuẩn Hộ chiếu Giày dép yêu cầu: <strong>R = 10 trường bắt buộc</strong>.</li>
+            <li>Xưởng sản xuất gửi lên file dữ liệu có: <strong>I = 12 trường</strong>.</li>
+            <li>Sau khi đối soát, phát hiện có: <strong>M = 9 trường trùng khớp</strong> (xưởng bị thiếu 1 trường bắt buộc, và gửi thừa 12 - 9 = 3 trường phụ).</li>
+          </ul>
+          <p><strong>Hỏi: Điểm số của xưởng là bao nhiêu? Có ĐẬU không?</strong></p>
+
+          <details>
+            <summary>👉 Bấm vào đây để xem lời giải chi tiết từng dòng</summary>
+            <div class="details-content">
+              <p><strong>Bước 1: Tính Độ chuẩn xác (Precision)</strong></p>
+              <p><code>Precision = M / I = 9 / 12 = 0.75</code> (Tương đương 75%)</p>
+
+              <p><strong>Bước 2: Tính Mẫu số của Weighted Jaccard</strong></p>
+              <p><code>Mẫu số = R + 0.25 × (I - M) = 10 + 0.25 × (12 - 9) = 10 + 0.25 × 3 = 10 + 0.75 = 10.75</code></p>
+
+              <p><strong>Bước 3: Tính Điểm Jaccard</strong></p>
+              <p><code>Jaccard = M / Mẫu số = 9 / 10.75 ≈ 0.837</code> (Tương đương 83.7%)</p>
+
+              <p><strong>Bước 4: Chọn điểm số cao nhất</strong></p>
+              <p><code>Final Score = MAX( 0.75 , 0.837 ) = 0.837</code></p>
+
+              <p><strong>Kết luận:</strong></p>
+              <p>Vì <code>0.837 &gt;= 0.30</code> (83.7% vượt xa ngưỡng 30%), hệ thống kết luận: <strong>✅ HỢP LỆ (PASSED)!</strong> Hệ thống tự động xác định đây chính là Hộ chiếu giày dép và tiến hành thẩm định chi tiết.</p>
+            </div>
+          </details>
+        </div>
+      </section>
+
+      <!-- CHƯƠNG 5 -->
+      <section id="ch5" class="module-card">
+        <div class="module-badge">Chương 5</div>
+        <h2 class="module-title">💻 Bóc Tách Từng Dòng Code: Hàm, Biến Số & Lập Trình Từ Con Số 0</h2>
+        <div class="module-lead">
+          Bây giờ bạn đã hiểu rõ toán học và nguyên lý. Hãy cùng xem các lập trình viên chuyển hóa các ý tưởng này thành mã lệnh máy tính như thế nào.
+        </div>
+
+        <h3>1. Từ điển thuật ngữ dành cho người chưa từng code</h3>
+        <table class="comp-table">
+          <thead>
+            <tr>
+              <th>Thuật ngữ</th>
+              <th>Ẩn dụ đời thường</th>
+              <th>Ý nghĩa trong thuật toán này</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>Biến số (Variable)</code></td>
+              <td>Một chiếc hộp có dán nhãn để cất đồ</td>
+              <td><code>required_paths</code>: Hộp chứa danh sách các trường bắt buộc</td>
+            </tr>
+            <tr>
+              <td><code>Hàm (Function)</code></td>
+              <td>Một chiếc máy ép hoa quả (bỏ cam vào, ra nước cam)</td>
+              <td><code>calculate_similarity()</code>: Bỏ 2 file JSON vào, lấy ra điểm số từ 0.0 đến 1.0</td>
+            </tr>
+            <tr>
+              <td><code>Vòng lặp (for loop)</code></td>
+              <td>Bác bảo vệ đi gõ cửa kiểm tra từng phòng trong khách sạn</td>
+              <td>Duyệt qua từng thuộc tính của file JSON để bóc tách địa chỉ</td>
+            </tr>
+            <tr>
+              <td><code>Đệ quy (Recursion)</code></td>
+              <td>Búp bê Nga Matryoshka (mở búp bê to ra thấy búp bê nhỏ hơn)</td>
+              <td>Mở hộp JSON to, thấy bên trong có hộp con thì tự động gọi lại chính mình để mở tiếp</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3>2. Hàm 1: Làm phẳng cây JSON (Python)</h3>
+        <p>Hàm này nhận vào một vật thể JSON bất kỳ và biến nó thành danh sách các địa chỉ phẳng.</p>
+
+        <div class="code-wrapper">
+          <div class="code-header">
+            <span>Python: Hàm bóc tách đường dẫn đệ quy</span>
+            <span class="code-lang-tag">PYTHON 3</span>
+          </div>
+          <pre><code><span class="c-kw">def</span> <span class="c-fn">extract_flat_paths</span>(data, prefix=<span class="c-str">""</span>):
+    <span class="c-cm"># Biến paths là chiếc hộp chứa kết quả các đường dẫn tìm được</span>
+    paths = []
+    
+    <span class="c-cm"># Trường hợp 1: Nếu data là một danh sách mảng (Array) [ ... ]</span>
+    <span class="c-kw">if</span> isinstance(data, list):
+        array_path = prefix + <span class="c-str">"[]"</span>
+        paths.append(array_path)
+        <span class="c-cm"># Nếu mảng có phần tử con, bóc tách tiếp phần tử đầu tiên</span>
+        <span class="c-kw">if</span> len(data) &gt; <span class="c-num">0</span> <span class="c-kw">and</span> isinstance(data[<span class="c-num">0</span>], (dict, list)):
+            paths.extend(extract_flat_paths(data[<span class="c-num">0</span>], array_path))
+            
+    <span class="c-cm"># Trường hợp 2: Nếu data là một đối tượng từ điển (Object/Dict) { ... }</span>
+    <span class="c-kw">elif</span> isinstance(data, dict):
+        <span class="c-kw">for</span> key, value <span class="c-kw">in</span> data.items():
+            <span class="c-cm"># Nối đường dẫn: ví dụ "nhaSanXuat" + "." + "tenCongTy"</span>
+            full_path = f<span class="c-str">"{prefix}.{key}"</span> <span class="c-kw">if</span> prefix <span class="c-kw">else</span> key
+            paths.append(full_path)
+            
+            <span class="c-cm"># Đệ quy: Nếu bên trong value còn là hộp con, tiếp tục bóc tách</span>
+            <span class="c-kw">if</span> isinstance(value, (dict, list)):
+                paths.extend(extract_flat_paths(value, full_path))
+                
+    <span class="c-kw">return</span> paths</code></pre>
+        </div>
+
+        <h3>3. Hàm 2: Tính điểm tương đồng Similarity (Python)</h3>
+        <p>Hàm này áp dụng đúng các công thức toán học mà chúng ta vừa học ở Chương 4.</p>
+
+        <div class="code-wrapper">
+          <div class="code-header">
+            <span>Python: Hàm tính điểm tương đồng hoàn chỉnh</span>
+            <span class="code-lang-tag">PYTHON 3</span>
+          </div>
+          <pre><code><span class="c-kw">def</span> <span class="c-fn">calculate_similarity</span>(required_paths, input_paths, penalty_factor=<span class="c-num">0.25</span>):
+    <span class="c-cm"># 1. Đếm tổng số lượng trường</span>
+    required_count = len(required_paths)  <span class="c-cm"># R: Số trường bắt buộc</span>
+    input_count = len(set(input_paths))   <span class="c-cm"># I: Số trường người dùng gửi lên</span>
+    
+    <span class="c-kw">if</span> input_count == <span class="c-num">0</span> <span class="c-kw">or</span> required_count == <span class="c-num">0</span>:
+        <span class="c-kw">return</span> <span class="c-num">0.0</span>
+        
+    <span class="c-cm"># 2. Tìm phần giao nhau: Các trường mà cả hai bên cùng có</span>
+    matched = [p <span class="c-kw">for</span> p <span class="c-kw">in</span> required_paths <span class="c-kw">if</span> p <span class="c-kw">in</span> input_paths]
+    matched_count = len(matched)          <span class="c-cm"># M: Số trường trùng khớp</span>
+    
+    <span class="c-cm"># 3. Tính Độ chuẩn xác (Precision = M / I)</span>
+    precision = matched_count / input_count
+    
+    <span class="c-cm"># 4. Tính Weighted Jaccard = M / ( R + 0.25 * (I - M) )</span>
+    extra_fields = input_count - matched_count  <span class="c-cm"># Số trường thừa</span>
+    denominator = required_count + penalty_factor * extra_fields
+    jaccard = matched_count / denominator <span class="c-kw">if</span> denominator &gt; <span class="c-num">0</span> <span class="c-kw">else</span> <span class="c-num">0.0</span>
+    
+    <span class="c-cm"># 5. Lấy điểm số lớn nhất giữa Precision và Jaccard</span>
+    final_score = max(precision, jaccard)
+    
+    <span class="c-kw">return</span> final_score</code></pre>
+        </div>
+      </section>
+
+      <!-- CHƯƠNG 6 -->
+      <section id="ch6" class="module-card">
+        <div class="module-badge">Chương 6</div>
+        <h2 class="module-title">🏛️ Đối Chiếu Với Mã Nguồn Gốc Trong Repo dpp-validator</h2>
+        <div class="module-lead">
+          Hãy cùng xem chính xác những dòng code Java và câu lệnh SQL mà các kỹ sư phần mềm đang chạy trong kho lưu trữ <code>dpp-validator</code>.
+        </div>
+
+        <p>
+          Trong kho mã nguồn <code>D:\GIT\DPP\dpp-validator</code>, thuật toán này được tổ chức thành 2 thành phần chính:
+        </p>
+        <ol>
+          <li>
+            <strong>Bộ bóc tách đường dẫn:</strong> File <code>core/src/main/java/.../json/JsonPropertyExtractor.java</code>.
+          </li>
+          <li>
+            <strong>Bộ truy vấn dữ liệu tốc độ cao:</strong> File <code>datastore/pgsql/.../pgsql/PgSQLJsonSchemaRepository.java</code>.
+          </li>
+        </ol>
+
+        <div class="code-wrapper">
+          <div class="code-header">
+            <span>Trích đoạn Java gốc: JsonPropertyExtractor.java</span>
+            <span class="code-lang-tag">JAVA (QUARKUS)</span>
+          </div>
+          <pre><code><span class="c-cm">// Đây chính là hàm đệ quy bóc tách đường dẫn trong Java</span>
+<span class="c-kw">private void</span> <span class="c-fn">extractPathsRecursive</span>(JsonNode node, String currentPath, Set&lt;String&gt; paths) {
+    <span class="c-kw">if</span> (node == <span class="c-kw">null</span>) <span class="c-kw">return</span>;
+    <span class="c-kw">if</span> (node.isObject()) {
+        <span class="c-kw">for</span> (Map.Entry&lt;String, JsonNode&gt; field : node.properties()) {
+            String fullPath = currentPath.isEmpty() ? field.getKey() : currentPath + <span class="c-str">"."</span> + field.getKey();
+            paths.add(fullPath);
+            extractPathsRecursive(field.getValue(), fullPath, paths);
+        }
+    } <span class="c-kw">else if</span> (node.isArray()) {
+        String arrayPath = currentPath + <span class="c-str">"[]"</span>;
+        paths.add(arrayPath);
+        <span class="c-kw">if</span> (!node.isEmpty()) {
+            extractPathsRecursive(node.get(<span class="c-num">0</span>), arrayPath, paths);
+        }
+    }
+}</code></pre>
+        </div>
+
+        <div class="code-wrapper">
+          <div class="code-header">
+            <span>Trích đoạn câu lệnh SQL gốc: PgSQLJsonSchemaRepository.java</span>
+            <span class="code-lang-tag">POSTGRESQL SQL</span>
+          </div>
+          <pre><code><span class="c-cm">-- Câu lệnh truy vấn so khớp tương đồng trực tiếp trong cơ sở dữ liệu PostgreSQL</span>
+SELECT
+    id,
+    schema_name,
+    schema_version,
+    GREATEST(
+        matched_count::float / NULLIF($2, <span class="c-num">0</span>),   <span class="c-cm">-- Chính là Precision (M / I)</span>
+        matched_count::float / (required_paths_count + <span class="c-num">0.25</span> * ($2 - matched_count))::float <span class="c-cm">-- Chính là Weighted Jaccard!</span>
+    ) AS preliminary_score
+FROM base_jaccard
+WHERE GREATEST(...) &gt;= <span class="c-num">0.2</span>
+ORDER BY preliminary_score DESC
+LIMIT <span class="c-num">5</span>;</code></pre>
+        </div>
+
+        <div class="concept-box">
+          <div class="concept-header">⚡ Tại sao câu lệnh SQL này chạy nhanh như chớp (8 phần nghìn giây)?</div>
+          <p>
+            Nhờ sử dụng cấu trúc mảng <code>TEXT[]</code> kết hợp với <strong>Chỉ mục GIN Index</strong> trong PostgreSQL, hệ thống không cần phải đọc từng file JSON từ ổ cứng. Lệnh <code>rp = ANY($1)</code> quét qua 100.000 bản ghi trong chớp mắt!
+          </p>
+        </div>
+      </section>
+
+      <!-- CHƯƠNG 7 (LAB) -->
+      <section id="lab" class="module-card">
+        <div class="module-badge">Chương 7</div>
+        <h2 class="module-title">⚡ Phòng Thí Nghiệm Trực Quan Tương Tác (Interactive Sandbox Lab)</h2>
+        <div class="module-lead">
+          Hãy tự tay điều chỉnh dữ liệu, kéo các thanh trượt và xem thuật toán phản hồi ngay trước mắt bạn!
+        </div>
+
+        <div class="sim-container">
+          <div class="sim-presets">
+            <span style="font-size:13px;font-weight:600;color:var(--text-muted);display:flex;align-items:center">Chọn mẫu thử:</span>
+            <button class="btn btn-secondary" onclick="loadSimPreset('footwear')">👟 Hộ Chiếu Giày Dép (DPP)</button>
+            <button class="btn btn-secondary" onclick="loadSimPreset('bearing')">⚙️ Bạc Đạn Công Nghiệp (MRO)</button>
+            <button class="btn btn-secondary" onclick="loadSimPreset('chemical')">🧪 Dữ Liệu Hóa Chất (REACH)</button>
+          </div>
+
+          <div class="sim-grid">
+            <div class="sim-box">
+              <div class="sim-box-title">
+                <span>📋 KHUÔN MẪU CHUẨN (SCHEMA BẮT BUỘC)</span>
+                <span id="schemaCountBadge" style="color:#60a5fa">10 trường</span>
+              </div>
+              <textarea id="txtSchema" class="sim-textarea" oninput="runLiveSim()"></textarea>
+            </div>
+            <div class="sim-box">
+              <div class="sim-box-title">
+                <span>📦 DỮ LIỆU GỬI LÊN (PAYLOAD THỰC TẾ)</span>
+                <span id="payloadCountBadge" style="color:#34d399">10 trường</span>
+              </div>
+              <textarea id="txtPayload" class="sim-textarea" oninput="runLiveSim()"></textarea>
+            </div>
+          </div>
+
+          <div class="sim-controls">
+            <div>
+              <div class="control-label">
+                <span>Hệ Số Phạt Thừa Trường (Penalty Factor &alpha;):</span>
+                <span id="valPenalty" style="color:#fbbf24">0.25</span>
+              </div>
+              <input type="range" id="rngPenalty" class="slider-input" min="0" max="1" step="0.05" value="0.25" oninput="runLiveSim()">
+              <div style="font-size:11px;color:var(--text-dim);margin-top:4px">Kéo về 1.0 = Phạt rất nặng (Jaccard cổ điển); Kéo về 0.0 = Không phạt trường thừa.</div>
+            </div>
+            <div>
+              <div class="control-label">
+                <span>Ngưỡng Điểm Tối Thiểu (Acceptance Threshold):</span>
+                <span id="valThreshold" style="color:#38bdf8">0.30</span>
+              </div>
+              <input type="range" id="rngThreshold" class="slider-input" min="0.1" max="0.9" step="0.05" value="0.30" oninput="runLiveSim()">
+              <div style="font-size:11px;color:var(--text-dim);margin-top:4px">Mặc định của DPP Validator là 0.30 (Điểm số trên 30% là ĐẠT).</div>
+            </div>
+          </div>
+
+          <div class="sim-results">
+            <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
+              <div>
+                <div style="font-size:13px;color:var(--text-muted)">KẾT QUẢ ĐIỂM TƯƠNG ĐỒNG CUỐI CÙNG</div>
+                <div id="resScoreText" style="font-size:32px;font-weight:800;color:#f8fafc">Score: 0.850</div>
+              </div>
+              <div id="resVerdictBadge" class="verdict-badge verdict-pass">✅ ĐẠT NGƯỠNG THẨM ĐỊNH (PASS)</div>
+            </div>
+
+            <div class="score-meter-wrap">
+              <div id="resScoreBar" class="score-meter-bar" style="width: 85%;"></div>
+            </div>
+
+            <div id="resBreakdown" style="font-family:'Fira Code',monospace;font-size:13px;color:#94a3b8;margin-top:12px;line-height:1.7">
+              Trùng khớp: 9/10 trường • Độ chuẩn xác (Precision): 0.750 • Weighted Jaccard: 0.837
+            </div>
+          </div>
+
+          <!-- Step by step inspection -->
+          <div class="step-inspector">
+            <div style="font-size:13px;font-weight:700;color:#e2e8f0;margin-bottom:12px;display:flex;align-items:center;gap:8px">
+              <span>🔍 KÍNH LÚP THUẬT TOÁN: XEM CHI TIẾT TỪNG BƯỚC THỰC THI</span>
+            </div>
+            <div class="step-nav-bar">
+              <button class="step-btn-pill active" onclick="showStepDetail(1)">Bước 1: Bóc tách trường Schema</button>
+              <button class="step-btn-pill" onclick="showStepDetail(2)">Bước 2: Bóc tách trường Payload</button>
+              <button class="step-btn-pill" onclick="showStepDetail(3)">Bước 3: Danh sách trường trùng khớp</button>
+              <button class="step-btn-pill" onclick="showStepDetail(4)">Bước 4: Phép tính số học chi tiết</button>
+            </div>
+            <div id="stepDetailBox" class="step-content-area">
+              Đang tải thông tin chi tiết...
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- CHƯƠNG 8 -->
+      <section id="ch8" class="module-card">
+        <div class="module-badge">Chương 8</div>
+        <h2 class="module-title">🚀 Ứng Dụng Thực Tiễn Trong Doanh Nghiệp (DPP & MRO Sourcing)</h2>
+        <div class="module-lead">
+          Thuật toán này không phải lý thuyết suông trên giấy. Nó đang tạo ra giá trị kinh tế khổng lồ trong 2 lĩnh vực trọng điểm.
+        </div>
+
+        <h3>1. Trong Hộ Chiếu Sản Phẩm Số Châu Âu (EU DPP)</h3>
+        <ul>
+          <li><strong>Tự động phân loại luồng (Smart Routing):</strong> Khi nhận một gói dữ liệu từ biên giới, hệ thống tự động nhận biết gói tin thuộc ngành Giày dép, Pin hay Dệt may để chuyển giao đúng bộ thẩm định tương ứng.</li>
+          <li><strong>Bảo vệ chống tấn công dữ liệu rác (DDoS & Spam Defense):</strong> Nếu một hacker cố tình gửi file rác vô nghĩa lên máy chủ, thuật toán chỉ mất 0.005 giây để phát hiện điểm tương đồng &lt; 0.1 và ngay lập tức từ chối, bảo vệ máy chủ không bị quá tải.</li>
+        </ul>
+
+        <h3>2. Trong Quản Lý Vật Tư & Mua Đi Bán Lại Phụ Tùng MRO</h3>
+        <p>Đây là ứng dụng mở rộng cực kỳ đắt giá cho các doanh nghiệp thương mại công nghiệp:</p>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin:20px 0">
+          <div style="background:var(--surface-2);padding:18px;border-radius:var(--radius-md);border:1px solid var(--border)">
+            <div style="font-size:15px;font-weight:700;color:#60a5fa;margin-bottom:8px">1. Ghép Nối Báo Giá (RFQ Matching)</div>
+            <div style="font-size:13px;color:var(--text-muted)">Khách hàng gửi yêu cầu mua vật tư mô tả tự do. Bot tự động so khớp các thông số (đường kính, vật liệu, áp suất) với kho nhà cung cấp để đề xuất mã hàng tương đương ngay trong 1 giây.</div>
+          </div>
+          <div style="background:var(--surface-2);padding:18px;border-radius:var(--radius-md);border:1px solid var(--border)">
+            <div style="font-size:15px;font-weight:700;color:#a78bfa;margin-bottom:8px">2. Chuẩn Hóa Danh Mục (Deduplication)</div>
+            <div style="font-size:13px;color:var(--text-muted)">Phát hiện các mã vật tư bị nhập trùng lặp trong hệ thống ERP (ví dụ "Ốc lục giác M8x30" và "Bu lông chìm M8 30mm") để gom về một mã kho duy nhất, tiết kiệm hàng tỷ đồng hàng tồn kho.</div>
+          </div>
+          <div style="background:var(--surface-2);padding:18px;border-radius:var(--radius-md);border:1px solid var(--border)">
+            <div style="font-size:15px;font-weight:700;color:#34d399;margin-bottom:8px">3. Thư Viện Phụ Tùng Tương Đương</div>
+            <div style="font-size:13px;color:var(--text-muted)">Xây dựng bảng Cross-Reference tự động: Khi một mã phụ tùng của Đức hết hàng, tự động đề xuất 2 phương án thay thế của Nhật hoặc Hàn Quốc có cùng thông số kích thước và độ chịu lực.</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- CHƯƠNG 9 -->
+      <section id="ch9" class="module-card">
+        <div class="module-badge">Chương 9</div>
+        <h2 class="module-title">🎯 Bài Kiểm Tra Nhanh & Đánh Giá Năng Lực (Quiz)</h2>
+        <div class="module-lead">
+          Hãy kiểm tra xem bạn đã nắm chắc các nguyên lý cốt lõi của thuật toán chưa nhé!
+        </div>
+
+        <div class="quiz-card" id="q1">
+          <div class="quiz-q">Câu 1: Bước đầu tiên của thuật toán Similarity là gì?</div>
+          <div class="quiz-options">
+            <div class="quiz-opt" onclick="checkQuiz(1, 0, false)">A. Nhân tử số và mẫu số của phương trình</div>
+            <div class="quiz-opt" onclick="checkQuiz(1, 1, true)">B. "Làm phẳng" cây JSON lồng nhau thành danh sách các đường dẫn duy nhất</div>
+            <div class="quiz-opt" onclick="checkQuiz(1, 2, false)">C. Xóa toàn bộ dữ liệu người dùng gửi lên</div>
+            <div class="quiz-opt" onclick="checkQuiz(1, 3, false)">D. So sánh mã màu hex của sản phẩm</div>
+          </div>
+          <div class="quiz-explanation" id="exp1"></div>
+        </div>
+
+        <div class="quiz-card" id="q2">
+          <div class="quiz-q">Câu 2: Tại sao trong công thức Weighted Jaccard lại có con số 0.25 (hệ số phạt)?</div>
+          <div class="quiz-options">
+            <div class="quiz-opt" onclick="checkQuiz(2, 0, false)">A. Để chia điểm thi cho 4 quý trong năm</div>
+            <div class="quiz-opt" onclick="checkQuiz(2, 1, false)">B. Vì một quy định ngẫu nhiên không có ý nghĩa</div>
+            <div class="quiz-opt" onclick="checkQuiz(2, 2, true)">C. Để giảm nhẹ hình phạt khi người gửi cung cấp thêm các trường thông tin mở rộng ngoài lề</div>
+            <div class="quiz-opt" onclick="checkQuiz(2, 3, false)">D. Để bắt buộc mọi file phải đạt 100% điểm</div>
+          </div>
+          <div class="quiz-explanation" id="exp2"></div>
+        </div>
+
+        <div class="quiz-card" id="q3">
+          <div class="quiz-q">Câu 3: Ngưỡng điểm tối thiểu (Threshold) mặc định của DPP Validator để chấp nhận một file là bao nhiêu?</div>
+          <div class="quiz-options">
+            <div class="quiz-opt" onclick="checkQuiz(3, 0, false)">A. 0.90 (90%)</div>
+            <div class="quiz-opt" onclick="checkQuiz(3, 1, false)">B. 0.50 (50%)</div>
+            <div class="quiz-opt" onclick="checkQuiz(3, 2, true)">C. 0.30 (30%)</div>
+            <div class="quiz-opt" onclick="checkQuiz(3, 3, false)">D. 0.01 (1%)</div>
+          </div>
+          <div class="quiz-explanation" id="exp3"></div>
+        </div>
+      </section>
+
+      <!-- Footer -->
+      <footer class="course-footer">
+        <p>🇪🇺 <strong>CIRPASS-2 Digital Product Passport & Industrial Sourcing Education</strong></p>
+        <p style="margin-top:6px">Tài liệu đào tạo chuẩn mực được tạo và lưu trữ độc lập tại <code>D:\GIT\DPP\dpp-validator</code>.</p>
+      </footer>
+
+    </main>
+  </div>
+
+  <script>
+    // --- SCROLL PROGRESS TRACKER ---
+    window.addEventListener('scroll', () => {
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const scrollPos = window.scrollY;
+      const pct = docHeight > 0 ? (scrollPos / docHeight) * 100 : 0;
+      document.getElementById('readingProgress').style.width = pct + '%';
+
+      // Active sidebar highlight
+      const sections = document.querySelectorAll('.module-card, .course-hero');
+      let currentSection = '';
+      sections.forEach(sec => {
+        const top = sec.offsetTop - 120;
+        if (scrollPos >= top) {
+          currentSection = sec.getAttribute('id');
+        }
+      });
+      document.querySelectorAll('.sidebar-link').forEach(link => {
+        link.classList.remove('active');
+        if (currentSection && link.getAttribute('href') === '#' + currentSection) {
+          link.classList.add('active');
+        }
+      });
+    });
+
+    // --- INTERACTIVE SIMULATOR ---
+    const presets = {
+      footwear: {
+        schema: {
+          "required_paths": [
+            "taricCode",
+            "productId",
+            "Manufacturer_BrandOwner.companyName",
+            "Manufacturer_BrandOwner.companyIdentifier",
+            "Supply_chain.Operator.operatorIdentifier",
+            "Supply_chain.Facility.facilityIdentifier",
+            "MaterialComposition[].materialComponent",
+            "MaterialComposition[].materialPercentage",
+            "DPP_metadata.passportId",
+            "DPP_metadata.dppUrl"
+          ]
+        },
+        payload: {
+          "taricCode": "64041100",
+          "productId": "https://id.brand.com/01/09506000134352",
+          "Manufacturer_BrandOwner": {
+            "companyName": "EcoStride Footwear AG",
+            "companyIdentifier": "DE1234567890"
+          },
+          "Supply_chain": {
+            "Operator": { "operatorIdentifier": "7031234000015" },
+            "Facility": { "facilityIdentifier": "8931234567890" }
+          },
+          "MaterialComposition": [
+            { "materialComponent": "Upper Mesh", "materialPercentage": 0.42 }
+          ],
+          "DPP_metadata": {
+            "passportId": "https://dpp-mockup.erx.vn/dpp/model/09506000134352",
+            "dppUrl": "https://dpp-mockup.erx.vn/dpp/model/09506000134352"
+          }
+        }
+      },
+      bearing: {
+        schema: {
+          "required_paths": [
+            "item_category",
+            "dimensions.bore_diameter_mm",
+            "dimensions.outer_diameter_mm",
+            "dimensions.width_mm",
+            "specifications.seal_type",
+            "specifications.clearance_class",
+            "ratings.dynamic_load_kn",
+            "manufacturer.brand_name"
+          ]
+        },
+        payload: {
+          "item_category": "Deep Groove Ball Bearing",
+          "part_number_raw": "6205-2RSH/C3",
+          "dimensions": {
+            "bore_diameter_mm": 25,
+            "outer_diameter_mm": 52,
+            "width_mm": 15
+          },
+          "specifications": {
+            "seal_type": "2RS (Rubber Contact Seal)",
+            "clearance_class": "C3",
+            "cage_material": "Sheet Steel"
+          },
+          "ratings": {
+            "dynamic_load_kn": 14.8,
+            "max_speed_rpm": 12000
+          },
+          "manufacturer": {
+            "brand_name": "SKF Industrial",
+            "country_of_origin": "FR"
+          }
+        }
+      },
+      chemical: {
+        schema: {
+          "required_paths": [
+            "chemicalName",
+            "casNumber",
+            "hazardClassification.ghsCode",
+            "safetyMeasures.firstAidInstructions",
+            "reachRegistrationNumber"
+          ]
+        },
+        payload: {
+          "chemicalName": "Isopropanol 99.9%",
+          "casNumber": "67-63-0",
+          "hazardClassification": {
+            "ghsCode": "GHS02-GHS07",
+            "signalWord": "Danger"
+          },
+          "safetyMeasures": {
+            "firstAidInstructions": "Wash eyes with abundant water."
+          },
+          "reachRegistrationNumber": "01-2119457558-25-XXXX"
+        }
+      }
+    };
+
+    let cachedInspectionData = null;
+
+    function loadSimPreset(key) {
+      const p = presets[key];
+      if (!p) return;
+      document.getElementById('txtSchema').value = JSON.stringify(p.schema, null, 2);
+      document.getElementById('txtPayload').value = JSON.stringify(p.payload, null, 2);
+      runLiveSim();
+    }
+
+    function extractFlatPaths(obj, prefix = '') {
+      let paths = [];
+      if (!obj || typeof obj !== 'object') return paths;
+      if (Array.isArray(obj)) {
+        const arrayPath = prefix + '[]';
+        paths.push(arrayPath);
+        if (obj.length > 0 && typeof obj[0] === 'object') {
+          paths = paths.concat(extractFlatPaths(obj[0], arrayPath));
+        }
+        return paths;
+      }
+      for (const key of Object.keys(obj)) {
+        const fullPath = prefix ? prefix + '.' + key : key;
+        paths.push(fullPath);
+        if (typeof obj[key] === 'object' && obj[key] !== null) {
+          paths = paths.concat(extractFlatPaths(obj[key], fullPath));
+        }
+      }
+      return paths;
+    }
+
+    function runLiveSim() {
+      const penalty = parseFloat(document.getElementById('rngPenalty').value);
+      const threshold = parseFloat(document.getElementById('rngThreshold').value);
+      document.getElementById('valPenalty').textContent = penalty.toFixed(2);
+      document.getElementById('valThreshold').textContent = threshold.toFixed(2);
+
+      let schemaObj, payloadObj;
+      try {
+        schemaObj = JSON.parse(document.getElementById('txtSchema').value);
+        payloadObj = JSON.parse(document.getElementById('txtPayload').value);
+      } catch (e) {
+        document.getElementById('resScoreText').textContent = 'LỖI CÚ PHÁP JSON';
+        document.getElementById('resBreakdown').textContent = 'Vui lòng kiểm tra dấu phẩy hoặc dấu ngoặc trong ô nhập JSON.';
+        return;
+      }
+
+      // 1. Schema required paths
+      let reqPaths = [];
+      if (schemaObj.required_paths && Array.isArray(schemaObj.required_paths)) {
+        reqPaths = schemaObj.required_paths;
+      } else {
+        reqPaths = extractFlatPaths(schemaObj);
+      }
+
+      // 2. Payload paths
+      const inputPaths = Array.from(new Set(extractFlatPaths(payloadObj)));
+
+      document.getElementById('schemaCountBadge').textContent = reqPaths.length + ' trường';
+      document.getElementById('payloadCountBadge').textContent = inputPaths.length + ' trường';
+
+      // 3. Count matched
+      const matched = reqPaths.filter(rp => inputPaths.includes(rp));
+      const M = matched.length;
+      const R = reqPaths.length;
+      const I = inputPaths.length;
+
+      // 4. Calculate Precision & Jaccard
+      const precision = I > 0 ? (M / I) : 0;
+      const extraFields = Math.max(0, I - M);
+      const denominator = R + penalty * extraFields;
+      const jaccard = denominator > 0 ? (M / denominator) : 0;
+      const finalScore = Math.max(precision, jaccard);
+
+      // Save for inspector
+      cachedInspectionData = { reqPaths, inputPaths, matched, M, R, I, precision, jaccard, penalty, denominator, finalScore, threshold };
+
+      // Render score
+      const pct = Math.min(100, finalScore * 100).toFixed(1);
+      document.getElementById('resScoreText').textContent = 'Score: ' + finalScore.toFixed(3) + ' (' + pct + '%)';
+      document.getElementById('resScoreBar').style.width = pct + '%';
+
+      const isPass = finalScore >= threshold;
+      const badge = document.getElementById('resVerdictBadge');
+      if (isPass) {
+        badge.className = 'verdict-badge verdict-pass';
+        badge.textContent = '✅ ĐẠT NGƯỠNG THẨM ĐỊNH (PASS)';
+        document.getElementById('resScoreBar').style.background = 'linear-gradient(90deg, #3b82f6, #10b981)';
+      } else {
+        badge.className = 'verdict-badge verdict-fail';
+        badge.textContent = '❌ KHÔNG ĐẠT (DƯỚI NGƯỠNG THẨM ĐỊNH)';
+        document.getElementById('resScoreBar').style.background = 'linear-gradient(90deg, #f43f5e, #fb7185)';
+      }
+
+      document.getElementById('resBreakdown').innerHTML = 
+        'Trùng khớp: <strong>' + M + '</strong> trên tổng số <strong>' + R + '</strong> trường bắt buộc • ' +
+        'Độ chuẩn xác (Precision): <strong>' + precision.toFixed(3) + '</strong> • ' +
+        'Weighted Jaccard: <strong>' + jaccard.toFixed(3) + '</strong> • ' +
+        'Ngưỡng tối thiểu: <strong>' + threshold.toFixed(2) + '</strong>';
+
+      // Update current step view
+      const activeBtn = document.querySelector('.step-btn-pill.active');
+      const stepNum = activeBtn ? parseInt(activeBtn.getAttribute('onclick').match(/\d+/)[0]) : 1;
+      showStepDetail(stepNum);
+    }
+
+    function showStepDetail(stepNum) {
+      document.querySelectorAll('.step-btn-pill').forEach((btn, idx) => {
+        btn.classList.toggle('active', (idx + 1) === stepNum);
+      });
+
+      if (!cachedInspectionData) return;
+      const d = cachedInspectionData;
+      const box = document.getElementById('stepDetailBox');
+
+      if (stepNum === 1) {
+        box.innerHTML = '// Danh sách ' + d.R + ' trường bắt buộc trích xuất từ Schema:\n' + 
+          d.reqPaths.map((p, i) => '[' + (i+1) + '] ' + p).join('\n');
+      } else if (stepNum === 2) {
+        box.innerHTML = '// Danh sách ' + d.I + ' trường tìm thấy trong Payload gửi lên:\n' + 
+          d.inputPaths.map((p, i) => '[' + (i+1) + '] ' + p).join('\n');
+      } else if (stepNum === 3) {
+        box.innerHTML = '// Có ' + d.M + ' trường trùng khớp hoàn toàn giữa 2 bên:\n' + 
+          (d.matched.length > 0 ? d.matched.map((p, i) => '✅ [' + (i+1) + '] ' + p).join('\n') : 'Không có trường nào trùng khớp.');
+      } else if (stepNum === 4) {
+        box.innerHTML = '// BẢNG TÍNH SỐ HỌC CHI TIẾT TỪNG BƯỚC:\n' +
+'1. Số trường bắt buộc (R)           = ' + d.R + '\n' +
+'2. Số trường gửi lên (I)            = ' + d.I + '\n' +
+'3. Số trường trùng khớp (M)        = ' + d.M + '\n' +
+'4. Số trường gửi thừa (I - M)       = ' + (d.I - d.M) + '\n\n' +
+'👉 PHÉP TÍNH 1: Độ chuẩn xác (Precision)\n' +
+'   Precision = M / I = ' + d.M + ' / ' + d.I + ' = ' + d.precision.toFixed(4) + '\n\n' +
+'👉 PHÉP TÍNH 2: Weighted Jaccard\n' +
+'   Mẫu số   = R + ' + d.penalty.toFixed(2) + ' * (I - M) = ' + d.R + ' + ' + d.penalty.toFixed(2) + ' * ' + (d.I - d.M) + ' = ' + d.denominator.toFixed(4) + '\n' +
+'   Jaccard  = M / Mẫu số = ' + d.M + ' / ' + d.denominator.toFixed(4) + ' = ' + d.jaccard.toFixed(4) + '\n\n' +
+'👉 KẾT QUẢ CUỐI CÙNG:\n' +
+'   Final Score = MAX( ' + d.precision.toFixed(4) + ', ' + d.jaccard.toFixed(4) + ' ) = ' + d.finalScore.toFixed(4) + '\n' +
+'   So với ngưỡng ' + d.threshold.toFixed(2) + ': ' + (d.finalScore >= d.threshold ? 'ĐẠT (QUALIFIED)' : 'KHÔNG ĐẠT (REJECTED)');
+      }
+    }
+
+    // --- QUIZ ENGINE ---
+    function checkQuiz(qNum, optIdx, isCorrect) {
+      const card = document.getElementById('q' + qNum);
+      const opts = card.querySelectorAll('.quiz-opt');
+      opts.forEach((opt, idx) => {
+        opt.classList.remove('selected-correct', 'selected-wrong');
+        if (idx === optIdx) {
+          opt.classList.add(isCorrect ? 'selected-correct' : 'selected-wrong');
+        }
+      });
+
+      const exp = document.getElementById('exp' + qNum);
+      exp.style.display = 'block';
+      if (isCorrect) {
+        exp.style.background = 'rgba(16, 185, 129, 0.15)';
+        exp.style.color = '#34d399';
+        exp.style.border = '1px solid rgba(16, 185, 129, 0.3)';
+        exp.innerHTML = '🎉 <strong>Chính xác!</strong> ' + getQuizExplanation(qNum);
+      } else {
+        exp.style.background = 'rgba(244, 63, 94, 0.15)';
+        exp.style.color = '#fb7185';
+        exp.style.border = '1px solid rgba(244, 63, 94, 0.3)';
+        exp.innerHTML = '❌ <strong>Chưa chính xác!</strong> Hãy đọc lại giải thích: ' + getQuizExplanation(qNum);
+      }
+    }
+
+    function getQuizExplanation(qNum) {
+      if (qNum === 1) return 'Bước đầu tiên luôn là làm phẳng (Flattening) cây JSON thành danh sách đường dẫn phẳng để máy tính có thể so sánh chuỗi nhanh chóng.';
+      if (qNum === 2) return 'Hệ số 0.25 giúp giảm nhẹ hình phạt cho các trường gửi thừa ra ngoài lề, tránh đánh rớt oan uổng các doanh nghiệp cung cấp nhiều tính năng mở rộng.';
+      if (qNum === 3) return 'Mặc định DPP Validator đặt ngưỡng 0.30 (30%). Chỉ cần điểm tương đồng đạt từ 30% trở lên là hệ thống đã nhận diện được và chuyển sang bước thẩm định chi tiết.';
+      return '';
+    }
+
+    // Initialize Default View
+    window.addEventListener('DOMContentLoaded', () => {
+      loadSimPreset('footwear');
+    });
+  </script>
+</body>
+</html>
