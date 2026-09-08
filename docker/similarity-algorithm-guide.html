@@ -448,6 +448,138 @@
       padding-top: 16px !important;
     }
 
+    
+    /* Prominent Training Masterclass Banner */
+    .training-cta-banner {
+      background: radial-gradient(ellipse at top left, rgba(59, 130, 246, 0.2), rgba(168, 85, 247, 0.15) 50%, rgba(15, 23, 42, 0.95) 100%);
+      border: 1px solid rgba(251, 191, 36, 0.45);
+      border-radius: var(--radius-lg);
+      padding: 32px 36px;
+      margin: 36px 0 48px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 32px;
+      box-shadow: 0 12px 36px rgba(0, 0, 0, 0.45), 0 0 24px rgba(251, 191, 36, 0.15);
+      position: relative;
+      overflow: hidden;
+    }
+    .training-cta-banner::before {
+      content: '';
+      position: absolute;
+      top: -2px; left: -2px; right: -2px; height: 3px;
+      background: linear-gradient(90deg, #3b82f6, #fbbf24, #10b981);
+    }
+    .cta-banner-content {
+      flex: 1;
+      min-width: 0;
+    }
+    .cta-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(251, 191, 36, 0.15);
+      border: 1px solid rgba(251, 191, 36, 0.4);
+      color: #fbbf24;
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      margin-bottom: 12px;
+    }
+    .pulse-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #fbbf24;
+      box-shadow: 0 0 8px #fbbf24;
+      animation: pulseAnim 1.8s infinite;
+    }
+    @keyframes pulseAnim {
+      0% { transform: scale(0.9); opacity: 0.8; }
+      50% { transform: scale(1.3); opacity: 1; box-shadow: 0 0 12px #fbbf24; }
+      100% { transform: scale(0.9); opacity: 0.8; }
+    }
+    .training-cta-banner h2 {
+      font-size: 24px;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 8px;
+      letter-spacing: -0.4px;
+      line-height: 1.3;
+    }
+    .training-cta-banner p {
+      font-size: 14.5px;
+      color: var(--text-muted);
+      line-height: 1.6;
+      margin-bottom: 18px;
+      max-width: 720px;
+    }
+    .cta-highlights {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .cta-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 5px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      color: #e2e8f0;
+    }
+    .cta-banner-action {
+      flex-shrink: 0;
+    }
+    .btn-cta-big {
+      display: inline-flex;
+      align-items: center;
+      gap: 14px;
+      background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+      color: #0b0f19 !important;
+      padding: 16px 26px;
+      border-radius: 12px;
+      text-decoration: none;
+      font-weight: 700;
+      box-shadow: 0 8px 24px rgba(245, 158, 11, 0.35);
+      transition: all 0.25s ease;
+      border: 1px solid rgba(255, 255, 255, 0.4);
+    }
+    .btn-cta-big:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 30px rgba(245, 158, 11, 0.5);
+      filter: brightness(1.05);
+    }
+    .btn-cta-big .cta-icon {
+      font-size: 28px;
+      line-height: 1;
+    }
+    .btn-cta-big .cta-main-text {
+      font-size: 15px;
+      font-weight: 800;
+      letter-spacing: -0.2px;
+    }
+    .btn-cta-big .cta-sub-text {
+      font-size: 11.5px;
+      opacity: 0.85;
+      font-weight: 600;
+    }
+    @media (max-width: 900px) {
+      .training-cta-banner {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 24px;
+      }
+      .btn-cta-big {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+
     /* Responsive */
     @media (max-width: 900px) {
       .grid-2, .grid-3, .sandbox-inputs { grid-template-columns: 1fr; }
@@ -469,6 +601,7 @@
     </a>
     <div class="header-actions">
       <a href="/" class="btn btn-secondary" id="btnBackDashboard">← Back to DPP Dashboard</a>
+      <a href="/similarity-algorithm-training.html" target="_blank" class="btn btn-secondary" style="border-color:rgba(251,191,36,.5);color:#fde68a" id="btnNavTraining"><span id="btnNavTrainingText">🎓 Course 0→Hero</span> ↗</a>
       <div class="lang-switcher">
         <button class="lang-btn active" id="btnEn" onclick="switchLang('en')">🇬🇧 EN</button>
         <button class="lang-btn" id="btnVi" onclick="switchLang('vi')">🇻🇳 VI</button>
@@ -491,9 +624,39 @@
         <a href="#section-core" class="btn btn-primary" id="btnLearnCore">Explore Core Algorithm</a>
         <a href="#section-mro" class="btn btn-secondary" id="btnLearnMro">Industrial MRO Applications</a>
         <a href="#section-simulator" class="btn btn-secondary" id="btnTrySim">Interactive Simulator</a>
-        <a href="/similarity-algorithm-training.html" target="_blank" class="btn btn-secondary" style="border-color:rgba(251,191,36,.5);color:#fde68a" id="btnTrainingMasterclass">🎓 Khóa Đào Tạo Từ Zero ↗</a>
+        <a href="/similarity-algorithm-training.html" target="_blank" class="btn btn-primary" style="background:linear-gradient(135deg,#fbbf24,#f59e0b);color:#0b0f19;font-weight:700;box-shadow:0 0 16px rgba(251,191,36,.4)" id="btnHeroTraining"><span id="btnHeroTrainingText">🎓 Want to Learn More? (0 to Hero Masterclass) ↗</span></a>
       </div>
     </section>
+
+    
+    <!-- PROMINENT CALL TO ACTION: WANT TO LEARN MORE / LEARN BY YOURSELF BANNER -->
+    <div class="training-cta-banner">
+      <div class="cta-banner-content">
+        <div class="cta-badge">
+          <span class="pulse-dot"></span>
+          <span id="bannerBadge">🚀 WANT TO LEARN MORE? MASTER FROM SCRATCH (0 TO HERO)</span>
+        </div>
+        <h2 id="bannerTitle">New to Algorithms & Python? Learn By Yourself in 30 Minutes!</h2>
+        <p id="bannerDesc">
+          A zero-code, visual interactive course designed from scratch for business leaders, sourcing professionals, and engineers. Demystify the math with real-life analogies, interactive visual sandbox, and hands-on quiz.
+        </p>
+        <div class="cta-highlights">
+          <div class="cta-pill"><span>🧳</span> <span id="pill1">Real-Life Luggage Analogy</span></div>
+          <div class="cta-pill"><span>🍜</span> <span id="pill2">Beef Soup 0.25 Penalty Math</span></div>
+          <div class="cta-pill"><span>⚡</span> <span id="pill3">Interactive Visual Lab</span></div>
+          <div class="cta-pill"><span>🎯</span> <span id="pill4">3-Question Knowledge Quiz</span></div>
+        </div>
+      </div>
+      <div class="cta-banner-action">
+        <a href="/similarity-algorithm-training.html" target="_blank" class="btn-cta-big" id="btnBannerCta">
+          <span class="cta-icon">🎓</span>
+          <div>
+            <div class="cta-main-text" id="btnBannerText">Start Learning Now ↗</div>
+            <div class="cta-sub-text" id="btnBannerSubText">Free Self-Paced Course (Offline & Online)</div>
+          </div>
+        </a>
+      </div>
+    </div>
 
     <!-- SECTION 1: EXECUTIVE SUMMARY -->
     <section class="section">
@@ -921,6 +1084,17 @@ return candidates
     const i18n = {
       en: {
         btnBackDashboard: "← Back to DPP Dashboard",
+        btnHeroTrainingText: "🎓 Want to Learn More? (0 to Hero Masterclass) ↗",
+        btnNavTrainingText: "🎓 Course 0→Hero ↗",
+        bannerBadge: "🚀 WANT TO LEARN MORE? MASTER FROM SCRATCH (0 TO HERO)",
+        bannerTitle: "New to Algorithms & Python? Learn By Yourself in 30 Minutes!",
+        bannerDesc: "A complete visual interactive course designed from scratch for business leaders, sourcing professionals, and non-programmers. Demystify the math with real-life analogies, interactive sandbox, and knowledge quiz.",
+        pill1: "Airport Luggage Analogy",
+        pill2: "Beef Soup 0.25 Penalty",
+        pill3: "Interactive Visual Lab",
+        pill4: "Knowledge Check Quiz",
+        btnBannerText: "Start Learning Now ↗",
+        btnBannerSubText: "Free Self-Paced Masterclass (Offline & Online)",
         heroTitle: "Deconstructing the SIMILARITY_MATCH Algorithm",
         heroDesc: "How the European Digital Product Passport automatically identifies unknown JSON trees using Weighted Jaccard & PostgreSQL GIN arrays — and how this exact engine transforms industrial MRO materials sourcing, RFQ quotation, and cross-reference cataloging.",
         btnLearnCore: "Explore Core Algorithm",
@@ -972,6 +1146,17 @@ return candidates
       },
       vi: {
         btnBackDashboard: "← Trở về Dashboard DPP",
+        btnHeroTrainingText: "🎓 Muốn Tự Học Sâu Hơn? (Khóa Từ Con Số 0) ↗",
+        btnNavTrainingText: "🎓 Khóa Học 0→Hero ↗",
+        bannerBadge: "🚀 BẠN MUỐN TỰ HỌC SÂU HƠN? LÀM CHỦ THUẬT TOÁN TỪ CON SỐ 0",
+        bannerTitle: "Chưa Từng Học Lập Trình Hay Python? Tự Học Dễ Dàng Chỉ 30 Phút!",
+        bannerDesc: "Chương trình đào tạo tương tác trực quan thiết kế từ con số 0 dành riêng cho người mới bắt đầu, chuyên viên Sourcing và quản lý dự án. Giải mã công thức bằng ví dụ đời thực, phòng thí nghiệm trực quan và bài trắc nghiệm nhanh.",
+        pill1: "Ẩn dụ Chiếc vali sân bay",
+        pill2: "Bát phở bò & Hệ số phạt 0.25",
+        pill3: "Phòng thí nghiệm tương tác",
+        pill4: "Trắc nghiệm kiểm tra kiến thức",
+        btnBannerText: "Bắt Đầu Tự Học Ngay ↗",
+        btnBannerSubText: "Khóa học miễn phí (Hỗ trợ Online & Offline)",
         heroTitle: "Bóc Tách Thuật Toán SIMILARITY_MATCH",
         heroDesc: "Cách Hộ chiếu Sản phẩm Số Châu Âu tự động nhận diện cây JSON bất kỳ bằng Weighted Jaccard & mảng PostgreSQL GIN — và cách ứng dụng thuật toán này để cách mạng hóa Sourcing vật tư MRO, báo giá RFQ tự động và quản lý thư viện linh kiện thay thế.",
         btnLearnCore: "Tìm hiểu Thuật toán Gốc",
