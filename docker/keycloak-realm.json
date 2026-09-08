@@ -1,0 +1,77 @@
+{
+  "realm": "dpp-registry",
+  "enabled": true,
+  "sslRequired": "none",
+  "registrationAllowed": false,
+  "accessTokenLifespan": 86400,
+  "ssoSessionIdleTimeout": 86400,
+  "ssoSessionMaxLifespan": 86400,
+  "roles": {
+    "realm": [
+      { "name": "registry-admin", "description": "Registry administrator" },
+      { "name": "registry-eo", "description": "Economic Operator" },
+      { "name": "registry-eu", "description": "End User" }
+    ]
+  },
+  "clients": [
+    {
+      "clientId": "registry-client",
+      "enabled": true,
+      "publicClient": false,
+      "secret": "registry-client-secret",
+      "directAccessGrantsEnabled": true,
+      "serviceAccountsEnabled": true,
+      "standardFlowEnabled": true,
+      "redirectUris": ["*"],
+      "webOrigins": ["*"],
+      "protocol": "openid-connect"
+    }
+  ],
+  "users": [
+    {
+      "username": "admin-user",
+      "email": "admin@example.com",
+      "enabled": true,
+      "firstName": "Admin",
+      "lastName": "User",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "admin123",
+          "temporary": false
+        }
+      ],
+      "realmRoles": ["registry-admin"]
+    },
+    {
+      "username": "eo-user",
+      "email": "eo@example.com",
+      "enabled": true,
+      "firstName": "Economic",
+      "lastName": "Operator",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "eo123",
+          "temporary": false
+        }
+      ],
+      "realmRoles": ["registry-eo"]
+    },
+    {
+      "username": "eu-user",
+      "email": "eu@example.com",
+      "enabled": true,
+      "firstName": "End",
+      "lastName": "User",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "eu123",
+          "temporary": false
+        }
+      ],
+      "realmRoles": ["registry-eu"]
+    }
+  ]
+}

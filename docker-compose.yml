@@ -1,0 +1,161 @@
+
+services:
+  # ── PostgreSQL ─────────────────────────────────────────────
+  postgres:
+    image: postgres:15
+    container_name: registry-postgres
+    environment:
+      POSTGRES_DB: registry_db
+      POSTGRES_USER: dbuser
+      POSTGRES_PASSWORD: dbpass
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./docker/init-db.sql:/docker-entrypoint-initdb.d/01-registry-schema.sql:ro
+      - ./docker/init-validator-db.sql:/docker-entrypoint-initdb.d/02-validator-schema.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U dbuser -d registry_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # ── Keycloak (OIDC Provider) ───────────────────────────────
+  keycloak:
+    image: quay.io/keycloak/keycloak:25.0
+    container_name: registry-keycloak
+    command: start-dev --import-realm
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_HTTP_PORT: 8180
+      KC_HEALTH_ENABLED: "true"
+    ports:
+      - "8180:8180"
+    volumes:
+      - ./docker/keycloak-realm.json:/opt/keycloak/data/import/registry-realm.json:ro
+    healthcheck:
+      test: ["CMD-SHELL", "exec 3<>/dev/tcp/localhost/9000 && echo -e 'GET /health/ready HTTP/1.1\\r\\nHost: localhost\\r\\nConnection: close\\r\\n\\r\\n' >&3 && timeout 1 cat <&3 | grep -q UP"]
+      interval: 10s
+      timeout: 10s
+      retries: 20
+      start_period: 40s
+
+  # ── Mock EU Registry App ───────────────────────────────────
+  registry:
+    build:
+      context: .
+      dockerfile: main/src/main/docker/Dockerfile.jvm
+    container_name: registry-app
+    ports:
+      - "8080:8080"
+    environment:
+      # Quarkus profiles
+      QUARKUS_PROFILE: pgsql,oidc
+
+      # CORS (for testing dashboard)
+      QUARKUS_HTTP_CORS: "true"
+      QUARKUS_HTTP_CORS_ORIGINS: "http://localhost:3333,http://localhost:5500,http://localhost:3000,http://127.0.0.1:3333"
+      QUARKUS_HTTP_CORS_METHODS: "GET,POST,PUT,DELETE,OPTIONS"
+      QUARKUS_HTTP_CORS_HEADERS: "Authorization,Content-Type,Accept"
+      QUARKUS_HTTP_CORS_ACCESS_CONTROL_ALLOW_CREDENTIALS: "true"
+
+      # Database
+      QUARKUS_DATASOURCE_REACTIVE_URL: vertx-reactive:postgresql://postgres:5432/registry_db
+      QUARKUS_DATASOURCE_USERNAME: dbuser
+      QUARKUS_DATASOURCE_PASSWORD: dbpass
+
+      # OIDC (Keycloak)
+      QUARKUS_OIDC_AUTH_SERVER_URL: http://keycloak:8180/realms/dpp-registry
+      QUARKUS_OIDC_CLIENT_ID: registry-client
+      QUARKUS_OIDC_CREDENTIALS_SECRET: registry-client-secret
+      QUARKUS_OIDC_ROLES_ROLE_CLAIM_PATH: realm_access/roles
+      QUARKUS_OIDC_TOKEN_ISSUER: any
+
+      # Application
+      REGISTRY_UPDATE_STRATEGY: MODIFY
+      REGISTRY_UPI_FIELD_NAME: upi
+      REGISTRY_DPP_VALIDATION_ENABLED: "false"
+      QUARKUS_REST_CLIENT__DPP_VALIDATION__URL: http://validator:8080
+      DPP_VALIDATION_MP_REST_URL: http://validator:8080
+      REGISTRY_ROLES_MAPPINGS: registry-admin:admin,registry-eo:eo,registry-eu:eu
+      # Override HTTP policies to match uppercase roles from RolesMappingsConverter
+      QUARKUS_HTTP_AUTH_POLICY_METADATA_POLICY_ROLES_ALLOWED: ADMIN,EO,EU
+      QUARKUS_HTTP_AUTH_POLICY_SCHEMA_POLICY_ROLES_ALLOWED: ADMIN,EU
+      REGISTRY_PROOF_ISSUER: http://localhost:8080
+      REGISTRY_KEY_ID: mock-eu-registry-key-1
+
+      # JWT signing keys (Proof of Registration)
+      SMALLRYE_JWT_SIGN_KEY_LOCATION: /deployments/keys/private-key.pem
+      SMALLRYE_JWT_ENCRYPT_KEY_LOCATION: /deployments/keys/public-key.pem
+    volumes:
+      - ./docker/private-key.pem:/deployments/keys/private-key.pem
+      - ./docker/public-key.pem:/deployments/keys/public-key.pem
+    depends_on:
+      postgres:
+        condition: service_healthy
+      keycloak:
+        condition: service_healthy
+
+  # ── DPP Validator ───────────────────────────────────────
+  validator:
+    image: ghcr.io/cirpass-2/dpp-validator-pgsql-oidc:latest
+    container_name: dpp-validator
+    ports:
+      - "8081:8080"
+    environment:
+      QUARKUS_PROFILE: pgsql,oidc
+
+      # Database (validator_db)
+      QUARKUS_DATASOURCE_REACTIVE_URL: vertx-reactive:postgresql://postgres:5432/validator_db
+      QUARKUS_DATASOURCE_JDBC_URL: jdbc:postgresql://postgres:5432/validator_db
+      QUARKUS_DATASOURCE_USERNAME: dbuser
+      QUARKUS_DATASOURCE_PASSWORD: dbpass
+
+      # OIDC (shared Keycloak realm)
+      QUARKUS_OIDC_AUTH_SERVER_URL: http://keycloak:8180/realms/dpp-registry
+      QUARKUS_OIDC_CLIENT_ID: registry-client
+      QUARKUS_OIDC_CREDENTIALS_SECRET: registry-client-secret
+      QUARKUS_OIDC_ROLES_ROLE_CLAIM_PATH: realm_access/roles
+      QUARKUS_OIDC_TOKEN_ISSUER: any
+
+      # Role mappings: map Keycloak realm roles to validator internal roles
+      VALIDATOR_ROLE_MAPPINGS: "registry-admin:admin,registry-eo:eo,registry-eu:eu,admin:admin,eo:eo,eu:eu"
+
+      # Override HTTP policies to accept both lowercase and uppercase roles
+      QUARKUS_HTTP_AUTH_POLICY_VALIDATION_POLICY_ROLES_ALLOWED: "admin,eo,eu,ADMIN,EO,EU"
+      QUARKUS_HTTP_AUTH_POLICY_RESOURCE_POLICY_ROLES_ALLOWED: "admin,eo,eu,ADMIN,EO,EU"
+
+      # CORS
+      QUARKUS_HTTP_CORS_ENABLED: "true"
+      QUARKUS_HTTP_CORS_ORIGINS: "/.*/"
+
+      # Debug logging
+      QUARKUS_LOG_CATEGORY__IT_EXTARED__LEVEL: DEBUG
+      QUARKUS_LOG_CATEGORY__IO_QUARKUS_OIDC__LEVEL: DEBUG
+      QUARKUS_LOG_CATEGORY__IO_QUARKUS_SECURITY__LEVEL: DEBUG
+    volumes:
+      - ./docker/validator-application.properties:/deployments/config/application.properties:ro
+    depends_on:
+      postgres:
+        condition: service_healthy
+      keycloak:
+        condition: service_healthy
+
+  # ── Testing Dashboard (Nginx reverse proxy) ────────────
+  dashboard:
+    image: nginx:alpine
+    container_name: registry-dashboard
+    ports:
+      - "9090:80"
+    volumes:
+      - ./docker/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./docker/dpp-test-dashboard.html:/usr/share/nginx/html/dpp-test-dashboard.html:ro
+      - ./docker/dpp-test-dashboard.html:/usr/share/nginx/html/index.html:ro
+    depends_on:
+      - registry
+      - validator
+      - keycloak
+
+volumes:
+  postgres-data:

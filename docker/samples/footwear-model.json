@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "taricCode": "64041100",
+  "productId": "https://id.brand.com/01/09506000134352",
+  "productIdentifierScheme": "GS1_GTIN",
+  "conformityDeclaration": "https://dpp-mockup.erx.vn/samples/doc-ecostride-xb100.pdf",
+  "Manufacturer_BrandOwner": {
+    "brandName": "EcoStride Circular",
+    "companyName": "EcoStride Footwear AG",
+    "companyIdentifier": "DE1234567890",
+    "companyIdentifierScheme": "EORI",
+    "companyRegistration": "HRB-987654",
+    "ContactDetails": {
+      "postalAddress": "Koenigsallee 45, 40212 Duesseldorf, Germany",
+      "emailAddress": "compliance@ecostride-footwear.eu",
+      "phoneNumber": "+49 211 555 0199"
+    }
+  },
+  "Supply_chain": {
+    "Operator": {
+      "operatorIdentifier": "7031234000015",
+      "operatorIdentifierScheme": "GLN",
+      "operatorName": "Global Footwear Tier-1 Manufacturing Ltd."
+    },
+    "Facility": {
+      "facilityIdentifier": "8931234567890",
+      "facilityIdentifierScheme": "GLN",
+      "facilityName": "Dong Nai Eco Assembly Plant #2",
+      "countryOfOrigin": "Vietnam"
+    }
+  },
+  "MaterialComposition": [
+    {
+      "materialComponent": "Upper Mesh",
+      "materialType": "Recycled Post-Consumer Ocean Polyester",
+      "materialPercentage": 0.42,
+      "recycledContent": 0.78
+    },
+    {
+      "materialComponent": "Midsole Cushioning",
+      "materialType": "Bio-based EVA Foam (Sugarcane derived)",
+      "materialPercentage": 0.35,
+      "recycledContent": 0.00
+    },
+    {
+      "materialComponent": "Outsole Traction",
+      "materialType": "Natural FSC-certified Vulcanized Rubber",
+      "materialPercentage": 0.23,
+      "recycledContent": 0.40
+    }
+  ],
+  "DPP_metadata": {
+    "passportId": "https://dpp-mockup.erx.vn/dpp/model/09506000134352",
+    "registryIdentifier": "EUREG-XB100-MOD-2026",
+    "dppUrl": "https://dpp-mockup.erx.vn/dpp/model/09506000134352",
+    "dppBackupUrl": "https://dpp-backup.erx.vn/archive/09506000134352",
+    "lifecycleState": "Active"
+  }
+}

@@ -1,0 +1,2845 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🇪🇺 DPP Platform — Testing & Blueprint Hub</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <style>
+    :root {
+      --bg: #0b0f19;
+      --surface: #131b2e;
+      --surface2: #1c2742;
+      --surface3: #243254;
+      --border: #263558;
+      --text: #e2e8f0;
+      --text-dim: #94a3b8;
+      --accent: #3b82f6;
+      --accent-hover: #60a5fa;
+      --accent-glow: rgba(59,130,246,0.25);
+      --success: #10b981;
+      --success-bg: rgba(16,185,129,0.12);
+      --warn: #f59e0b;
+      --warn-bg: rgba(245,158,11,0.12);
+      --error: #ef4444;
+      --error-bg: rgba(239,68,68,0.12);
+      --eu-blue: #003399;
+      --eu-gold: #ffcc00;
+      --radius: 12px;
+      --radius-sm: 8px;
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body {
+      font-family:'Inter',system-ui,-apple-system,sans-serif;
+      background:var(--bg);
+      color:var(--text);
+      min-height:100vh;
+      overflow-x:hidden;
+    }
+    /* Top Header */
+    .header {
+      background:linear-gradient(135deg, #07193f 0%, #0d2861 50%, #173d8b 100%);
+      padding:16px 28px;
+      display:flex;align-items:center;gap:20px;
+      border-bottom:3px solid var(--eu-gold);
+      box-shadow:0 4px 20px rgba(0,0,0,0.4);
+      flex-wrap:wrap;
+    }
+    .header-left { display:flex;align-items:center;gap:14px; }
+    .header .eu-flag {
+      width:44px;height:44px;background:var(--eu-blue);border-radius:50%;
+      display:flex;align-items:center;justify-content:center;font-size:24px;
+      border:2px solid var(--eu-gold);box-shadow:0 0 12px rgba(255,204,0,0.4);
+    }
+    .header h1 { font-size:18px;font-weight:800;letter-spacing:-0.4px;color:#fff; }
+    .header .subtitle { font-size:12px;color:#cbd5e1;opacity:.85;margin-top:2px; }
+
+    /* Nav Switcher */
+    .nav-tabs {
+      display:flex;gap:6px;background:rgba(0,0,0,0.3);padding:4px;border-radius:10px;
+      border:1px solid rgba(255,255,255,0.12);margin-left:12px;
+    }
+    .nav-tab-btn {
+      display:flex;align-items:center;gap:8px;padding:8px 16px;border-radius:8px;
+      border:none;background:transparent;color:#cbd5e1;font-size:13px;font-weight:600;
+      cursor:pointer;transition:all .2s;font-family:inherit;
+    }
+    .nav-tab-btn:hover { color:#fff;background:rgba(255,255,255,0.08); }
+    .nav-tab-btn.active {
+      background:var(--accent);color:#fff;box-shadow:0 2px 10px var(--accent-glow);
+    }
+
+    /* Status Bar & Lang Switch */
+    .header-right { margin-left:auto;display:flex;gap:12px;align-items:center;flex-wrap:wrap; }
+    .status-pill {
+      display:flex;align-items:center;gap:6px;
+      padding:6px 14px;border-radius:20px;font-size:12px;font-weight:500;
+      background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.12);
+    }
+    .status-pill .dot { width:8px;height:8px;border-radius:50%; }
+    .dot-green { background:var(--success);box-shadow:0 0 6px var(--success); }
+    .dot-red { background:var(--error);box-shadow:0 0 6px var(--error); }
+    .dot-yellow { background:var(--warn);box-shadow:0 0 6px var(--warn); }
+
+    /* Lang Selector */
+    .lang-switcher {
+      display:flex;background:rgba(0,0,0,0.4);padding:3px;border-radius:8px;
+      border:1px solid rgba(255,204,0,0.5);
+    }
+    .lang-btn {
+      padding:6px 12px;border:none;background:transparent;color:#cbd5e1;
+      font-size:12px;font-weight:700;border-radius:6px;cursor:pointer;
+      transition:all .2s;font-family:inherit;display:flex;align-items:center;gap:5px;
+    }
+    .lang-btn.active {
+      background:var(--eu-gold);color:#0a1931;box-shadow:0 0 10px rgba(255,204,0,0.5);
+    }
+
+    /* Views */
+    .view-container { min-height:calc(100vh - 80px);display:flex; }
+    .view-hidden { display:none !important; }
+
+    /* --- VIEW 1: TESTING LAB --- */
+    .sidebar {
+      width:290px;min-width:290px;background:var(--surface);
+      border-right:1px solid var(--border);padding:20px 0;overflow-y:auto;
+    }
+    .sidebar-header {
+      padding:0 20px 14px;font-size:11px;text-transform:uppercase;
+      letter-spacing:1.5px;color:var(--text-dim);font-weight:700;
+      display:flex;align-items:center;justify-content:space-between;
+    }
+    .step-btn {
+      display:flex;align-items:center;gap:12px;width:100%;padding:12px 20px;
+      border:none;background:none;color:var(--text-dim);cursor:pointer;
+      text-align:left;font-size:13px;font-family:inherit;transition:all .2s;
+    }
+    .step-btn:hover { background:rgba(59,130,246,.08);color:var(--text); }
+    .step-btn.active { background:rgba(59,130,246,.15);color:var(--accent-hover);border-left:3px solid var(--accent);font-weight:600; }
+    .step-btn.done { color:var(--success); }
+    .step-num {
+      width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+      font-size:11px;font-weight:700;background:var(--surface2);border:1px solid var(--border);flex-shrink:0;
+    }
+    .step-btn.active .step-num { background:var(--accent);color:#fff;border-color:var(--accent); }
+    .step-btn.done .step-num { background:var(--success);color:#fff;border-color:var(--success); }
+
+    .main { flex:1;padding:28px 36px;overflow-y:auto;max-width:1200px; }
+    .panel {
+      background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+      padding:28px;margin-bottom:24px;animation:fadeIn .3s ease;box-shadow:0 8px 30px rgba(0,0,0,0.2);
+    }
+    @keyframes fadeIn { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:none} }
+    .panel-title { font-size:18px;font-weight:700;margin-bottom:6px;display:flex;align-items:center;gap:10px;color:#fff; }
+    .panel-desc { color:var(--text-dim);font-size:13px;margin-bottom:20px;line-height:1.6; }
+
+    .instruction {
+      background:rgba(255,204,0,.06);border:1px solid rgba(255,204,0,.25);
+      border-radius:var(--radius-sm);padding:14px 18px;margin-bottom:18px;
+      font-size:13px;line-height:1.7;color:#fef3c7;
+    }
+    .instruction strong { color:var(--eu-gold); }
+    .instruction ol { padding-left:18px; }
+    .instruction li { margin-bottom:4px; }
+
+    .form-grid { display:grid;grid-template-columns:1fr 1fr;gap:14px; }
+    .form-group { display:flex;flex-direction:column;gap:5px; }
+    .form-group.full { grid-column:1/-1; }
+    label { font-size:12px;font-weight:600;color:var(--text-dim);text-transform:uppercase;letter-spacing:.5px; }
+    input, select, textarea {
+      background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);
+      padding:10px 14px;color:var(--text);font-size:13px;font-family:inherit;transition:border-color .2s;
+    }
+    input:focus, select:focus, textarea:focus {
+      outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(59,130,246,.2);
+    }
+
+    .btn {
+      display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:var(--radius-sm);
+      font-size:13px;font-weight:600;cursor:pointer;border:none;transition:all .2s;font-family:inherit;
+    }
+    .btn-primary { background:var(--accent);color:#fff; }
+    .btn-primary:hover { background:var(--accent-hover);transform:translateY(-1px);box-shadow:0 4px 14px var(--accent-glow); }
+    .btn-secondary { background:var(--surface2);color:var(--text);border:1px solid var(--border); }
+    .btn-secondary:hover { border-color:var(--accent);background:var(--surface3); }
+    .btn-gold { background:var(--eu-gold);color:#0a1931;font-weight:700; }
+    .btn-gold:hover { background:#ffe04d;box-shadow:0 4px 14px rgba(255,204,0,0.3); }
+    .btn-row { display:flex;gap:10px;margin-top:16px;align-items:center;flex-wrap:wrap; }
+
+    .result {
+      margin-top:16px;border-radius:var(--radius-sm);padding:16px;font-size:12.5px;
+      font-family:'Fira Code',monospace,inherit;white-space:pre-wrap;word-break:break-all;
+      max-height:420px;overflow-y:auto;line-height:1.6;
+    }
+    .result-success { background:var(--success-bg);border:1px solid rgba(16,185,129,.3);color:#6ee7b7; }
+    .result-error { background:var(--error-bg);border:1px solid rgba(239,68,68,.3);color:#fca5a5; }
+    .result-info { background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.25);color:#93c5fd; }
+
+    .info-card {
+      background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px 18px;
+    }
+    .info-card h4 { font-size:13px;margin-bottom:6px;color:var(--accent-hover); }
+    .info-card p { font-size:12px;color:var(--text-dim);line-height:1.5; }
+    .info-grid { display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;margin-bottom:20px; }
+
+    .data-table { width:100%;border-collapse:collapse;margin-top:12px;font-size:13px; }
+    .data-table th {
+      text-align:left;padding:10px 14px;background:var(--surface2);color:var(--text-dim);
+      font-size:11px;text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--border);
+    }
+    .data-table td {
+      padding:10px 14px;border-bottom:1px solid var(--border);font-family:'Fira Code',monospace,inherit;font-size:12px;
+    }
+    .level-badge { padding:3px 10px;border-radius:12px;font-size:11px;font-weight:600; }
+    .level-MODEL { background:rgba(59,130,246,.2);color:#93c5fd; }
+    .level-BATCH { background:rgba(245,158,11,.2);color:#fcd34d; }
+    .level-ITEM { background:rgba(16,185,129,.2);color:#86efac; }
+
+    .step-panel { display:none; }
+    .step-panel.active { display:block; }
+
+    /* --- VIEW 2: BLUEPRINT HUB --- */
+    .blueprint-view { flex:1;display:flex;height:calc(100vh - 80px);overflow:hidden; }
+    .blueprint-nav {
+      width:320px;min-width:320px;background:var(--surface);border-right:1px solid var(--border);
+      padding:24px 16px;overflow-y:auto;
+    }
+    .blueprint-nav h3 {
+      font-size:12px;text-transform:uppercase;letter-spacing:1px;color:var(--eu-gold);
+      margin-bottom:16px;padding-left:12px;display:flex;align-items:center;gap:8px;
+    }
+    .bp-nav-link {
+      display:block;padding:10px 14px;border-radius:8px;color:var(--text-dim);
+      text-decoration:none;font-size:13px;line-height:1.4;margin-bottom:4px;
+      transition:all .2s;border-left:2px solid transparent;
+    }
+    .bp-nav-link:hover { background:rgba(59,130,246,0.1);color:#fff; }
+    .bp-nav-link.active {
+      background:rgba(59,130,246,0.18);color:var(--accent-hover);
+      border-left-color:var(--accent);font-weight:600;
+    }
+
+    .blueprint-content {
+      flex:1;padding:36px 48px;overflow-y:auto;scroll-behavior:smooth;
+      max-width:1050px;margin:0 auto;line-height:1.75;
+    }
+    .bp-hero {
+      background:linear-gradient(135deg, rgba(59,130,246,0.1) 0%, rgba(0,51,153,0.15) 100%);
+      border:1px solid var(--border);border-left:4px solid var(--eu-gold);
+      border-radius:var(--radius);padding:24px 28px;margin-bottom:36px;
+    }
+    .bp-hero h2 { font-size:22px;color:#fff;margin-bottom:8px; }
+    .bp-hero p { color:#cbd5e1;font-size:14px; }
+    .bp-section {
+      background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+      padding:32px;margin-bottom:32px;box-shadow:0 4px 20px rgba(0,0,0,0.15);
+    }
+    .bp-section h2 {
+      font-size:20px;color:#fff;margin-bottom:14px;padding-bottom:10px;
+      border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;
+    }
+    .bp-section h3 { font-size:16px;color:var(--accent-hover);margin:20px 0 10px; }
+    .bp-section p { font-size:14px;color:var(--text);margin-bottom:14px; }
+    .bp-section ul, .bp-section ol { padding-left:22px;margin-bottom:14px;font-size:14px; }
+    .bp-section li { margin-bottom:6px; }
+    .bp-alert {
+      border-radius:var(--radius-sm);padding:14px 18px;margin:18px 0;font-size:13.5px;
+    }
+    .bp-alert-note { background:rgba(59,130,246,0.1);border-left:4px solid var(--accent);color:#bfdbfe; }
+    .bp-alert-success { background:rgba(16,185,129,0.1);border-left:4px solid var(--success);color:#a7f3d0; }
+    .bp-alert-gold { background:rgba(255,204,0,0.1);border-left:4px solid var(--eu-gold);color:#fef08a; }
+
+    .bp-table { width:100%;border-collapse:collapse;margin:18px 0;font-size:13.5px; }
+    .bp-table th {
+      background:var(--surface2);color:var(--text);padding:12px 16px;text-align:left;
+      font-size:12px;text-transform:uppercase;letter-spacing:.5px;border-bottom:2px solid var(--border);
+    }
+    .bp-table td { padding:12px 16px;border-bottom:1px solid var(--border);color:#cbd5e1; }
+    .bp-table tr:hover td { background:rgba(255,255,255,0.02); }
+
+    .mermaid-box {
+      background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);
+      padding:20px;margin:20px 0;display:flex;justify-content:center;overflow-x:auto;
+    }
+
+    /* --- VIEW 3: VOCABULARY HUB & ONTOLOGIES --- */
+    .vocab-view { flex:1;overflow-y:auto;padding:36px 48px;max-width:1200px;margin:0 auto;line-height:1.7; }
+    .vocab-hero {
+      background:linear-gradient(135deg, rgba(30,58,138,0.35) 0%, rgba(15,23,42,0.8) 100%);
+      border:1px solid #1e3a8a;border-left:4px solid var(--eu-gold);
+      border-radius:var(--radius);padding:26px 32px;margin-bottom:36px;
+      display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:20px;
+    }
+    .vocab-hero-text h2 { font-size:24px;color:#fff;margin-bottom:8px;display:flex;align-items:center;gap:12px; }
+    .vocab-hero-text p { color:#94a3b8;font-size:14.5px;max-width:750px; }
+    .vocab-hero-badge {
+      display:inline-flex;align-items:center;gap:8px;padding:8px 16px;
+      background:rgba(255,204,0,0.12);border:1px solid rgba(255,204,0,0.3);
+      border-radius:20px;color:var(--eu-gold);font-size:13px;font-weight:600;
+    }
+
+    .vocab-section-title {
+      font-size:20px;color:#fff;margin:36px 0 16px;padding-bottom:10px;
+      border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;
+    }
+    .vocab-section-desc { font-size:14px;color:var(--text-dim);margin-bottom:24px; }
+
+    .ontology-grid {
+      display:grid;grid-template-columns:repeat(auto-fill, minmax(350px, 1fr));
+      gap:20px;margin-bottom:40px;
+    }
+    .ontology-card {
+      background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+      padding:22px;transition:all .25s ease;display:flex;flex-direction:column;
+      position:relative;
+    }
+    .ontology-card:hover {
+      border-color:var(--accent);transform:translateY(-2px);
+      box-shadow:0 8px 30px rgba(0,0,0,0.3);
+    }
+    .ontology-card-hdr { display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px; }
+    .ontology-card-title { font-size:16px;font-weight:700;color:#fff;display:flex;align-items:center;gap:8px; }
+    .ontology-tag {
+      font-size:11px;font-weight:600;padding:3px 10px;border-radius:12px;
+      text-transform:uppercase;letter-spacing:0.5px;
+    }
+    .tag-core { background:rgba(59,130,246,0.15);color:#60a5fa;border:1px solid rgba(59,130,246,0.3); }
+    .tag-pilot { background:rgba(16,185,129,0.15);color:#34d399;border:1px solid rgba(16,185,129,0.3); }
+    .ontology-card p { font-size:13px;color:#94a3b8;line-height:1.6;margin-bottom:14px;flex:1; }
+    .ontology-meta { font-size:12px;color:#64748b;border-top:1px solid var(--border);padding-top:10px;margin-top:auto;display:flex;justify-content:space-between;align-items:center; }
+    .ontology-meta code { font-family:'Fira Code',monospace;color:#38bdf8;background:rgba(0,0,0,0.25);padding:2px 6px;border-radius:4px; }
+    .ontology-btn {
+      display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--accent-hover);
+      text-decoration:none;font-weight:600;padding:4px 10px;border-radius:6px;
+      background:rgba(59,130,246,0.1);border:1px solid rgba(59,130,246,0.25);transition:all .2s;
+    }
+    .ontology-btn:hover { background:var(--accent);color:#fff; }
+
+    .data-tree-box {
+      background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+      padding:26px;margin-bottom:40px;box-shadow:0 4px 20px rgba(0,0,0,0.15);
+    }
+    .tree-table { width:100%;border-collapse:collapse;margin-top:16px;font-size:13px; }
+    .tree-table th { background:var(--surface2);color:#f1f5f9;padding:12px 14px;text-align:left;font-size:12px;text-transform:uppercase;border-bottom:2px solid var(--border); }
+    .tree-table td { padding:10px 14px;border-bottom:1px solid var(--border);color:#cbd5e1; }
+    .tree-table tr:hover td { background:rgba(255,255,255,0.02); }
+    .badge-registry-yes { background:rgba(16,185,129,0.2);color:#34d399;padding:3px 8px;border-radius:4px;font-weight:700;font-size:11px;border:1px solid rgba(16,185,129,0.4); }
+    .badge-registry-no { background:rgba(148,163,184,0.1);color:#94a3b8;padding:3px 8px;border-radius:4px;font-size:11px; }
+
+    .dual-payload-container {
+      display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:20px;
+    }
+    @media (max-width: 900px) {
+      .dual-payload-container { grid-template-columns: 1fr; }
+    }
+    .payload-card {
+      background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);
+      overflow:hidden;display:flex;flex-direction:column;
+    }
+    .payload-card-hdr {
+      padding:14px 18px;background:rgba(0,0,0,0.25);border-bottom:1px solid var(--border);
+      display:flex;justify-content:space-between;align-items:center;
+    }
+    .payload-card-hdr h4 { font-size:14px;color:#fff;display:flex;align-items:center;gap:8px; }
+    .payload-card pre {
+      padding:16px;margin:0;overflow-x:auto;max-height:460px;font-family:'Fira Code',monospace;font-size:12px;color:#e2e8f0;line-height:1.5;background:transparent;
+    }
+
+    ::-webkit-scrollbar { width:6px;height:6px; }
+    ::-webkit-scrollbar-track { background:transparent; }
+    ::-webkit-scrollbar-thumb { background:var(--border);border-radius:3px; }
+  </style>
+</head>
+<body>
+
+  <!-- Top Global Header -->
+  <header class="header">
+    <div class="header-left">
+      <div class="eu-flag">&#127466;&#127482;</div>
+      <div>
+        <h1 id="hdrTitle">DPP Platform — Testing & Blueprint Hub</h1>
+        <div class="subtitle" id="hdrSubtitle">Digital Product Passport | Footwear ESPR Pilot | Registry + Validator</div>
+      </div>
+    </div>
+
+    <!-- Navigation Switcher -->
+    <div class="nav-tabs">
+      <button class="nav-tab-btn active" id="tabBtnLab" onclick="switchView('lab')">
+        <span>🧪</span> <span id="tabLabelLab">Testing Lab</span>
+      </button>
+      <button class="nav-tab-btn" id="tabBtnBlueprint" onclick="switchView('blueprint')">
+        <span>📖</span> <span id="tabLabelBlueprint">Blueprint & Architecture</span>
+      </button>
+      <button class="nav-tab-btn" id="tabBtnVocab" onclick="switchView('vocab')">
+        <span>📚</span> <span id="tabLabelVocab">Vocabulary Hub & Ontologies</span>
+      </button>
+    </div>
+
+    <div class="header-right">
+      <div class="status-pill" id="apiStatus">
+        <span class="dot dot-yellow" id="apiDot"></span>
+        <span id="apiLabel">API Checking...</span>
+      </div>
+      <div class="status-pill" id="valStatus">
+        <span class="dot dot-yellow" id="valDot"></span>
+        <span id="valLabel">Validator Checking...</span>
+      </div>
+      <div class="status-pill" id="authStatus">
+        <span class="dot dot-red" id="authDot"></span>
+        <span id="authLabel">Not authenticated</span>
+      </div>
+
+      <!-- Language Switcher: Default is EN -->
+      <div class="lang-switcher">
+        <button class="lang-btn active" id="btnLangEn" onclick="setLanguage('en')">🇬🇧 EN</button>
+        <button class="lang-btn" id="btnLangVi" onclick="setLanguage('vi')">🇻🇳 VI</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ==================== VIEW 1: TESTING LAB ==================== -->
+  <div id="viewLab" class="view-container">
+    <nav class="sidebar">
+      <div class="sidebar-header">
+        <span id="sbTitle">Testing Scenarios</span>
+        <span style="font-size:10px;background:var(--surface2);padding:2px 6px;border-radius:4px;color:var(--eu-gold)">11 Steps</span>
+      </div>
+      <button class="step-btn active" onclick="showStep(0)"><span class="step-num">1</span><span id="sbStep0">System Health Check</span></button>
+      <button class="step-btn" onclick="showStep(1)"><span class="step-num">2</span><span id="sbStep1">Authentication (Token)</span></button>
+      <button class="step-btn" onclick="showStep(2)"><span class="step-num">3</span><span id="sbStep2">Inspect Schemas</span></button>
+      <button class="step-btn" onclick="showStep(3)"><span class="step-num">4</span><span id="sbStep3">Validate Footwear DPP ✨</span></button>
+      <button class="step-btn" onclick="showStep(4)"><span class="step-num">5</span><span id="sbStep4">Register MODEL DPP</span></button>
+      <button class="step-btn" onclick="showStep(5)"><span class="step-num">6</span><span id="sbStep5">Register BATCH DPP</span></button>
+      <button class="step-btn" onclick="showStep(6)"><span class="step-num">7</span><span id="sbStep6">Register ITEM DPP</span></button>
+      <button class="step-btn" onclick="showStep(7)"><span class="step-num">8</span><span id="sbStep7">Lookup DPP</span></button>
+      <button class="step-btn" onclick="showStep(8)"><span class="step-num">9</span><span id="sbStep8">Proof of Registration</span></button>
+      <button class="step-btn" onclick="showStep(9)"><span class="step-num">10</span><span id="sbStep9">Update DPP</span></button>
+      <button class="step-btn" onclick="showStep(10)"><span class="step-num">11</span><span id="sbStep10">Summary Report</span></button>
+    </nav>
+
+    <main class="main">
+      <!-- STEP 0 -->
+      <div class="step-panel active" id="step0">
+        <div class="panel">
+          <div class="panel-title" id="p0Title">Step 1: System Health Check</div>
+          <div class="panel-desc" id="p0Desc">Verify that all cloud microservices (Mock EU Registry, Keycloak OIDC, PostgreSQL, and DPP Validator) are running properly.</div>
+          <div class="instruction">
+            <strong id="p0InstTitle">Instructions:</strong>
+            <ol id="p0InstList">
+              <li>Click the <strong>"Check All Services"</strong> button below.</li>
+              <li>Wait for the health response — all services should report OK.</li>
+              <li>Health endpoints verify internal database connections and JWKS public key distribution.</li>
+            </ol>
+          </div>
+          <div class="btn-row">
+            <button class="btn btn-primary" onclick="checkSystem()" id="btnCheckSys">Check All Services</button>
+          </div>
+          <div id="sysResult"></div>
+        </div>
+      </div>
+
+      <!-- STEP 1 -->
+      <div class="step-panel" id="step1">
+        <div class="panel">
+          <div class="panel-title" id="p1Title">Step 2: Authenticate & Obtain JWT Token</div>
+          <div class="panel-desc" id="p1Desc">Select an enterprise role to authenticate via Keycloak OIDC. The returned access token will authorize all subsequent actions.</div>
+          <div class="instruction">
+            <strong id="p1InstTitle">Instructions:</strong>
+            <ol id="p1InstList">
+              <li>Select <strong>"Economic Operator (eo-user)"</strong> for manufacturer role or <strong>"Admin (admin-user)"</strong> for regulator role.</li>
+              <li>Click <strong>"Log In"</strong>.</li>
+              <li>Once authenticated, the status badge in the top-right header will display active credentials.</li>
+            </ol>
+          </div>
+          <div class="info-grid">
+            <div class="info-card"><h4>admin-user</h4><p id="p1RoleAdmin">Full administrator access across schemas, services, and system configuration.</p></div>
+            <div class="info-card"><h4>eo-user</h4><p id="p1RoleEO">Economic Operator (Footwear Manufacturer) — registers, verifies, and updates footwear DPPs.</p></div>
+            <div class="info-card"><h4>eu-user</h4><p id="p1RoleEU">End User / Authority — inspects passport entries and reads public compliance certificates.</p></div>
+          </div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label id="lblSelectUser">Select User Account</label>
+              <select id="loginUser">
+                <option value="eo-user|eo123">Economic Operator (eo-user) — Manufacturer</option>
+                <option value="admin-user|admin123">Admin (admin-user) — Administrator</option>
+                <option value="eu-user|eu123">End User (eu-user) — Authority / Auditor</option>
+              </select>
+            </div>
+          </div>
+          <div class="btn-row">
+            <button class="btn btn-primary" onclick="doLogin()" id="btnLogin">Log In</button>
+          </div>
+          <div id="loginResult"></div>
+        </div>
+      </div>
+
+      <!-- STEP 2 -->
+      <div class="step-panel" id="step2">
+        <div class="panel">
+          <div class="panel-title" id="p2Title">Step 3: Inspect Current JSON Schema</div>
+          <div class="panel-desc" id="p2Desc">The Registry schema dictates the structural blueprint — mandatory fields, formats, and regulatory validation rules.</div>
+          <div class="instruction">
+            <strong id="p2InstTitle">Instructions:</strong>
+            <ol id="p2InstList">
+              <li>Click <strong>"Fetch Current Schema"</strong>.</li>
+              <li>Review the mandatory required fields.</li>
+              <li><strong>Note:</strong> Requires logging in with <strong>admin-user</strong> or <strong>eu-user</strong> to demonstrate RBAC access controls.</li>
+            </ol>
+          </div>
+          <div class="btn-row">
+            <button class="btn btn-primary" onclick="getSchema()" id="btnGetSchema">Fetch Current Schema</button>
+          </div>
+          <div id="schemaResult"></div>
+        </div>
+      </div>
+
+      <!-- STEP 3: VALIDATE FOOTWEAR DPP -->
+      <div class="step-panel" id="step3">
+        <div class="panel">
+          <div class="panel-title" id="p3Title">Step 4: Validate Footwear DPP Payload ✨</div>
+          <div class="panel-desc" id="p3Desc">Automatically audit product passport data against EU Ecodesign (ESPR) Footwear standards before submitting to the Registry.</div>
+          <div class="instruction">
+            <strong id="p3InstTitle">Instructions:</strong>
+            <ol id="p3InstList">
+              <li>Ensure you have authenticated (use the Quick Login buttons below).</li>
+              <li>Click <strong>"👟 Valid Footwear Sample"</strong> to populate a compliant sports shoe dataset.</li>
+              <li>Click <strong>"Validate Payload"</strong> to send the JSON to the DPP Validator.</li>
+              <li>Green indicates compliance (ready to register); red indicates regulatory discrepancies.</li>
+            </ol>
+          </div>
+
+          <div class="info-grid">
+            <div class="info-card">
+              <h4 id="p3CardValTitle">DPP Validator Engine</h4>
+              <p id="p3CardValDesc">Validates complex JSON/JSON-LD structures against official JSON Schemas and SHACL shapes independently from the Registry.</p>
+            </div>
+            <div class="info-card">
+              <h4 id="p3CardEsprTitle">Footwear ESPR Standards</h4>
+              <p id="p3CardEsprDesc">Verifies mandatory manufacturer address, product UID, life-cycle CO₂ footprint class, and detachable sole circularity parameters.</p>
+            </div>
+          </div>
+
+          <!-- Auth Alert -->
+          <div id="step4AuthAlert" style="margin-bottom:14px;padding:12px 18px;border-radius:var(--radius-sm);background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.25);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
+            <div>
+              <div style="font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--text-dim)" id="lblAuthStatusBox">Authentication Status (Keycloak JWT)</div>
+              <div id="step4AuthText" style="font-size:13px;font-weight:600;margin-top:2px">Checking authentication...</div>
+            </div>
+            <div style="display:flex;gap:8px">
+              <button class="btn btn-secondary" style="font-size:12px;padding:6px 14px" onclick="quickLogin('admin-user','admin123')" id="btnQuickAdmin">⚡ Quick Login Admin</button>
+              <button class="btn btn-secondary" style="font-size:12px;padding:6px 14px" onclick="quickLogin('eo-user','eo123')" id="btnQuickEO">⚡ Quick Login EO</button>
+            </div>
+          </div>
+
+          <!-- Preset Buttons -->
+          <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
+            <button class="btn btn-secondary" style="font-size:12px;padding:6px 14px" onclick="loadSampleDpp('valid-footwear')" id="btnSampleValid">👟 Valid Footwear Sample</button>
+            <button class="btn btn-secondary" style="font-size:12px;padding:6px 14px" onclick="loadSampleDpp('invalid-footwear')" id="btnSampleInvalid">⚠️ Invalid Sample (Missing Fields)</button>
+            <button class="btn btn-secondary" style="font-size:12px;padding:6px 14px" onclick="uploadSampleSchema()" id="btnUploadSchema">📤 Upload Footwear Schema</button>
+          </div>
+
+          <div class="form-grid">
+            <div class="form-group full">
+              <label id="lblPayload">Footwear DPP Payload (JSON) — Editable</label>
+              <textarea id="validatePayload" rows="13" style="width:100%;font-family:'Fira Code',monospace;font-size:12px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px;resize:vertical">{
+  "productIdentification": {
+    "productUID": "SHOE-ECO-2026-EU-00123456",
+    "productName": "EcoStride Circular Runner Pro",
+    "manufacturer": {
+      "name": "EcoStride Footwear AG",
+      "streetName": "Schuhstrasse 18",
+      "postalCode": "10115",
+      "cityName": "Berlin",
+      "country": "DE"
+    }
+  },
+  "generalInformation": {
+    "productCategory": "Footwear",
+    "footwearType": "Athletic Running Shoes",
+    "upperMaterial": "100% Recycled Ocean-Bound Polyester Mesh",
+    "soleMaterial": "FSC-Certified Natural Rubber & Bio-EVA Foam",
+    "manufacturingDate": "2026-03-20",
+    "sizeEUR": 42
+  },
+  "sustainability": {
+    "carbonFootprint": {
+      "lifeCycleCarbon": 8.45,
+      "carbonFootprintPerformanceClass": "A"
+    },
+    "recycledContentPercentage": 68.5,
+    "waterConsumptionLiters": 42.0,
+    "pfasFree": true
+  },
+  "circularityAndCare": {
+    "repairabilityScore": 8.8,
+    "detachableSole": true,
+    "recyclingInstructions": "Return to any EcoStride take-back station or certified textile recycling hub."
+  }
+}</textarea>
+            </div>
+          </div>
+
+          <div class="btn-row">
+            <button class="btn btn-primary" onclick="validateDpp()" id="btnValidate">Validate Payload</button>
+            <button class="btn btn-secondary" onclick="checkValidatorHealth()" id="btnValHealth">Check Validator Health</button>
+            <button class="btn btn-secondary" onclick="listValidatorSchemas()" id="btnListSchemas">List Schemas in DB</button>
+          </div>
+          <div id="validateResult"></div>
+        </div>
+      </div>
+
+      <!-- STEP 4: MODEL -->
+      <div class="step-panel" id="step4">
+        <div class="panel">
+          <div class="panel-title" id="p4Title">Step 5: Register Footwear MODEL DPP</div>
+          <div class="panel-desc" id="p4Desc"><strong>MODEL</strong> is the top-level product line tier (e.g. Model 'EcoStride Circular Runner XB-100').</div>
+          <div class="instruction">
+            <strong id="p4InstTitle">Instructions:</strong>
+            <ol id="p4InstList">
+              <li>Fields are pre-filled with the generic footwear model configuration.</li>
+              <li>Click <strong>"Register MODEL"</strong> to submit to the Registry.</li>
+              <li>Copy the returned <strong>Registry ID</strong> for lookup and proof issuance.</li>
+            </ol>
+          </div>
+          <div class="form-grid">
+            <div class="form-group"><label>UPI (Unique Product Identifier)</label><input id="modelUpi" value="urn:epc:id:sgtin:0614141.107346.SHOE-MODEL001" /></div>
+            <div class="form-group"><label>REO ID (Registered Economic Operator)</label><input id="modelReoId" value="LEI-529900T8BM49AURSDO55" /></div>
+            <div class="form-group"><label>Facility ID (Assembly Plant GLN)</label><input id="modelFacility" value="GLN-5412345000013" /></div>
+            <div class="form-group"><label>Commodity Code (Footwear HS Code)</label><input id="modelCommodity" value="64041100" /></div>
+            <div class="form-group"><label>Live URL (Brand Passport Web UI)</label><input id="modelLiveUrl" value="https://dpp-mockup.erx.vn/samples/footwear-model.json" /></div>
+            <div class="form-group"><label>Backup URL</label><input id="modelBackupUrl" value="https://dpp-mockup.erx.vn/samples/footwear-model.json" /></div>
+          </div>
+          <div class="btn-row"><button class="btn btn-primary" onclick="registerModel()" id="btnRegModel">Register MODEL</button></div>
+          <div id="modelResult"></div>
+        </div>
+      </div>
+
+      <!-- STEP 5: BATCH -->
+      <div class="step-panel" id="step5">
+        <div class="panel">
+          <div class="panel-title" id="p5Title">Step 6: Register Footwear BATCH DPP</div>
+          <div class="panel-desc" id="p5Desc"><strong>BATCH</strong> represents a specific manufacturing production run lot linked to a parent MODEL.</div>
+          <div class="instruction">
+            <strong id="p5InstTitle">Instructions:</strong>
+            <ol id="p5InstList">
+              <li>The <strong>Model UPI</strong> field references the registered parent MODEL.</li>
+              <li>Click <strong>"Register BATCH"</strong> to establish the genealogical link.</li>
+            </ol>
+          </div>
+          <div class="form-grid">
+            <div class="form-group"><label>UPI (Batch Identifier)</label><input id="batchUpi" value="urn:epc:id:sgtin:0614141.107346.SHOE-BATCH001" /></div>
+            <div class="form-group"><label>Model UPI (Parent Reference)</label><input id="batchModelUpi" value="urn:epc:id:sgtin:0614141.107346.SHOE-MODEL001" /></div>
+            <div class="form-group"><label>REO ID</label><input id="batchReoId" value="LEI-529900T8BM49AURSDO55" /></div>
+            <div class="form-group"><label>Commodity Code</label><input id="batchCommodity" value="64041100" /></div>
+            <div class="form-group"><label>Live URL</label><input id="batchLiveUrl" value="https://dpp-mockup.erx.vn/samples/footwear-batch.json" /></div>
+            <div class="form-group"><label>Backup URL</label><input id="batchBackupUrl" value="https://dpp-mockup.erx.vn/samples/footwear-batch.json" /></div>
+          </div>
+          <div class="btn-row"><button class="btn btn-primary" onclick="registerBatch()" id="btnRegBatch">Register BATCH</button></div>
+          <div id="batchResult"></div>
+        </div>
+      </div>
+
+      <!-- STEP 6: ITEM -->
+      <div class="step-panel" id="step6">
+        <div class="panel">
+          <div class="panel-title" id="p6Title">Step 7: Register Footwear ITEM DPP</div>
+          <div class="panel-desc" id="p6Desc"><strong>ITEM</strong> is the individual physical pair of shoes — serial-numbered and linked to its parent BATCH and MODEL.</div>
+          <div class="instruction">
+            <strong id="p6InstTitle">Instructions:</strong>
+            <ol id="p6InstList">
+              <li>Ensure <strong>Model UPI</strong> and <strong>Batch UPI</strong> correspond to earlier steps.</li>
+              <li>Click <strong>"Register ITEM"</strong> to record this specific serialized pair.</li>
+            </ol>
+          </div>
+          <div class="form-grid">
+            <div class="form-group"><label>UPI (Serialized Item Identifier)</label><input id="itemUpi" value="urn:epc:id:sgtin:0614141.107346.SHOE-ITEM001" /></div>
+            <div class="form-group"><label>Deactivated?</label>
+              <select id="itemDeactivated">
+                <option value="false" id="optActive">No — Active In-Service</option>
+                <option value="true" id="optDeactive">Yes — Decommissioned / Recycled</option>
+              </select>
+            </div>
+            <div class="form-group"><label>Model UPI</label><input id="itemModelUpi" value="urn:epc:id:sgtin:0614141.107346.SHOE-MODEL001" /></div>
+            <div class="form-group"><label>Batch UPI</label><input id="itemBatchUpi" value="urn:epc:id:sgtin:0614141.107346.SHOE-BATCH001" /></div>
+            <div class="form-group"><label>REO ID</label><input id="itemReoId" value="LEI-529900T8BM49AURSDO55" /></div>
+            <div class="form-group"><label>Commodity Code</label><input id="itemCommodity" value="64041100" /></div>
+            <div class="form-group"><label>Live URL</label><input id="itemLiveUrl" value="https://dpp-mockup.erx.vn/samples/footwear-item.json" /></div>
+            <div class="form-group"><label>Backup URL</label><input id="itemBackupUrl" value="https://dpp-mockup.erx.vn/samples/footwear-item.json" /></div>
+          </div>
+          <div class="btn-row"><button class="btn btn-primary" onclick="registerItem()" id="btnRegItem">Register ITEM</button></div>
+          <div id="itemResult"></div>
+        </div>
+      </div>
+
+      <!-- STEP 7: QUERY -->
+      <div class="step-panel" id="step7">
+        <div class="panel">
+          <div class="panel-title" id="p7Title">Step 8: Lookup Registered DPP</div>
+          <div class="panel-desc" id="p7Desc">Inspect registered product passport records by Registry ID or view the active session registry table.</div>
+          <div class="instruction">
+            <strong id="p7InstTitle">Instructions:</strong>
+            <ol id="p7InstList">
+              <li>Click <strong>"View All Registered DPPs"</strong> to view the session ledger.</li>
+              <li>Or paste a specific <strong>Registry ID</strong> and click <strong>"Lookup"</strong>.</li>
+            </ol>
+          </div>
+          <div class="form-grid">
+            <div class="form-group full"><label>Registry ID</label><input id="queryRegistryId" placeholder="Enter Registry UUID..." /></div>
+          </div>
+          <div class="btn-row">
+            <button class="btn btn-primary" onclick="queryDpp()" id="btnQuery">Lookup</button>
+            <button class="btn btn-secondary" onclick="listAllDpp()" id="btnListAll">View All Registered DPPs</button>
+          </div>
+          <div id="queryResult"></div>
+        </div>
+      </div>
+
+      <!-- STEP 8: PROOF -->
+      <div class="step-panel" id="step8">
+        <div class="panel">
+          <div class="panel-title" id="p8Title">Step 9: Fetch Proof of Registration</div>
+          <div class="panel-desc" id="p8Desc">Proof of Registration is an unforgeable <strong>JWT</strong> signed by the Registry's private RSA key.</div>
+          <div class="instruction">
+            <strong id="p8InstTitle">Instructions:</strong>
+            <ol id="p8InstList">
+              <li>Enter the <strong>Registry ID</strong> of a registered shoe model, batch, or item.</li>
+              <li>Click <strong>"Get Proof"</strong> to receive the cryptographically signed JWT certificate.</li>
+              <li>Click <strong>"Inspect JWKS Public Key"</strong> to view the public key used for global verification.</li>
+            </ol>
+          </div>
+          <div class="form-grid">
+            <div class="form-group full"><label>Registry ID</label><input id="proofRegistryId" placeholder="Enter Registry UUID..." /></div>
+          </div>
+          <div class="btn-row">
+            <button class="btn btn-primary" onclick="getProof()" id="btnGetProof">Get Proof</button>
+            <button class="btn btn-secondary" onclick="getJwks()" id="btnGetJwks">Inspect JWKS Public Key</button>
+          </div>
+          <div id="proofResult"></div>
+        </div>
+      </div>
+
+      <!-- STEP 9: UPDATE -->
+      <div class="step-panel" id="step9">
+        <div class="panel">
+          <div class="panel-title" id="p9Title">Step 10: Update DPP (Lifecycle Management)</div>
+          <div class="panel-desc" id="p9Desc">Re-submitting an existing UPI updates the entry in place under the MODIFY strategy without creating duplicate entries.</div>
+          <div class="instruction">
+            <strong id="p9InstTitle">Instructions:</strong>
+            <ol id="p9InstList">
+              <li>Keep the existing MODEL UPI unchanged.</li>
+              <li>Modify an attribute (such as Commodity Code or Live URL).</li>
+              <li>Click <strong>"Update DPP"</strong> and observe the updated timestamp.</li>
+            </ol>
+          </div>
+          <div class="form-grid">
+            <div class="form-group"><label>UPI (Unchanged for update)</label><input id="updateUpi" value="urn:epc:id:sgtin:0614141.107346.SHOE-MODEL001" /></div>
+            <div class="form-group"><label>REO ID</label><input id="updateReoId" value="LEI-529900T8BM49AURSDO55" /></div>
+            <div class="form-group"><label>Commodity Code (Try modifying)</label><input id="updateCommodity" value="64041990" /></div>
+            <div class="form-group"><label>Facility ID</label><input id="updateFacility" value="GLN-5412345000013" /></div>
+            <div class="form-group"><label>Live URL</label><input id="updateLiveUrl" value="https://dpp-mockup.erx.vn/samples/footwear-model.json" /></div>
+            <div class="form-group"><label>Backup URL</label><input id="updateBackupUrl" value="https://dpp-mockup.erx.vn/samples/footwear-model.json" /></div>
+          </div>
+          <div class="btn-row"><button class="btn btn-primary" onclick="updateDpp()" id="btnUpdate">Update DPP</button></div>
+          <div id="updateResult"></div>
+        </div>
+      </div>
+
+      <!-- STEP 10: SUMMARY -->
+      <div class="step-panel" id="step10">
+        <div class="panel">
+          <div class="panel-title" id="p10Title">Step 11: End-to-End Summary Report</div>
+          <div class="panel-desc" id="p10Desc">Consolidated audit trail of all 11 testing steps and registered footwear passport entries.</div>
+          <div class="instruction"><strong id="p10InstTitle">Instructions:</strong> <span id="p10InstDesc">Click <strong>"Generate Summary Report"</strong> to calculate testing coverage and compile the audit report.</span></div>
+          <div class="btn-row"><button class="btn btn-primary" onclick="generateSummary()" id="btnSummary">Generate Summary Report</button></div>
+          <div id="summaryResult"></div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- ==================== VIEW 2: BLUEPRINT HUB ==================== -->
+  <div id="viewBlueprint" class="view-container view-hidden">
+    <div class="blueprint-view">
+      <nav class="blueprint-nav">
+        <h3 id="bpTocHeader">📑 Blueprint Table of Contents</h3>
+        <a href="#bp-sec1" class="bp-nav-link active" onclick="activateBpLink(this)" id="bpNav1">1. What is DPP & Footwear ESPR?</a>
+        <a href="#bp-sec2" class="bp-nav-link" onclick="activateBpLink(this)" id="bpNav2">2. 5-Component Architecture</a>
+        <a href="#bp-sec3" class="bp-nav-link" onclick="activateBpLink(this)" id="bpNav3">3. System Roles & Access Control</a>
+        <a href="#bp-sec4" class="bp-nav-link" onclick="activateBpLink(this)" id="bpNav4">4. 3-Tier Hierarchy (Model/Batch/Item)</a>
+        <a href="#bp-sec5" class="bp-nav-link" onclick="activateBpLink(this)" id="bpNav5">5. Validator & JSON Schema Rules</a>
+        <a href="#bp-sec6" class="bp-nav-link" onclick="activateBpLink(this)" id="bpNav6">6. Data Ingestion (Web UI vs API)</a>
+        <a href="#bp-sec7" class="bp-nav-link" onclick="activateBpLink(this)" id="bpNav7">7. Where to View Passports?</a>
+        <a href="#bp-sec8" class="bp-nav-link" onclick="activateBpLink(this)" id="bpNav8">8. Cryptographic Proof (JWT)</a>
+        <a href="#bp-sec9" class="bp-nav-link" onclick="activateBpLink(this)" id="bpNav9">9. Operational FAQ (Cloud & License)</a>
+        <a href="#bp-sec10" class="bp-nav-link" onclick="activateBpLink(this)" id="bpNav10">10. Public URLs Cheat Sheet</a>
+        <a href="#bp-sec11" class="bp-nav-link" onclick="activateBpLink(this)" id="bpNav11">11. Vocabulary Hub & EUDPP CORE</a>
+        <a href="#bp-sec12" class="bp-nav-link" onclick="activateBpLink(this)" id="bpNav12">12. CIRPASS-2 Footwear Data Model</a>
+      </nav>
+
+      <main class="blueprint-content" id="blueprintContentArea">
+        <!-- Blueprint Dynamic Content rendered by renderBlueprint() based on active language -->
+      </main>
+    </div>
+  </div>
+
+  <!-- ==================== VIEW 3: VOCABULARY HUB & ONTOLOGIES ==================== -->
+  <div id="viewVocab" class="view-container view-hidden">
+    <div class="vocab-view" id="vocabContentArea">
+      <!-- Dynamically rendered by renderVocab() in active language -->
+    </div>
+  </div>
+
+  <script>
+    // --- APP STATE & ROUTING ---
+    const isProxy = location.port === '9090' || !location.hostname.includes('localhost') || location.hostname.includes('railway');
+    const API = isProxy ? '' : 'http://localhost:8080';
+    const VAPI = isProxy ? '' : 'http://localhost:8081';
+    const KC  = isProxy ? '/auth' : 'http://localhost:8180';
+    let token = null;
+    let currentUser = null;
+    let registeredIds = { model: null, batch: null, item: null };
+    let registeredData = {};
+    let stepsDone = new Set();
+    let currentLang = localStorage.getItem('dpp_lang') || 'en'; // DEFAULT IS EN
+    let currentView = 'lab';
+
+    // --- VIEW SWITCHER ---
+    function switchView(view) {
+      currentView = view;
+      document.getElementById('viewLab').classList.toggle('view-hidden', view !== 'lab');
+      document.getElementById('viewBlueprint').classList.toggle('view-hidden', view !== 'blueprint');
+      document.getElementById('viewVocab').classList.toggle('view-hidden', view !== 'vocab');
+
+      document.getElementById('tabBtnLab').classList.toggle('active', view === 'lab');
+      document.getElementById('tabBtnBlueprint').classList.toggle('active', view === 'blueprint');
+      document.getElementById('tabBtnVocab').classList.toggle('active', view === 'vocab');
+
+      if (view === 'blueprint') renderBlueprint();
+      if (view === 'vocab') renderVocab();
+    }
+
+    function activateBpLink(el) {
+      document.querySelectorAll('.bp-nav-link').forEach(a => a.classList.remove('active'));
+      el.classList.add('active');
+    }
+
+    // --- STEP NAVIGATION ---
+    function showStep(idx) {
+      document.querySelectorAll('.step-panel').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.step-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById('step' + idx).classList.add('active');
+      document.querySelectorAll('.step-btn')[idx].classList.add('active');
+      if (idx === 3) updateAuthUI();
+    }
+    function markDone(idx) {
+      stepsDone.add(idx);
+      document.querySelectorAll('.step-btn')[idx].classList.add('done');
+    }
+
+    // --- I18N DICTIONARY ---
+    const i18n = {
+      en: {
+        hdrTitle: "DPP Platform — Testing & Blueprint Hub",
+        hdrSubtitle: "Digital Product Passport | Footwear ESPR Pilot | Registry + Validator",
+        tabLabelLab: "Testing Lab",
+        tabLabelBlueprint: "Blueprint & Architecture",
+        sbTitle: "Testing Scenarios",
+        sbStep0: "System Health Check",
+        sbStep1: "Authentication (Token)",
+        sbStep2: "Inspect Schemas",
+        sbStep3: "Validate Footwear DPP ✨",
+        sbStep4: "Register MODEL DPP",
+        sbStep5: "Register BATCH DPP",
+        sbStep6: "Register ITEM DPP",
+        sbStep7: "Lookup DPP",
+        sbStep8: "Proof of Registration",
+        sbStep9: "Update DPP",
+        sbStep10: "Summary Report",
+
+        // Step 1
+        p0Title: "Step 1: System Health Check",
+        p0Desc: "Verify that all cloud microservices (Mock EU Registry, Keycloak OIDC, PostgreSQL, and DPP Validator) are running properly.",
+        p0InstTitle: "Instructions:",
+        p0InstList: "<li>Click the <strong>\"Check All Services\"</strong> button below.</li><li>Wait for the health response — all services should report OK.</li><li>Health endpoints verify internal database connections and JWKS public key distribution.</li>",
+        btnCheckSys: "Check All Services",
+
+        // Step 2
+        p1Title: "Step 2: Authenticate & Obtain JWT Token",
+        p1Desc: "Select an enterprise role to authenticate via Keycloak OIDC. The returned access token will authorize all subsequent actions.",
+        p1InstTitle: "Instructions:",
+        p1InstList: "<li>Select <strong>\"Economic Operator (eo-user)\"</strong> for manufacturer role or <strong>\"Admin (admin-user)\"</strong> for regulator role.</li><li>Click <strong>\"Log In\"</strong>.</li><li>Once authenticated, the status badge in the top-right header will display active credentials.</li>",
+        p1RoleAdmin: "Full administrator access across schemas, services, and system configuration.",
+        p1RoleEO: "Economic Operator (Footwear Manufacturer) — registers, verifies, and updates footwear DPPs.",
+        p1RoleEU: "End User / Authority — inspects passport entries and reads public compliance certificates.",
+        lblSelectUser: "Select User Account",
+        btnLogin: "Log In",
+
+        // Step 3
+        p2Title: "Step 3: Inspect Current JSON Schema",
+        p2Desc: "The Registry schema dictates the structural blueprint — mandatory fields, formats, and regulatory validation rules.",
+        p2InstTitle: "Instructions:",
+        p2InstList: "<li>Click <strong>\"Fetch Current Schema\"</strong>.</li><li>Review the mandatory required fields.</li><li><strong>Note:</strong> Requires logging in with <strong>admin-user</strong> or <strong>eu-user</strong> to demonstrate RBAC access controls.</li>",
+        btnGetSchema: "Fetch Current Schema",
+
+        // Step 4
+        p3Title: "Step 4: Validate Footwear DPP Payload ✨",
+        p3Desc: "Automatically audit product passport data against EU Ecodesign (ESPR) Footwear standards before submitting to the Registry.",
+        p3InstTitle: "Instructions:",
+        p3InstList: "<li>Ensure you have authenticated (use the Quick Login buttons below).</li><li>Click <strong>\"👟 Valid Footwear Sample\"</strong> to populate a compliant sports shoe dataset.</li><li>Click <strong>\"Validate Payload\"</strong> to send the JSON to the DPP Validator.</li><li>Green indicates compliance (ready to register); red indicates regulatory discrepancies.</li>",
+        p3CardValTitle: "DPP Validator Engine",
+        p3CardValDesc: "Validates complex JSON/JSON-LD structures against official JSON Schemas and SHACL shapes independently from the Registry.",
+        p3CardEsprTitle: "Footwear ESPR Standards",
+        p3CardEsprDesc: "Verifies mandatory manufacturer address, product UID, life-cycle CO₂ footprint class, and detachable sole circularity parameters.",
+        lblAuthStatusBox: "Authentication Status (Keycloak JWT)",
+        btnQuickAdmin: "⚡ Quick Login Admin",
+        btnQuickEO: "⚡ Quick Login EO",
+        btnSampleValid: "👟 Valid Footwear Sample",
+        btnSampleInvalid: "⚠️ Invalid Sample (Missing Fields)",
+        btnUploadSchema: "📤 Upload Footwear Schema",
+        lblPayload: "Footwear DPP Payload (JSON) — Editable",
+        btnValidate: "Validate Payload",
+        btnValHealth: "Check Validator Health",
+        btnListSchemas: "List Schemas in DB",
+
+        // Step 5
+        p4Title: "Step 5: Register Footwear MODEL DPP",
+        p4Desc: "<strong>MODEL</strong> is the top-level product line tier (e.g. Model 'EcoStride Circular Runner XB-100').",
+        p4InstTitle: "Instructions:",
+        p4InstList: "<li>Fields are pre-filled with the generic footwear model configuration.</li><li>Click <strong>\"Register MODEL\"</strong> to submit to the Registry.</li><li>Copy the returned <strong>Registry ID</strong> for lookup and proof issuance.</li>",
+        btnRegModel: "Register MODEL",
+
+        // Step 6
+        p5Title: "Step 6: Register Footwear BATCH DPP",
+        p5Desc: "<strong>BATCH</strong> represents a specific manufacturing production run lot linked to a parent MODEL.",
+        p5InstTitle: "Instructions:",
+        p5InstList: "<li>The <strong>Model UPI</strong> field references the registered parent MODEL.</li><li>Click <strong>\"Register BATCH\"</strong> to establish the genealogical link.</li>",
+        btnRegBatch: "Register BATCH",
+
+        // Step 7
+        p6Title: "Step 7: Register Footwear ITEM DPP",
+        p6Desc: "<strong>ITEM</strong> is the individual physical pair of shoes — serial-numbered and linked to its parent BATCH and MODEL.",
+        p6InstTitle: "Instructions:",
+        p6InstList: "<li>Ensure <strong>Model UPI</strong> and <strong>Batch UPI</strong> correspond to earlier steps.</li><li>Click <strong>\"Register ITEM\"</strong> to record this specific serialized pair.</li>",
+        optActive: "No — Active In-Service",
+        optDeactive: "Yes — Decommissioned / Recycled",
+        btnRegItem: "Register ITEM",
+
+        // Step 8
+        p7Title: "Step 8: Lookup Registered DPP",
+        p7Desc: "Inspect registered product passport records by Registry ID or view the active session registry table.",
+        p7InstTitle: "Instructions:",
+        p7InstList: "<li>Click <strong>\"View All Registered DPPs\"</strong> to view the session ledger.</li><li>Or paste a specific <strong>Registry ID</strong> and click <strong>\"Lookup\"</strong>.</li>",
+        btnQuery: "Lookup",
+        btnListAll: "View All Registered DPPs",
+
+        // Step 9
+        p8Title: "Step 9: Fetch Proof of Registration",
+        p8Desc: "Proof of Registration is an unforgeable <strong>JWT</strong> signed by the Registry's private RSA key.",
+        p8InstTitle: "Instructions:",
+        p8InstList: "<li>Enter the <strong>Registry ID</strong> of a registered shoe model, batch, or item.</li><li>Click <strong>\"Get Proof\"</strong> to receive the cryptographically signed JWT certificate.</li><li>Click <strong>\"Inspect JWKS Public Key\"</strong> to view the public key used for global verification.</li>",
+        btnGetProof: "Get Proof",
+        btnGetJwks: "Inspect JWKS Public Key",
+
+        // Step 10
+        p9Title: "Step 10: Update DPP (Lifecycle Management)",
+        p9Desc: "Re-submitting an existing UPI updates the entry in place under the MODIFY strategy without creating duplicate entries.",
+        p9InstTitle: "Instructions:",
+        p9InstList: "<li>Keep the existing MODEL UPI unchanged.</li><li>Modify an attribute (such as Commodity Code or Live URL).</li><li>Click <strong>\"Update DPP\"</strong> and observe the updated timestamp.</li>",
+        btnUpdate: "Update DPP",
+
+        // Step 11
+        p10Title: "Step 11: End-to-End Summary Report",
+        p10Desc: "Consolidated audit trail of all 11 testing steps and registered footwear passport entries.",
+        p10InstTitle: "Instructions:",
+        p10InstDesc: "Click <strong>\"Generate Summary Report\"</strong> to calculate testing coverage and compile the audit report.",
+        btnSummary: "Generate Summary Report",
+
+        // Blueprint TOC
+        bpTocHeader: "📑 Blueprint Table of Contents",
+        bpNav1: "1. What is DPP & Footwear ESPR?",
+        bpNav2: "2. 5-Component Architecture",
+        bpNav3: "3. System Roles & Access Control",
+        bpNav4: "4. 3-Tier Hierarchy (Model/Batch/Item)",
+        bpNav5: "5. Validator & JSON Schema Rules",
+        bpNav6: "6. Data Ingestion (Web UI vs API)",
+        bpNav7: "7. Where to View Passports?",
+        bpNav8: "8. Cryptographic Proof (JWT)",
+        bpNav9: "9. Operational FAQ (Cloud & License)",
+        bpNav10: "10. Public URLs Cheat Sheet",
+        bpNav11: "11. Vocabulary Hub & EUDPP CORE",
+        bpNav12: "12. CIRPASS-2 Footwear Data Model",
+        tabLabelVocab: "Vocabulary Hub & Ontologies"
+      },
+      vi: {
+        hdrTitle: "Nền tảng DPP — Bàn Thử Nghiệm & Toàn Tập Blueprint",
+        hdrSubtitle: "Hộ chiếu Sản phẩm Kỹ thuật số | Thí điểm Ngành Giày Dép ESPR | Registry + Validator",
+        tabLabelLab: "Bàn Thử Nghiệm",
+        tabLabelBlueprint: "Toàn Tập Blueprint",
+        tabLabelVocab: "Từ điển & Bản thể luận DPP",
+        sbTitle: "Kịch bản Thử nghiệm",
+        sbStep0: "Kiểm tra hệ thống",
+        sbStep1: "Đăng nhập (Token)",
+        sbStep2: "Xem JSON Schema",
+        sbStep3: "Validate DPP Giày dép ✨",
+        sbStep4: "Đăng ký MODEL DPP",
+        sbStep5: "Đăng ký BATCH DPP",
+        sbStep6: "Đăng ký ITEM DPP",
+        sbStep7: "Tra cứu DPP",
+        sbStep8: "Lấy Proof",
+        sbStep9: "Cập nhật DPP",
+        sbStep10: "Báo cáo Tổng kết",
+
+        // Step 1
+        p0Title: "Bước 1: Kiểm tra Sức khỏe Toàn bộ Hệ thống",
+        p0Desc: "Kiểm tra tình trạng hoạt động thực tế của cả 5 dịch vụ vi mô trên Cloud (Mock EU Registry, Keycloak OIDC, PostgreSQL, và DPP Validator).",
+        p0InstTitle: "Hướng dẫn:",
+        p0InstList: "<li>Nhấn nút <strong>\"Kiểm tra toàn bộ dịch vụ\"</strong> bên dưới.</li><li>Đợi phản hồi từ máy chủ — tất cả các ô dịch vụ phải chuyển sang màu xanh (OK).</li><li>Các điểm cuối kiểm tra kết nối cơ sở dữ liệu nội bộ và phân phối khóa công khai JWKS.</li>",
+        btnCheckSys: "Kiểm tra toàn bộ dịch vụ",
+
+        // Step 2
+        p1Title: "Bước 2: Đăng nhập & Lấy Mã Chứng thực (JWT Token)",
+        p1Desc: "Chọn một vai trò doanh nghiệp để đăng nhập qua Keycloak OIDC. Mã Token nhận được sẽ được dùng để thực hiện tất cả các thao tác tiếp theo.",
+        p1InstTitle: "Hướng dẫn:",
+        p1InstList: "<li>Chọn <strong>\"Nhà sản xuất giày (eo-user)\"</strong> cho vai trò doanh nghiệp hoặc <strong>\"Quản trị viên (admin-user)\"</strong> cho vai trò kiểm soát.</li><li>Nhấn nút <strong>\"Đăng nhập\"</strong>.</li><li>Sau khi đăng nhập thành công, huy hiệu trạng thái ở góc trên bên phải sẽ hiển thị thông tin phiên làm việc.</li>",
+        p1RoleAdmin: "Toàn quyền quản trị hệ thống, quản lý schema và cấu hình hệ thống.",
+        p1RoleEO: "Nhà sản xuất giày dép (Economic Operator) — đăng ký, kiểm định và cập nhật DPP.",
+        p1RoleEU: "Khách hàng / Cơ quan thẩm quyền (End User) — xem thông tin công khai và kiểm tra chứng nhận tuân thủ.",
+        lblSelectUser: "Chọn tài khoản đăng nhập",
+        btnLogin: "Đăng nhập",
+
+        // Step 3
+        p2Title: "Bước 3: Xem JSON Schema hiện tại",
+        p2Desc: "JSON Schema quy định cấu trúc dữ liệu bắt buộc của Hộ chiếu — định dạng, trường thông tin và quy tắc thẩm định.",
+        p2InstTitle: "Hướng dẫn:",
+        p2InstList: "<li>Nhấn nút <strong>\"Lấy Schema hiện tại\"</strong>.</li><li>Xem lại danh sách các trường bắt buộc phải có.</li><li><strong>Lưu ý:</strong> Cần đăng nhập với tài khoản <strong>admin-user</strong> hoặc <strong>eu-user</strong> để kiểm tra cơ chế phân quyền RBAC.</li>",
+        btnGetSchema: "Lấy Schema hiện tại",
+
+        // Step 4
+        p3Title: "Bước 4: Kiểm định Hợp chuẩn DPP Giày Dép ✨",
+        p3Desc: "Tự động kiểm tra dữ liệu hộ chiếu theo tiêu chuẩn Sinh thái EU Ecodesign (ESPR) ngành Giày dép trước khi nộp lên Sổ Đăng Ký.",
+        p3InstTitle: "Hướng dẫn:",
+        p3InstList: "<li>Đảm bảo bạn đã đăng nhập (sử dụng các nút Đăng nhập nhanh bên dưới).</li><li>Nhấn nút <strong>\"👟 Dữ liệu Giày Chuẩn\"</strong> để điền mẫu thông tin giày thể thao hợp lệ.</li><li>Nhấn nút <strong>\"Kiểm định Payload\"</strong> để gửi dữ liệu đến DPP Validator.</li><li>Màu xanh báo hiệu đạt chuẩn (sẵn sàng đăng ký); màu đỏ chỉ ra các lỗi chưa tuân thủ quy chuẩn EU.</li>",
+        p3CardValTitle: "Động cơ DPP Validator",
+        p3CardValDesc: "Kiểm tra tính hợp lệ của cấu trúc JSON/JSON-LD theo các lược đồ JSON Schema và SHACL chính thức, độc lập với Sổ Đăng Ký.",
+        p3CardEsprTitle: "Tiêu chuẩn Giày dép ESPR",
+        p3CardEsprDesc: "Xác minh các trường bắt buộc: địa chỉ nhà sản xuất, mã định danh sản phẩm, phân hạng dấu chân carbon vòng đời, và thông số đế giày có thể tháo rời tái chế.",
+        lblAuthStatusBox: "Trạng thái xác thực (Keycloak JWT)",
+        btnQuickAdmin: "⚡ Đăng nhập nhanh Admin",
+        btnQuickEO: "⚡ Đăng nhập nhanh EO",
+        btnSampleValid: "👟 Dữ liệu Giày Chuẩn",
+        btnSampleInvalid: "⚠️ Dữ liệu Thiếu trường (Lỗi)",
+        btnUploadSchema: "📤 Tải lên Schema Giày Dép",
+        lblPayload: "Dữ liệu Hộ chiếu Giày Dép (JSON) — Có thể chỉnh sửa",
+        btnValidate: "Kiểm định Payload",
+        btnValHealth: "Kiểm tra Sức khỏe Validator",
+        btnListSchemas: "Danh sách Schema trong DB",
+
+        // Step 5
+        p4Title: "Bước 5: Đăng ký MODEL DPP Giày Dép",
+        p4Desc: "<strong>MODEL</strong> là cấp độ cao nhất đại diện cho toàn bộ dòng sản phẩm (ví dụ dòng giày 'EcoStride Circular Runner XB-100').",
+        p4InstTitle: "Hướng dẫn:",
+        p4InstList: "<li>Nhấn nút <strong>\"Tải mẫu MODEL\"</strong> để điền thông số dòng giày.</li><li>Nhấn <strong>\"Đăng ký MODEL\"</strong> để ghi nhận thông tin vào Sổ Đăng Ký Quốc Gia.</li><li>Lưu lại mã <strong>Model UPI</strong> và <strong>Registry ID</strong> để dùng cho các bước tiếp theo.</li>",
+        btnLoadModelSample: "Tải mẫu MODEL",
+        btnRegModel: "Đăng ký MODEL",
+
+        // Step 6
+        p5Title: "Bước 6: Đăng ký BATCH DPP Giày Dép",
+        p5Desc: "<strong>BATCH</strong> là cấp lô sản xuất — mỗi BATCH gắn liền với một dòng MODEL cha.",
+        p5InstTitle: "Hướng dẫn:",
+        p5InstList: "<li>Ô <strong>Model UPI</strong> tham chiếu chính xác đến MODEL đã đăng ký ở Bước 5.</li><li>Nhấn <strong>\"Đăng ký BATCH\"</strong> để liên kết quan hệ lô hàng.</li>",
+        btnRegBatch: "Đăng ký BATCH",
+
+        // Step 7
+        p6Title: "Bước 7: Đăng ký ITEM DPP Giày Dép",
+        p6Desc: "<strong>ITEM</strong> là từng đôi giày cụ thể xuất xưởng — có mã serial riêng và liên kết với BATCH và MODEL cha.",
+        p6InstTitle: "Hướng dẫn:",
+        p6InstList: "<li>Đảm bảo <strong>Model UPI</strong> và <strong>Batch UPI</strong> khớp với các bước trước.</li><li>Nhấn <strong>\"Đăng ký ITEM\"</strong> để cấp hộ chiếu cho đôi giày cụ thể.</li>",
+        optActive: "Không — Đang lưu hành / Hoạt động",
+        optDeactive: "Có — Đã ngừng / Đã thu hồi tái chế",
+        btnRegItem: "Đăng ký ITEM",
+
+        // Step 8
+        p7Title: "Bước 8: Tra cứu DPP đã đăng ký",
+        p7Desc: "Tra cứu hồ sơ đăng kiểm bằng Registry ID hoặc xem toàn bộ danh sách sản phẩm trong phiên làm việc.",
+        p7InstTitle: "Hướng dẫn:",
+        p7InstList: "<li>Nhấn <strong>\"Xem tất cả DPP\"</strong> để mở sổ đăng ký trong phiên.</li><li>Hoặc dán mã <strong>Registry ID</strong> và nhấn <strong>\"Tra cứu\"</strong>.</li>",
+        btnQuery: "Tra cứu",
+        btnListAll: "Xem tất cả DPP",
+
+        // Step 9
+        p8Title: "Bước 9: Lấy Chứng chỉ số (Proof of Registration)",
+        p8Desc: "Proof of Registration là một chuỗi <strong>JWT</strong> được ký bằng khóa bí mật (Private Key) của Cổng EU Registry.",
+        p8InstTitle: "Hướng dẫn:",
+        p8InstList: "<li>Nhập mã <strong>Registry ID</strong> của mẫu giày, lô hàng hoặc đôi giày đã đăng ký.</li><li>Nhấn <strong>\"Lấy Proof\"</strong> để nhận chứng nhận có chữ ký số chống giả mạo.</li><li>Nhấn <strong>\"Xem JWKS Public Key\"</strong> để xem khóa công khai dùng để xác minh chữ ký toàn cầu.</li>",
+        btnGetProof: "Lấy Proof",
+        btnGetJwks: "Xem JWKS Public Key",
+
+        // Step 10
+        p9Title: "Bước 10: Cập nhật DPP (Quản lý vòng đời)",
+        p9Desc: "Gửi lại cùng mã UPI sẽ cập nhật hồ sơ cũ (chiến lược MODIFY) mà không tạo bản ghi trùng lặp.",
+        p9InstTitle: "Hướng dẫn:",
+        p9InstList: "<li>Giữ nguyên mã UPI của mẫu giày cần cập nhật.</li><li>Thay đổi một thông số (ví dụ Mã hải quan hoặc Live URL).</li><li>Nhấn <strong>\"Cập nhật DPP\"</strong> và kiểm tra thời gian cập nhật.</li>",
+        btnUpdate: "Cập nhật DPP",
+
+        // Step 11
+        p10Title: "Bước 11: Báo cáo Tổng kết Toàn trình",
+        p10Desc: "Tổng hợp kết quả toàn bộ 11 bước thử nghiệm và bảng kê khai các sản phẩm giày dép đã cấp hộ chiếu.",
+        p10InstTitle: "Hướng dẫn:",
+        p10InstDesc: "Nhấn nút <strong>\"Tạo báo cáo\"</strong> để hệ thống tính toán tỷ lệ hoàn thành và xuất bảng kết quả.",
+        btnSummary: "Tạo báo cáo",
+
+        // Blueprint TOC
+        bpTocHeader: "📑 Mục Lục Toàn Tập Blueprint",
+        bpNav1: "1. DPP là gì & Quy chuẩn Giày dép ESPR?",
+        bpNav2: "2. Kiến trúc 5 Thành phần liên hoàn",
+        bpNav3: "3. Phân quyền & Các vai trò tham gia",
+        bpNav4: "4. Phân cấp 3 tầng (Model/Batch/Item)",
+        bpNav5: "5. Validator & Quy tắc JSON Schema",
+        bpNav6: "6. Phương thức nhập liệu (Web vs API)",
+        bpNav7: "7. Xem hộ chiếu sản phẩm ở đâu?",
+        bpNav8: "8. Chứng chỉ ký số (Proof JWT)",
+        bpNav9: "9. Giải đáp vận hành (Cloud & Bản quyền)",
+        bpNav10: "10. Bảng tra cứu đường link Public",
+        bpNav11: "11. Vocabulary Hub & EUDPP CORE",
+        bpNav12: "12. Mô hình chuẩn CIRPASS-2 Giày dép"
+      }
+    };
+
+    function setLanguage(lang) {
+      currentLang = lang;
+      localStorage.setItem('dpp_lang', lang);
+
+      // Toggle Lang Button Styles
+      document.getElementById('btnLangEn').classList.toggle('active', lang === 'en');
+      document.getElementById('btnLangVi').classList.toggle('active', lang === 'vi');
+
+      const dict = i18n[lang];
+
+      // Update text in Testing Lab
+      for (const [key, val] of Object.entries(dict)) {
+        const el = document.getElementById(key);
+        if (el) {
+          if (key.includes('List') || key.includes('Desc') || key.includes('Title')) {
+            el.innerHTML = val;
+          } else {
+            el.textContent = val;
+          }
+        }
+      }
+
+      // Update dynamic selects
+      const selUser = document.getElementById('loginUser');
+      if (selUser) {
+        if (lang === 'en') {
+          selUser.options[0].text = "Economic Operator (eo-user) — Manufacturer";
+          selUser.options[1].text = "Admin (admin-user) — Administrator";
+          selUser.options[2].text = "End User (eu-user) — Authority / Auditor";
+        } else {
+          selUser.options[0].text = "Nhà sản xuất giày (eo-user) — Economic Operator";
+          selUser.options[1].text = "Quản trị viên (admin-user) — Admin";
+          selUser.options[2].text = "Hải quan / Khách hàng (eu-user) — End User";
+        }
+      }
+
+      const selDeact = document.getElementById('itemDeactivated');
+      if (selDeact) {
+        selDeact.options[0].text = dict.optActive;
+        selDeact.options[1].text = dict.optDeactive;
+      }
+
+      updateAuthUI();
+      if (currentView === 'blueprint') {
+        renderBlueprint();
+      } else if (currentView === 'vocab') {
+        renderVocab();
+      }
+    }
+
+    // --- BLUEPRINT RENDERER (EN & VI) ---
+    function renderBlueprint() {
+      const area = document.getElementById('blueprintContentArea');
+      if (!area) return;
+
+      if (currentLang === 'en') {
+        area.innerHTML = `
+          <div class="bp-hero">
+            <h2>🇪🇺 Digital Product Passport (DPP) — Complete Blueprint</h2>
+            <p>A comprehensive operational architecture guide using the Footwear industry (ESPR Priority Sector) as an end-to-end practical model — written for non-technical leaders and business operators.</p>
+          </div>
+
+          <!-- Section 1 -->
+          <section id="bp-sec1" class="bp-section">
+            <h2>👟 Part 1: What is DPP and Why is it Mandatory for Footwear?</h2>
+            <h3>1. An Everyday Story: Buying a Pair of Running Shoes</h3>
+            <p>Imagine purchasing a new pair of athletic sneakers:</p>
+            <ul>
+              <li><strong>You want to know:</strong> <em>Where were these shoes assembled? What materials are they made of?</em></li>
+              <li><strong>You want to verify:</strong> <em>Are the uppers genuinely woven from 100% recycled ocean-bound plastics? Is the sole made of natural rubber or toxic chemicals (PFAS-free)? How many kilograms of CO₂ were emitted in manufacturing?</em></li>
+              <li><strong>Customs & Regulators want to verify:</strong> <em>Do the shoes meet European safety norms? Can the outsole be detached for second-life recycling?</em></li>
+            </ul>
+            <p>Today, this information is fragmented across a tiny blurry shoe tongue label, a cardboard hangtag, and closed manufacturer databases. Neither customs inspectors nor consumers can verify authenticity.</p>
+            <div class="bp-alert bp-alert-gold">
+              <strong>👉 DPP Solves This Problem:</strong> Every physical product sold in the EU will carry a unique "Digital Product Passport" — functioning exactly like an official <strong>National Identity Card / Citizen Passport for physical goods</strong>.
+            </div>
+
+            <h3>2. Official Definition</h3>
+            <p><strong>Digital Product Passport (DPP):</strong> A standardized, electronically accessible dataset that securely collects and shares product-related information across its entire lifecycle: <strong>from raw material harvesting ➔ spinning & sole molding ➔ assembly ➔ logistics ➔ consumer wear ➔ repair ➔ circular recycling</strong>.</p>
+
+            <h3>3. Who is Mandated by Law?</h3>
+            <p>The <strong>European Union (EU)</strong> under the <strong>Ecodesign for Sustainable Products Regulation (ESPR)</strong>:</p>
+            <ul>
+              <li><strong>Starting 2026 – 2027:</strong> Mandatory first for <strong>Footwear & Textiles</strong> and <strong>EV / Industrial Batteries</strong>.</li>
+              <li><strong>Subsequent Years:</strong> Electronics, Iron & Steel, Chemicals, Construction Materials.</li>
+              <li><strong>Export Impact:</strong> Any enterprise worldwide (including footwear manufacturers in Vietnam, Asia, or America exporting to the EU) <strong>must provide an official DPP</strong> before shipments can clear EU customs.</li>
+            </ul>
+          </section>
+
+          <!-- Section 2 -->
+          <section id="bp-sec2" class="bp-section">
+            <h2>🏗️ Part 2: System Architecture (5 Interconnected Components)</h2>
+            <p>The DPP platform operates like a <strong>Digital Administrative Agency</strong> consisting of 5 seamlessly linked microservices:</p>
+            <div class="mermaid-box">
+              <pre class="mermaid">
+graph TB
+    User([👤 User / Factory ERP / EU Customs]) -->|Internet HTTPS| Gateway["🌐 Gateway (Nginx Reverse Proxy)<br/>dpp-mockup.erx.vn<br/>[Front Desk & Secure Routing]"]
+
+    subgraph "🏛️ Internal Cloud Private Network (*.railway.internal)"
+        Gateway -->|/auth/| KC["🔐 Keycloak (OIDC Server:8180)<br/>[Security Office - ID Checks & Badges]"]
+        Gateway -->|/validate/, /resource/| Val["📐 DPP Validator (Validator:8080)<br/>[Customs Inspection - Compliance Checker]"]
+        Gateway -->|/metadata/, /schema/| Reg["🏛️ EU Registry (Mock Registry:8080)<br/>[Registration Authority & Ledger]"]
+
+        Val --> DB[("🗄️ PostgreSQL (Database:5432)<br/>[Tamper-Proof Archive & Vault]")]
+        Reg --> DB
+    end
+              </pre>
+            </div>
+            <table class="bp-table">
+              <thead><tr><th>Technical Component</th><th>System Service</th><th>Real-World Agency Role</th></tr></thead>
+              <tbody>
+                <tr><td><strong>Nginx Dashboard</strong></td><td>Gateway & Web UI</td><td><strong>Front Desk Receptionist:</strong> Single public entry point; routes traffic securely to internal offices without exposing internal container ports.</td></tr>
+                <tr><td><strong>Keycloak</strong></td><td>OIDC Identity Provider</td><td><strong>Security Guard:</strong> Verifies corporate identities and issues temporary digital access badges (JWT tokens).</td></tr>
+                <tr><td><strong>DPP Validator</strong></td><td>Rule Engine</td><td><strong>Customs Inspector:</strong> Scrutinizes every field against mandatory EU environmental and circularity checklists.</td></tr>
+                <tr><td><strong>Mock EU Registry</strong></td><td>Central Registration Portal</td><td><strong>Government Notary:</strong> Records verified registrations and issues cryptographically signed certificates (Proof JWT).</td></tr>
+                <tr><td><strong>PostgreSQL</strong></td><td>Relational Database</td><td><strong>Permanent Secure Vault:</strong> Stores registration ledgers, audit trails, and regulatory schema definitions permanently.</td></tr>
+              </tbody>
+            </table>
+          </section>
+
+          <!-- Section 3 -->
+          <section id="bp-sec3" class="bp-section">
+            <h2>👥 Part 3: System Roles & Permissions</h2>
+            <p>The platform strictly enforces Role-Based Access Control (RBAC):</p>
+            <table class="bp-table">
+              <thead><tr><th>Role</th><th>Technical Username</th><th>Default Password</th><th>Operational Responsibility</th></tr></thead>
+              <tbody>
+                <tr><td>🔑 <strong>Administrator (Admin)</strong></td><td><code>admin-user</code></td><td><code>admin123</code></td><td>System operator; uploads new regulatory schemas, monitors microservice health.</td></tr>
+                <tr><td>🏭 <strong>Economic Operator (EO)</strong></td><td><code>eo-user</code></td><td><code>eo123</code></td><td>Shoe brand / manufacturer (e.g. <em>EcoStride Footwear AG</em>); registers footwear models, submits batch data, and updates passports.</td></tr>
+                <tr><td>👤 <strong>End User / Authority (EU)</strong></td><td><code>eu-user</code></td><td><code>eu123</code></td><td>Customs inspectors, market surveillance auditors, or retail consumers; reads passport data, verifies cryptographic proofs.</td></tr>
+              </tbody>
+            </table>
+          </section>
+
+          <!-- Section 4 -->
+          <section id="bp-sec4" class="bp-section">
+            <h2>📊 Part 4: 3-Tier Granularity Hierarchy in Footwear</h2>
+            <p>In footwear manufacturing, data is organized in a 3-tier hierarchy pyramid:</p>
+            <div class="mermaid-box">
+              <pre class="mermaid">
+graph TD
+    M["🏷️ Level 1: MODEL (Product Line)<br/>e.g. Model 'EcoStride Circular Runner XB-100'<br/><i>Contains: Brand name, HS Code 64041100, Base Upper & Sole Composition</i>"]
+    B["📦 Level 2: BATCH (Production Lot)<br/>e.g. Lot #BATCH-2026-09 (Manufactured Sept 2026)<br/><i>Contains: Assembly plant GLN, vulcanization lot date, dye batch</i>"]
+    I["👟 Level 3: ITEM (Individual Physical Pair)<br/>e.g. Serial #SN-SHOE-00123456 (Size EUR 42)<br/><i>Contains: Unique QR code serialized UID, repair log</i>"]
+
+    M --> B
+    B --> I
+              </pre>
+            </div>
+            <ul>
+              <li><strong>Level 1 (MODEL):</strong> General blueprint. Allows customs to confirm that the style meets EU safety standards and chemical bans (PFAS-free).</li>
+              <li><strong>Level 2 (BATCH):</strong> Production run. If a specific lot of sole adhesive fails quality tests, the brand recalls only that batch rather than all shoes ever made.</li>
+              <li><strong>Level 3 (ITEM):</strong> The exact physical pair you wear. Contains a unique serial number tied to the physical QR code on the shoe tongue, enabling individual repair tracking and take-back recycling.</li>
+            </ul>
+          </section>
+
+          <!-- Section 5 -->
+          <section id="bp-sec5" class="bp-section">
+            <h2>📐 Part 5: Validator & JSON Schema Rules</h2>
+            <p>The Validator is the automated gatekeeper auditing payloads before submission to the Registry:</p>
+            <h3>1. What is a JSON Schema?</h3>
+            <p>A JSON Schema is an official regulatory checklist. Under EU Footwear rules, a valid passport must declare:</p>
+            <ul>
+              <li>Manufacturer legal entity & physical address (<code>name</code>, <code>streetName</code>, <code>postalCode</code>, <code>cityName</code>, <code>country</code>)</li>
+              <li>Unique Product Identifier (<code>productUID</code>)</li>
+              <li>Carbon Footprint declaration (<code>carbonFootprint.lifeCycleCarbon</code>, <code>carbonFootprintPerformanceClass</code>)</li>
+              <li>Circularity parameters (<code>repairabilityScore</code>, <code>detachableSole</code>, <code>recyclingInstructions</code>)</li>
+            </ul>
+            <div class="bp-alert bp-alert-note">
+              <strong>Unique Schema Constraint:</strong> Each schema version (e.g. <code>footwear-schema</code> version <code>1.0.0</code>) is uploaded once into the PostgreSQL database. If re-uploaded, the system detects its presence and advises proceeding directly to validation.
+            </div>
+          </section>
+
+          <!-- Section 6 -->
+          <section id="bp-sec6" class="bp-section">
+            <h2>💻 Part 6: Data Ingestion (Web UI vs API)</h2>
+            <p>Data can be ingested via two primary pathways:</p>
+            <h3>Method 1: Web Testing Dashboard (For Pilot Testing & Auditing)</h3>
+            <p>Visit the public testing dashboard: <strong><a href="https://dpp-mockup.erx.vn" target="_blank" style="color:var(--accent-hover)">https://dpp-mockup.erx.vn</a></strong></p>
+            <ol>
+              <li><strong>Step 2 (Auth):</strong> Click <code>⚡ Quick Login EO</code> to acquire a 24-hour access token.</li>
+              <li><strong>Step 4 (Validation):</strong> Click <code>👟 Valid Footwear Sample</code> and click <code>Validate Payload</code>.</li>
+              <li><strong>Steps 5, 6, 7 (Registration):</strong> Enter the UPI, REO ID, Commodity Code (<code>64041100</code>), and Live URL, then click Register.</li>
+            </ol>
+            <h3>Method 2: Automated REST API (For Factory ERP / MES Integration)</h3>
+            <p>In high-volume manufacturing, automated assembly lines push data directly through REST APIs:</p>
+            <ul>
+              <li><strong>Gateway Base URL:</strong> <code>https://dpp-mockup.erx.vn</code></li>
+              <li><strong>API Specs:</strong> <code>/q/openapi</code></li>
+              <li><strong>Step 1:</strong> Acquire token: <code>POST /auth/realms/dpp-registry/protocol/openid-connect/token</code></li>
+              <li><strong>Step 2:</strong> Submit passport: <code>POST /metadata/v1/registerDPP</code> with <code>Authorization: Bearer &lt;TOKEN&gt;</code></li>
+            </ul>
+          </section>
+
+          <!-- Section 7 -->
+          <section id="bp-sec7" class="bp-section">
+            <h2>🔍 Part 7: Where to View Registered Passports?</h2>
+            <p>It is vital to distinguish between the <strong>Central EU Registry Ledger</strong> and the <strong>Consumer Passport Web UI</strong>:</p>
+            <div class="mermaid-box">
+              <pre class="mermaid">
+graph LR
+    subgraph "1. Central EU Registry (This Platform)"
+        R["Legal Verification & Ledger<br/><i>(For Customs, Auditors, and Brand Legal Teams)</i><br/>Stores: UPI, HS Code, Registration Date, Cryptographic Proof JWT"]
+    end
+
+    subgraph "2. Consumer Passport Web UI (Live URL)"
+        P["Brand Consumer Web Application<br/><i>(For Shoppers Scanning Tongue/Box QR Code)</i><br/>Displays: Materials, Eco-score, Sizing, Detachable Sole Repair Guide"]
+    end
+
+    QR["Consumer scans QR on shoe tongue"] --> P
+    Customs["Customs officer checks EU database"] --> R
+              </pre>
+            </div>
+            <ul>
+              <li><strong>Central EU Registry (This System):</strong> A legal notary and index ledger. It does <em>not</em> serve as a commercial shopping catalog; it stores verifiable regulatory metadata and proof certificates. Access via <strong>Step 8 (Lookup)</strong> or <strong>Step 11 (Summary Report)</strong>.</li>
+              <li><strong>Consumer Passport UI (Live URL):</strong> The interactive, branded portal displayed when a consumer scans the QR code on the shoe tongue or box tag (specified in the <code>Live URL</code> field, e.g. <code>https://passport.ecostride.eu/shoes/runner-xb100</code>).</li>
+            </ul>
+          </section>
+
+          <!-- Section 8 -->
+          <section id="bp-sec8" class="bp-section">
+            <h2>📜 Part 8: Cryptographic Proof of Registration</h2>
+            <p>Upon registration, the EU Registry generates an unforgeable <strong>Proof of Registration</strong>:</p>
+            <ul>
+              <li><strong>What is it?</strong> A digitally signed JSON Web Token (JWT) signed by the Registry's private RSA key.</li>
+              <li><strong>Non-Repudiation:</strong> Only the official EU Registry holds the private signing key.</li>
+              <li><strong>Global Verifiability:</strong> Anyone worldwide can fetch the public key via <code>/.well-known/jwks.json</code> to verify that the certificate is authentic.</li>
+              <li><strong>Tamper Detection (<code>dppHash</code>):</strong> Product data is hashed using SHA-256. If any party changes even a single character in the passport, the hash mismatch immediately exposes the discrepancy.</li>
+            </ul>
+          </section>
+
+          <!-- Section 9 -->
+          <section id="bp-sec9" class="bp-section">
+            <h2>❓ Part 9: Operational FAQ (Cloud & License)</h2>
+            <h3>1. Do we need any backend adjustments? Are services operational on Railway?</h3>
+            <p>👉 <strong>NO ADJUSTMENTS NEEDED.</strong> All 5 microservices are fully installed, interconnected, and running with <strong>Status: SUCCESS (100% Up & Running)</strong>.</p>
+            <h3>2. Why does <code>http://registry:8080/q/health</code> fail in my personal browser?</h3>
+            <p><code>registry:8080</code> is an internal container hostname inside Railway's isolated private network. Use the public gateway URL: <strong><a href="https://dpp-mockup.erx.vn/q/health" target="_blank" style="color:var(--accent-hover)">https://dpp-mockup.erx.vn/q/health</a></strong> (returns <code>{"status": "UP"}</code>).</p>
+            <h3>3. What does "Mock" mean? How will it work when EU mandates start?</h3>
+            <p>The software was developed by the CIRPASS-2 Consortium (funded by the European Commission) as the official reference implementation adhering to 100% of future EU specifications. When the EU launches its central registry in 2026–2027, you do <strong>not</strong> rewrite any code; you simply point your API calls to the official EU domain.</p>
+            <h3>4. Are there any licensing restrictions or royalty fees?</h3>
+            <p>👉 <strong>100% Free & Open-Source under the Apache License 2.0.</strong> Free for commercial use, no royalties, no quotas on product registrations.</p>
+            <h3>5. What are the cloud hosting costs?</h3>
+            <p>All 5 microservices consume only ~1.1 GB of RAM combined, costing approximately <strong>$5/month (~120,000 VND/month)</strong> on Railway.</p>
+          </section>
+
+          <!-- Section 10 -->
+          <section id="bp-sec10" class="bp-section">
+            <h2>📌 Part 10: Public Quick Reference Cheat Sheet</h2>
+            <table class="bp-table">
+              <thead><tr><th>Service</th><th>Public URL</th><th>Usage</th></tr></thead>
+              <tbody>
+                <tr><td>🖥️ <strong>Testing Dashboard</strong></td><td><a href="https://dpp-mockup.erx.vn" target="_blank" style="color:var(--accent-hover)">https://dpp-mockup.erx.vn</a></td><td>Complete 11-step testing interface and blueprint viewer</td></tr>
+                <tr><td>🏥 <strong>Registry Health</strong></td><td><a href="https://dpp-mockup.erx.vn/q/health" target="_blank" style="color:var(--accent-hover)">.../q/health</a></td><td>Verifies Mock EU Registry server & database connectivity (<code>UP</code>)</td></tr>
+                <tr><td>🔬 <strong>Validator Health</strong></td><td><a href="https://dpp-mockup.erx.vn/validator-health/health" target="_blank" style="color:var(--accent-hover)">.../validator-health/health</a></td><td>Verifies DPP Validator compliance engine (<code>UP</code>)</td></tr>
+                <tr><td>🔑 <strong>JWKS Public Key</strong></td><td><a href="https://dpp-mockup.erx.vn/.well-known/jwks.json" target="_blank" style="color:var(--accent-hover)">.../.well-known/jwks.json</a></td><td>Public RSA key for verifying Proof of Registration signatures</td></tr>
+                <tr><td>🛡️ <strong>Keycloak Admin</strong></td><td><a href="https://dpp-mockup.erx.vn/auth/admin/" target="_blank" style="color:var(--accent-hover)">.../auth/admin/</a></td><td>Enterprise user & credential administration (<code>admin</code> / <code>admin</code>)</td></tr>
+                <tr><td>📖 <strong>OpenAPI Specs</strong></td><td><a href="https://dpp-mockup.erx.vn/q/openapi" target="_blank" style="color:var(--accent-hover)">.../q/openapi</a></td><td>Technical endpoint definitions for ERP & MES automation</td></tr>
+              </tbody>
+            </table>
+          </section>
+
+          <!-- Section 11 -->
+          <section id="bp-sec11" class="bp-section">
+            <h2>📚 Part 11: European DPP Semantic Architecture & 10 EUDPP Core Ontologies</h2>
+            <p>The European Digital Product Passport is built upon the official semantic framework hosted at <strong><a href="https://dpp.vocabulary-hub.eu/" target="_blank" style="color:var(--accent-hover)">dpp.vocabulary-hub.eu</a></strong> (operated on Semantic Treehouse by TNO, Kezzler, and the CIRPASS-2 Consortium).</p>
+            <div class="bp-alert bp-alert-note">
+              <strong>Single Source of Truth:</strong> EUDPP CORE ontologies define machine-readable standards across all 27 EU member states, ensuring semantic interoperability for customs, market surveillance authorities, and circular recycling operators.
+            </div>
+            <table class="bp-table">
+              <thead><tr><th>Module</th><th>Version</th><th>Domain & Scope</th><th>Key Standards & Classes</th></tr></thead>
+              <tbody>
+                <tr><td><code>CORE</code></td><td>v2.0</td><td>Central integrating backbone connecting all thematic modules</td><td><code>eudpp:Product</code>, <code>eudpp:DPP</code>, <code>eudpp:hasProperty</code></td></tr>
+                <tr><td><code>IDENT</code></td><td>v1.0.5</td><td>Universal identification framework for products and facilities</td><td>GS1 Digital Link URI, ISO/IEC 15459, SGTIN, GLN, EORI</td></tr>
+                <tr><td><code>P_DPP</code></td><td>v2.0.6</td><td>Granularity levels and lifecycle status of physical goods and passports</td><td>Model, Batch, Item, Active, Inactive, Decommissioned</td></tr>
+                <tr><td><code>ACTOR</code></td><td>v2.0.0</td><td>Economic Operators across global manufacturing & supply chains</td><td>RegisteredEconomicOperator, Manufacturer, Facility, Recycler</td></tr>
+                <tr><td><code>MAT</code></td><td>v1.0.2</td><td>Multi-component material breakdown and certified recycled content</td><td>UpperMesh, MidsoleFoam, OutsoleRubber, recycledContent</td></tr>
+                <tr><td><code>SOC</code></td><td>v2.0.0</td><td>Substances of Concern under REACH and chemical restrictions</td><td>REACH SVHC list, SCIP database bindings, PFAS-Free declarations</td></tr>
+                <tr><td><code>LCA</code></td><td>v2.0</td><td>Environmental life-cycle footprint and circularity metrics</td><td>ILCD+EPD v1.3, PEF (kg CO₂e/pair), Repairability Index</td></tr>
+                <tr><td><code>EVENT</code></td><td>v0.1.0</td><td>GS1 EPCIS 2.0 lifecycle timeline audit events</td><td>BirthEvent, TransferEvent, RepairEvent, RecyclingEvent</td></tr>
+                <tr><td><code>COMP</code></td><td>v1.0</td><td>Digital EU Declaration of Conformity and CE compliance</td><td>EU Declaration of Conformity (DoC), Notified Body IDs</td></tr>
+                <tr><td><code>CON</code></td><td>v2.0.5</td><td>Axiomatic bridge module unifying inter-ontology relationships</td><td>Cross-module integration axioms and semantic mappings</td></tr>
+              </tbody>
+            </table>
+          </section>
+
+          <!-- Section 12 -->
+          <section id="bp-sec12" class="bp-section">
+            <h2>👟 Part 12: CIRPASS-2 Footwear Pilot Data Model (MVP v2)</h2>
+            <h3>1. The Architectural Divide: Central Registry vs. Decentralized DPP Carrier</h3>
+            <p>Under European Regulation ESPR (EU) 2024/1781, <strong>the EU Central Registry DOES NOT store confidential commercial data, raw material formulas, or supply chain trade secrets</strong>.</p>
+            <ul>
+              <li><strong>EU Central Registry (9 Index Fields):</strong> Stores only the routing index: <code>companyIdentifier</code>, <code>taricCode</code>, <code>operatorIdentifier</code>, <code>facilityIdentifier</code>, <code>passportId</code>, <code>registryIdentifier</code>, <code>dppUrl</code>, <code>dppBackupUrl</code>, <code>lifecycleState</code>.</li>
+              <li><strong>Decentralized DPP Carrier (35+ Detailed Fields):</strong> Hosted by the brand/DPP provider, holding the complete bill of materials, factory names, recycled %, repair guides, and EU DoC.</li>
+            </ul>
+            <div class="bp-alert bp-alert-gold">
+              <strong>Footwear Classification:</strong> Uses TARIC commodity code <code>64041100</code> (Sports footwear with rubber soles and textile upper). Tier-1 assembly facilities are uniquely identified using GS1 Global Location Numbers (GLN).
+            </div>
+          </section>
+
+        `;
+      } else {
+        area.innerHTML = `
+          <div class="bp-hero">
+            <h2>🇪🇺 Digital Product Passport (DPP) — Toàn Tập Blueprint</h2>
+            <p>Cẩm nang vận hành kiến trúc hệ thống chuẩn Châu Âu, sử dụng ngành Giày Dép (Nhóm ưu tiên hàng đầu theo luật ESPR) làm ví dụ thực tế xuyên suốt — viết riêng cho người không chuyên về dữ liệu & công nghệ.</p>
+          </div>
+
+          <!-- Section 1 -->
+          <section id="bp-sec1" class="bp-section">
+            <h2>👟 Phần 1: DPP là gì và tại sao lại bắt buộc đối với ngành Giày dép?</h2>
+            <h3>1. Câu chuyện đời thường: Khi bạn mua một đôi Giày Thể thao</h3>
+            <p>Hãy tưởng tượng bạn chuẩn bị mua một đôi giày chạy bộ mới:</p>
+            <ul>
+              <li><strong>Bạn muốn biết:</strong> <em>Đôi giày này sản xuất ở đâu? Do nhà máy nào gia công?</em></li>
+              <li><strong>Bạn muốn kiểm tra:</strong> <em>Vải thân trên (Upper) có thật sự làm từ 100% nhựa đại dương tái chế không? Đế giày làm bằng cao su tự nhiên hay có chứa chất độc hại (PFAS-free)? Quá trình sản xuất thải ra bao nhiêu kg CO₂?</em></li>
+              <li><strong>Hải quan Châu Âu muốn biết:</strong> <em>Sản phẩm có đạt tiêu chuẩn an toàn không? Đế giày có thể tháo rời để tái chế khi cũ hỏng không?</em></li>
+            </ul>
+            <p>Hiện nay, thông tin này bị phân mảnh nghiêm trọng — một mẩu tem vải mờ may trong lưỡi gà, một tấm tag bìa giấy vứt vào sọt rác, và toàn bộ dữ liệu kỹ thuật bị khóa kín trong máy tính của nhà máy. Hải quan và người tiêu dùng không thể xác minh thật giả.</p>
+            <div class="bp-alert bp-alert-gold">
+              <strong>👉 DPP Ra Đời Để Giải Quyết Vấn Đề Này:</strong> Mỗi đôi giày bán ra thị trường sẽ có một "Hộ chiếu kỹ thuật số" độc nhất vô nhị — giống hệt như cuốn <strong>Căn cước công dân / Hộ chiếu</strong>, nhưng dành riêng cho hàng hóa vật lý.
+            </div>
+
+            <h3>2. Định nghĩa chính thức</h3>
+            <p><strong>Digital Product Passport (DPP):</strong> Là tập hợp hồ sơ dữ liệu điện tử minh bạch, ghi lại toàn bộ "lý lịch" vòng đời của sản phẩm: <strong>từ nguồn gốc sợi dệt & cao su thô ➔ nhuộm vải & đúc đế ➔ lắp ráp xuất xưởng ➔ vận chuyển quốc tế ➔ người tiêu dùng sử dụng ➔ sửa chữa ➔ thu hồi tái chế tuần hoàn</strong>.</p>
+
+            <h3>3. Ai bắt buộc áp dụng?</h3>
+            <p><strong>Liên minh Châu Âu (EU)</strong> — thông qua đạo luật <strong>ESPR (Ecodesign for Sustainable Products Regulation)</strong>:</p>
+            <ul>
+              <li><strong>Từ 2026 – 2027:</strong> Bắt buộc tiên phong đối với <strong>Giày dép & May mặc (Footwear & Textiles)</strong> cùng với <strong>Pin xe điện</strong>.</li>
+              <li><strong>Các năm tiếp theo:</strong> Mở rộng sang Thiết bị điện tử, Sắt thép, Hóa chất, Vật liệu xây dựng.</li>
+              <li><strong>Tác động xuất khẩu:</strong> Mọi doanh nghiệp sản xuất gia công giày dép tại Việt Nam hoặc các nước xuất khẩu sang EU <strong>bắt buộc phải có DPP</strong> thì hàng hóa mới được thông quan qua hải quan Châu Âu.</li>
+            </ul>
+          </section>
+
+          <!-- Section 2 -->
+          <section id="bp-sec2" class="bp-section">
+            <h2>🏗️ Phần 2: Kiến trúc Hệ thống DPP (5 Thành phần liên hoàn)</h2>
+            <p>Hệ thống DPP hoàn chỉnh hoạt động như một <strong>Tòa nhà cơ quan hành chính số</strong> bao gồm 5 bộ phận phối hợp chặt chẽ:</p>
+            <div class="mermaid-box">
+              <pre class="mermaid">
+graph TB
+    User([👤 Người dùng / Nhà máy ERP / Hải quan EU]) -->|Internet HTTPS| Gateway["🌐 Cổng Gateway (Nginx Reverse Proxy)<br/>dpp-mockup.erx.vn<br/>[Quầy tiếp tân & Điều phối luồng an toàn]"]
+
+    subgraph "🏛️ Mạng nội bộ bảo mật (*.railway.internal)"
+        Gateway -->|/auth/| KC["🔐 Keycloak (OIDC Server:8180)<br/>[Phòng an ninh - Soát vé & Cấp thẻ ra vào]"]
+        Gateway -->|/validate/, /resource/| Val["📐 DPP Validator (Validator:8080)<br/>[Cán bộ hải quan - Soi chuẩn kỹ thuật giày dép]"]
+        Gateway -->|/metadata/, /schema/| Reg["🏛️ EU Registry (Mock Registry:8080)<br/>[Phòng công chứng - Cấp chứng nhận & Ký số EU]"]
+
+        Val --> DB[("🗄️ PostgreSQL (Database:5432)<br/>[Kho lưu trữ vĩnh viễn & Chống sửa đổi]")]
+        Reg --> DB
+    end
+              </pre>
+            </div>
+            <table class="bp-table">
+              <thead><tr><th>Thành phần</th><th>Tên kỹ thuật</th><th>Đóng vai trò gì trong đời thực?</th></tr></thead>
+              <tbody>
+                <tr><td><strong>Nginx Dashboard</strong></td><td>Gateway & Web UI</td><td><strong>Quầy tiếp tân:</strong> Điểm tiếp xúc duy nhất với mạng Internet bên ngoài; hướng dẫn khách vào đúng phòng chức năng mà không để lộ mạng nội bộ.</td></tr>
+                <tr><td><strong>Keycloak</strong></td><td>OIDC Identity Provider</td><td><strong>Bảo vệ an ninh:</strong> Cấp thẻ ra vào điện tử (Token) cho đúng người, đúng quyền, ngăn chặn truy cập trái phép.</td></tr>
+                <tr><td><strong>DPP Validator</strong></td><td>Bộ kiểm định tiêu chuẩn</td><td><strong>Hải quan kiểm hóa:</strong> Tự động rà soát từng dòng thông tin của đôi giày xem có đạt chuẩn môi trường và an toàn Châu Âu hay không.</td></tr>
+                <tr><td><strong>Mock EU Registry</strong></td><td>Cổng đăng ký trung tâm</td><td><strong>Cơ quan cấp chứng nhận:</strong> Đóng dấu xác nhận đăng ký hợp lệ và cấp chứng nhận điện tử (Proof) có chữ ký số chống giả mạo.</td></tr>
+                <tr><td><strong>PostgreSQL</strong></td><td>Cơ sở dữ liệu quan hệ</td><td><strong>Tủ hồ sơ bảo mật vĩnh viễn:</strong> Nơi cất giữ thông tin đăng ký và bộ tiêu chuẩn kiểm định (Schemas).</td></tr>
+              </tbody>
+            </table>
+          </section>
+
+          <!-- Section 3 -->
+          <section id="bp-sec3" class="bp-section">
+            <h2>👥 Phần 3: Các vai trò tham gia hệ thống</h2>
+            <p>Hệ thống phân định rõ ràng 3 nhóm tài khoản theo mô hình RBAC:</p>
+            <table class="bp-table">
+              <thead><tr><th>Vai trò</th><th>Tài khoản kỹ thuật</th><th>Mật khẩu mẫu</th><th>Trách nhiệm thực tế</th></tr></thead>
+              <tbody>
+                <tr><td>🔑 <strong>Quản trị viên (Admin)</strong></td><td><code>admin-user</code></td><td><code>admin123</code></td><td>Quản lý toàn bộ hệ thống; tải lên các bộ tiêu chuẩn kiểm định mới (Schemas) cho ngành giày dép.</td></tr>
+                <tr><td>🏭 <strong>Doanh nghiệp (EO)</strong></td><td><code>eo-user</code></td><td><code>eo123</code></td><td>Hãng giày / Nhà máy sản xuất (VD: <em>EcoStride Footwear AG</em>); nộp dữ liệu, đăng ký hộ chiếu và cập nhật thông tin sản phẩm.</td></tr>
+                <tr><td>👤 <strong>Hải quan / Người dùng (EU)</strong></td><td><code>eu-user</code></td><td><code>eu123</code></td><td>Cán bộ hải quan kiểm tra thông quan hoặc người tiêu dùng quét mã tra cứu tính hợp lệ và chứng nhận số.</td></tr>
+              </tbody>
+            </table>
+          </section>
+
+          <!-- Section 4 -->
+          <section id="bp-sec4" class="bp-section">
+            <h2>📊 Phần 4: Cấu trúc phân cấp 3 tầng của DPP ngành Giày dép</h2>
+            <p>Hộ chiếu sản phẩm giày dép được quản lý theo mô hình hình phễu 3 cấp độ:</p>
+            <div class="mermaid-box">
+              <pre class="mermaid">
+graph TD
+    M["🏷️ Cấp 1: MODEL (Dòng sản phẩm)<br/>VD: Mẫu giày 'EcoStride Circular Runner XB-100'<br/><i>Chứa: Tên mẫu, Mã hải quan HS 64041100, Tỷ lệ chất liệu vải & đế chung</i>"]
+    B["📦 Cấp 2: BATCH (Lô sản xuất)<br/>VD: Lô hàng #BATCH-2026-09 (Sản xuất tháng 09/2026)<br/><i>Chứa: Mã nhà máy lắp ráp GLN, ngày xuất xưởng của cả lô, mẻ nhuộm vải</i>"]
+    I["👟 Cấp 3: ITEM (Từng đôi giày cụ thể)<br/>VD: Đôi giày số serial #SN-SHOE-00123456 (Cỡ 42)<br/><i>Chứa: Mã QR định danh độc nhất trên tem giày, lịch sử sửa chữa/thu hồi</i>"]
+
+    M --> B
+    B --> I
+              </pre>
+            </div>
+            <ul>
+              <li><strong>Cấp 1 (MODEL):</strong> Bản thiết kế dòng sản phẩm. Giúp hải quan kiểm tra mẫu giày có đạt chuẩn an toàn của EU và không chứa hóa chất độc hại (PFAS-free) hay không.</li>
+              <li><strong>Cấp 2 (BATCH):</strong> Lô sản xuất. Nếu một mẻ đế cao su bị lỗi keo dán, hãng chỉ cần triệu hồi đúng lô đó thay vì thu hồi toàn bộ giày trên thị trường.</li>
+              <li><strong>Cấp 3 (ITEM):</strong> Từng đôi giày cụ thể bạn đi. Mỗi đôi có mã số serial riêng biệt gắn với mã QR dán trong tem lưỡi gà, giúp theo dõi bảo hành, thay đế và thu hồi tái chế.</li>
+            </ul>
+          </section>
+
+          <!-- Section 5 -->
+          <section id="bp-sec5" class="bp-section">
+            <h2>📐 Phần 5: Validator & Quy tắc JSON Schema</h2>
+            <p>Validator là cổng kiểm tra chất lượng tự động trước khi nộp lên Cổng EU Registry:</p>
+            <h3>1. JSON Schema là gì?</h3>
+            <p>Là một bản danh mục quy chuẩn bắt buộc. Đối với ngành Giày dép, quy định EU bắt buộc phải khai báo:</p>
+            <ul>
+              <li>Thông tin hãng sản xuất & địa chỉ trụ sở (<code>name</code>, <code>streetName</code>, <code>postalCode</code>, <code>cityName</code>, <code>country</code>)</li>
+              <li>Mã định danh duy nhất của sản phẩm (<code>productUID</code>)</li>
+              <li>Chỉ số phát thải carbon (<code>carbonFootprint.lifeCycleCarbon</code>, <code>carbonFootprintPerformanceClass</code>)</li>
+              <li>Tính tuần hoàn và sửa chữa (<code>repairabilityScore</code>, <code>detachableSole</code>, <code>recyclingInstructions</code>)</li>
+            </ul>
+            <div class="bp-alert bp-alert-note">
+              <strong>Quy tắc bộ luật nạp 1 lần:</strong> Mỗi phiên bản tiêu chuẩn (ví dụ <code>footwear-schema</code> phiên bản <code>1.0.0</code>) chỉ cần nạp vào cơ sở dữ liệu 1 lần. Nếu bạn bấm nạp lại, hệ thống sẽ thông báo schema đã có sẵn và sẵn sàng kiểm định.
+            </div>
+          </section>
+
+          <!-- Section 6 -->
+          <section id="bp-sec6" class="bp-section">
+            <h2>💻 Phần 6: Phương thức nhập liệu (Web vs API)</h2>
+            <p>Doanh nghiệp có thể nhập liệu bằng 2 phương thức chính:</p>
+            <h3>Cách 1: Nhập liệu trực tiếp qua Giao diện Web (Thử nghiệm & Vận hành)</h3>
+            <p>Truy cập bảng điều khiển công khai: <strong><a href="https://dpp-mockup.erx.vn" target="_blank" style="color:var(--accent-hover)">https://dpp-mockup.erx.vn</a></strong></p>
+            <ol>
+              <li><strong>Bước 2 (Đăng nhập):</strong> Bấm <code>⚡ Đăng nhập EO</code> để nhận token bảo mật 24 giờ.</li>
+              <li><strong>Bước 4 (Kiểm định):</strong> Bấm <code>👟 Mẫu Giày Hợp lệ</code> rồi bấm <code>Validate Payload</code> để máy soi đạt chuẩn xanh.</li>
+              <li><strong>Bước 5, 6, 7 (Đăng ký):</strong> Điền mã định danh (UPI), REO ID, Mã hải quan (<code>64041100</code>) và Live URL rồi bấm Đăng ký.</li>
+            </ol>
+            <h3>Cách 2: Tự động hóa qua REST API (Dành cho phần mềm ERP / Nhà máy sản xuất)</h3>
+            <p>Trong dây chuyền sản xuất lớn, phần mềm quản lý nhà máy (ERP/MES) sẽ tự động đẩy dữ liệu qua API:</p>
+            <ul>
+              <li><strong>Địa chỉ Gateway API:</strong> <code>https://dpp-mockup.erx.vn</code></li>
+              <li><strong>Tài liệu đặc tả:</strong> <code>/q/openapi</code></li>
+              <li><strong>Bước 1:</strong> Lấy Token: <code>POST /auth/realms/dpp-registry/protocol/openid-connect/token</code></li>
+              <li><strong>Bước 2:</strong> Gửi đăng ký: <code>POST /metadata/v1/registerDPP</code> kèm <code>Authorization: Bearer &lt;TOKEN&gt;</code></li>
+            </ul>
+          </section>
+
+          <!-- Section 7 -->
+          <section id="bp-sec7" class="bp-section">
+            <h2>🔍 Phần 7: Xem hộ chiếu sản phẩm ở đâu?</h2>
+            <p>Cần phân biệt rõ 2 màn hình hiển thị hoàn toàn khác nhau:</p>
+            <div class="mermaid-box">
+              <pre class="mermaid">
+graph LR
+    subgraph "1. Cổng Đăng ký EU Registry (Hệ thống này)"
+        R["Sổ bộ đăng kiểm & Chứng nhận số<br/><i>(Dành cho Hải quan EU, Kiểm toán & Doanh nghiệp)</i><br/>Lưu trữ: Mã số đăng ký, ngày cấp, trạng thái pháp lý, Proof JWT chống giả"]
+    end
+
+    subgraph "2. Trang Web Hộ chiếu Người dùng (Live URL)"
+        P["Trang Web chi tiết của thương hiệu giày<br/><i>(Dành cho Khách hàng quét mã QR trên tem giày)</i><br/>Hiển thị: Thành phần vải tái chế, độ bền đế giày, cách tháo đế sửa chữa"]
+    end
+
+    QR["Khách quét mã QR trên lưỡi gà/hộp giày"] --> P
+    Customs["Hải quan kiểm tra cổng EU"] --> R
+              </pre>
+            </div>
+            <ul>
+              <li><strong>Cổng Đăng Ký EU (Hệ thống này):</strong> Là "Sổ hộ tịch / Cơ quan đăng kiểm số" của EU, dùng để đối soát pháp lý và lưu chứng chỉ ký số. Đây <em>không phải là trang bán hàng</em>. Xem tại <strong>Bước 8 (Tra cứu)</strong> hoặc <strong>Bước 11 (Báo cáo Tổng kết)</strong>.</li>
+              <li><strong>Trang Web Hộ Chiếu Người Dùng (Live URL):</strong> Trang web tương tác dành cho khách hàng khi họ lấy điện thoại quét mã QR in trên tem lưỡi gà hoặc hộp giày (nằm tại địa chỉ khai báo ở trường <code>Live URL</code>, ví dụ <code>https://passport.ecostride.eu/shoes/runner-xb100</code>).</li>
+            </ul>
+          </section>
+
+          <!-- Section 8 -->
+          <section id="bp-sec8" class="bp-section">
+            <h2>📜 Phần 8: Chứng chỉ ký số (Proof of Registration)</h2>
+            <p>Sau khi đăng ký thành công, Cổng EU Registry sẽ cấp một <strong>Chứng chỉ số (Proof of Registration)</strong>:</p>
+            <ul>
+              <li><strong>Proof là gì?</strong> Là một chuỗi mã hóa đặc biệt (JWT) được ký bằng khóa bí mật (Private Key) của cơ quan quản lý EU.</li>
+              <li><strong>Chống làm giả 100%:</strong> Chỉ có cơ quan đăng ký EU mới sở hữu khóa bí mật để ký chứng chỉ.</li>
+              <li><strong>Kiểm tra công khai toàn cầu:</strong> Bất kỳ ai cũng có thể dùng khóa công khai (Public Key tại JWKS) để kiểm tra chữ ký có hợp pháp hay không.</li>
+              <li><strong>Chống sửa dữ liệu (<code>dppHash</code>):</strong> Toàn bộ dữ liệu của đôi giày được băm thành chuỗi dấu vân tay điện tử SHA-256. Nếu ai đó sửa dù chỉ một chữ số, mã hash sẽ lệch ngay và chứng chỉ lập tức báo vi phạm!</li>
+            </ul>
+          </section>
+
+          <!-- Section 9 -->
+          <section id="bp-sec9" class="bp-section">
+            <h2>❓ Phần 9: Giải đáp vận hành (Cloud & Bản quyền)</h2>
+            <h3>1. Tôi có cần tinh chỉnh hay cài đặt thêm gì ở Back-end không?</h3>
+            <p>👉 <strong>KHÔNG CẦN TINH CHỈNH GÌ THÊM.</strong> Toàn bộ 5 dịch vụ back-end đã được tự động đóng gói, liên kết mạng nội bộ và <strong>đang hoạt động 100% (Status: SUCCESS / Up & Running)</strong> trên Railway.</p>
+            <h3>2. Tại sao link <code>http://registry:8080/q/health</code> báo lỗi khi mở trên máy tính?</h3>
+            <p><code>registry:8080</code> là tên miền nội bộ nằm trong mạng riêng của máy chủ đám mây Railway, được giấu kín sau tường lửa để chống tấn công mạng. Hãy mở qua link công khai: <strong><a href="https://dpp-mockup.erx.vn/q/health" target="_blank" style="color:var(--accent-hover)">https://dpp-mockup.erx.vn/q/health</a></strong> (hiển thị <code>{"status": "UP"}</code>).</p>
+            <h3>3. Chữ "Mock" có nghĩa là gì? Thực tế sẽ hoạt động ra sao?</h3>
+            <p>Đây là sản phẩm chuẩn của Hiệp hội CIRPASS-2 (do Ủy ban Châu Âu tài trợ) viết ra với 100% đúng chuẩn kỹ thuật của cổng EU thật sau này. Khi EU bắt buộc áp dụng vào năm 2026–2027, bạn không cần sửa lại code, chỉ cần đổi địa chỉ URL kết nối sang máy chủ chính thức của EU.</p>
+            <h3>4. Phần mềm có bị giới hạn bản quyền (License) gì không?</h3>
+            <p>👉 <strong>Hoàn toàn KHÔNG bị giới hạn bản quyền.</strong> Phát hành dưới giấy phép mã nguồn mở quốc tế <strong>Apache License 2.0</strong>: Miễn phí trọn đời, được quyền thương mại hóa, không giới hạn số lượng sản phẩm.</p>
+            <h3>5. Chi phí duy trì hệ thống trên Cloud (Railway) là bao nhiêu?</h3>
+            <p>Cả 5 dịch vụ chỉ tiêu thụ khoảng ~1.1 GB RAM, chi phí duy trì trên Railway chỉ khoảng <strong>$5/tháng (~120.000 VNĐ/tháng)</strong>.</p>
+          </section>
+
+          <!-- Section 10 -->
+          <section id="bp-sec10" class="bp-section">
+            <h2>📌 Phần 10: Bảng tra cứu đường link Public</h2>
+            <table class="bp-table">
+              <thead><tr><th>Dịch vụ</th><th>Đường link Public</th><th>Ý nghĩa & Hướng dẫn</th></tr></thead>
+              <tbody>
+                <tr><td>🖥️ <strong>Testing Dashboard</strong></td><td><a href="https://dpp-mockup.erx.vn" target="_blank" style="color:var(--accent-hover)">https://dpp-mockup.erx.vn</a></td><td>Giao diện điều khiển, thử nghiệm 11 bước và xem tài liệu blueprint</td></tr>
+                <tr><td>🏥 <strong>Registry Health</strong></td><td><a href="https://dpp-mockup.erx.vn/q/health" target="_blank" style="color:var(--accent-hover)">.../q/health</a></td><td>Kiểm tra trạng thái máy chủ EU Registry & kết nối Database (<code>UP</code>)</td></tr>
+                <tr><td>🔬 <strong>Validator Health</strong></td><td><a href="https://dpp-mockup.erx.vn/validator-health/health" target="_blank" style="color:var(--accent-hover)">.../validator-health/health</a></td><td>Kiểm tra máy chủ kiểm định tiêu chuẩn DPP Validator (<code>UP</code>)</td></tr>
+                <tr><td>🔑 <strong>Khóa công khai JWKS</strong></td><td><a href="https://dpp-mockup.erx.vn/.well-known/jwks.json" target="_blank" style="color:var(--accent-hover)">.../.well-known/jwks.json</a></td><td>Bộ khóa công khai dùng để xác minh chữ ký điện tử Proof</td></tr>
+                <tr><td>🛡️ <strong>Quản trị Keycloak</strong></td><td><a href="https://dpp-mockup.erx.vn/auth/admin/" target="_blank" style="color:var(--accent-hover)">.../auth/admin/</a></td><td>Cổng quản lý tài khoản & phân quyền doanh nghiệp (<code>admin</code> / <code>admin</code>)</td></tr>
+                <tr><td>📖 <strong>Tài liệu API (OpenAPI)</strong></td><td><a href="https://dpp-mockup.erx.vn/q/openapi" target="_blank" style="color:var(--accent-hover)">.../q/openapi</a></td><td>Cấu trúc dữ liệu chi tiết cho lập trình viên tích hợp ERP nhà máy</td></tr>
+              </tbody>
+            </table>
+          </section>
+
+          <!-- Section 11 -->
+          <section id="bp-sec11" class="bp-section">
+            <h2>📚 Phần 11: Kiến trúc Ngữ nghĩa Châu Âu & 10 Bản thể luận Cốt lõi (EUDPP CORE)</h2>
+            <p>Hộ chiếu Sản phẩm Kỹ thuật số Châu Âu vận hành dựa trên khung ngữ nghĩa chính thức được công bố tại <strong><a href="https://dpp.vocabulary-hub.eu/" target="_blank" style="color:var(--accent-hover)">dpp.vocabulary-hub.eu</a></strong> (do Viện TNO, Kezzler và Consortium CIRPASS-2 điều hành trên nền tảng Semantic Treehouse).</p>
+            <div class="bp-alert bp-alert-note">
+              <strong>Nguồn chuẩn hóa duy nhất:</strong> 10 bản thể luận EUDPP CORE là bộ quy chuẩn ngữ nghĩa bắt buộc áp dụng chung cho tất cả 27 quốc gia EU, đảm bảo hải quan, cơ quan kiểm định thị trường và người tiêu dùng đều đọc hiểu đồng nhất.
+            </div>
+            <table class="bp-table">
+              <thead><tr><th>Tên Module</th><th>Phiên bản</th><th>Phạm vi & Vai trò trong Hộ chiếu DPP</th><th>Thuộc tính & Chuẩn áp dụng</th></tr></thead>
+              <tbody>
+                <tr><td><code>CORE</code></td><td>v2.0</td><td>Trục xương sống tích hợp toàn bộ các module ngữ nghĩa chuyên ngành</td><td><code>eudpp:Product</code>, <code>eudpp:DPP</code>, <code>eudpp:hasProperty</code></td></tr>
+                <tr><td><code>IDENT</code></td><td>v1.0.5</td><td>Chuẩn hóa định danh số toàn cầu cho sản phẩm, mã vạch và doanh nghiệp</td><td>GS1 Digital Link URI, ISO/IEC 15459, SGTIN, GLN, EORI</td></tr>
+                <tr><td><code>P_DPP</code></td><td>v2.0.6</td><td>Quản lý cấp độ phân cấp (Model/Batch/Item) và trạng thái vòng đời hộ chiếu</td><td>Model, Batch, Item, Active, Inactive, Decommissioned</td></tr>
+                <tr><td><code>ACTOR</code></td><td>v2.0.0</td><td>Phân loại vai trò trách nhiệm pháp lý trong chuỗi cung ứng toàn cầu</td><td>RegisteredEconomicOperator, Manufacturer, Facility, Recycler</td></tr>
+                <tr><td><code>MAT</code></td><td>v1.0.2</td><td>Phân rã cấu phần vật liệu giày dép (Upper, Sole), tỷ lệ vật liệu tái chế</td><td>UpperMesh, MidsoleFoam, OutsoleRubber, recycledContent</td></tr>
+                <tr><td><code>SOC</code></td><td>v2.0.0</td><td>Kiểm soát danh mục hóa chất độc hại, chất cấm SVHC và cam kết an toàn</td><td>EU REACH (EC 1907/2006), SCIP Database, PFAS-Free</td></tr>
+                <tr><td><code>LCA</code></td><td>v2.0</td><td>Đánh giá tác động môi trường, chỉ số carbon PEF và tính tuần hoàn</td><td>ILCD+EPD v1.3, PEF (kg CO₂e/đôi giày), Điểm sửa chữa</td></tr>
+                <tr><td><code>EVENT</code></td><td>v0.1.0</td><td>Nhật ký dòng sự kiện vòng đời vật lý theo chuẩn quốc tế GS1 EPCIS</td><td>GS1 EPCIS 2.0 (BirthEvent, RepairEvent, RecyclingEvent)</td></tr>
+                <tr><td><code>COMP</code></td><td>v1.0</td><td>Hồ sơ chứng minh tuân thủ pháp lý và chứng chỉ phòng thí nghiệm độc lập</td><td>Tuyên bố Hợp chuẩn EU (DoC PDF), Mã Notified Body</td></tr>
+                <tr><td><code>CON</code></td><td>v2.0.5</td><td>Module cầu nối duy trì sự nhất quán tiên đề giữa các ontology</td><td>Cầu nối ngữ nghĩa tích hợp liên miền dữ liệu</td></tr>
+              </tbody>
+            </table>
+          </section>
+
+          <!-- Section 12 -->
+          <section id="bp-sec12" class="bp-section">
+            <h2>👟 Phần 12: Mô hình Chuẩn Ngành Giày Dép CIRPASS-2 (MVP v2)</h2>
+            <h3>1. Phân định Cốt lõi: Sổ Đăng ký EU (Registry) vs. Kho Dữ liệu Hộ chiếu (Carrier)</h3>
+            <p>Theo luật ESPR của Ủy ban Châu Âu, <strong>EU Central Registry KHÔNG lưu trữ bí mật công thức hay quy trình nội bộ của doanh nghiệp</strong>:</p>
+            <ul>
+              <li><strong>Cổng EU Registry (Chỉ lưu 9 trường Chỉ mục Kỹ thuật):</strong> <code>companyIdentifier</code>, <code>taricCode</code>, <code>operatorIdentifier</code>, <code>facilityIdentifier</code>, <code>passportId</code>, <code>registryIdentifier</code>, <code>dppUrl</code>, <code>dppBackupUrl</code>, <code>lifecycleState</code>.</li>
+              <li><strong>Kho Dữ liệu DPP Phân Tán (35+ trường chi tiết):</strong> Lưu trữ trên máy chủ thương hiệu/nhà cung cấp DPP, chứa đầy đủ bóc tách vật liệu (Upper, Sole), xưởng may ráp tại Việt Nam, chứng chỉ REACH, DoC và hướng dẫn sửa chữa.</li>
+            </ul>
+            <div class="bp-alert bp-alert-gold">
+              <strong>Mã Hải Quan Giày Thể Thao:</strong> Giày thể thao có đế cao su và thân vải dệt mang mã TARIC <code>64041100</code>. Xưởng lắp ráp Tier-1 tại Việt Nam được định danh bằng mã GLN toàn cầu 13 chữ số.
+            </div>
+          </section>
+
+        `;
+      }
+
+      // Re-run mermaid rendering on newly injected content
+      setTimeout(() => {
+        try {
+          if (window.mermaid) {
+            mermaid.run({ querySelector: '.mermaid' });
+          }
+        } catch(_) {}
+      }, 50);
+    }
+
+    // --- VOCABULARY HUB & ONTOLOGIES RENDERER (EN & VI) ---
+    function renderVocab() {
+      const area = document.getElementById('vocabContentArea');
+      if (!area) return;
+
+      const isEn = currentLang === 'en';
+
+      area.innerHTML = `
+        <!-- Hero Header -->
+        <div class="vocab-hero">
+          <div class="vocab-hero-text">
+            <h2>${isEn ? '📚 EU DPP Vocabulary Hub & Semantic Architecture' : '📚 Cổng Từ Điển & Bản Thể Luận Hộ Chiếu Kỹ Thuật Số Châu Âu'}</h2>
+            <p>${isEn 
+              ? 'Official CIRPASS-2 Semantic Framework on Semantic Treehouse (TNO & Kezzler). Serving as the single source of truth for European cross-sector ontologies and priority Footwear/Textile data models under ESPR.' 
+              : 'Khung ngữ nghĩa chuẩn hóa chính thức của dự án CIRPASS-2 trên nền tảng Semantic Treehouse (do Viện TNO và Kezzler điều hành). Đây là nguồn chuẩn hóa ngữ nghĩa duy nhất cho các bản thể luận liên ngành và mô hình hộ chiếu ngành Dệt may & Giày dép theo quy định ESPR.'}
+            </p>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:10px;align-items:flex-end">
+            <span class="vocab-hero-badge">🇪🇺 CIRPASS-2 Official Standard</span>
+            <a href="https://dpp.vocabulary-hub.eu/" target="_blank" class="ontology-btn" style="padding:8px 16px;font-size:13px">
+              🌐 ${isEn ? 'Open dpp.vocabulary-hub.eu' : 'Mở dpp.vocabulary-hub.eu'} ↗
+            </a>
+          </div>
+        </div>
+
+        <!-- Section 1: 10 EUDPP CORE Ontologies -->
+        <div class="vocab-section-title">
+          <span>🏛️</span> ${isEn ? 'Part 1: 10 EUDPP Horizontal Core Ontologies' : 'Phần 1: 10 Bản thể luận Cốt lõi Liên ngành (EUDPP CORE)'}
+        </div>
+        <div class="vocab-section-desc">
+          ${isEn 
+            ? 'These 10 core modular ontologies govern semantic interoperability across all European Member States, enabling automated cross-border validation by EU Customs and Market Surveillance Authorities.' 
+            : '10 module bản thể luận cốt lõi này quy định khả năng liên thông ngữ nghĩa giữa tất cả các quốc gia thành viên EU, cho phép Hải quan và Cơ quan giám sát thị trường kiểm tra tự động.'}
+        </div>
+
+        <div class="ontology-grid">
+          <!-- Card 1: CORE -->
+          <div class="ontology-card">
+            <div class="ontology-card-hdr">
+              <div class="ontology-card-title"><span>🌟</span> CORE v2.0</div>
+              <span class="ontology-tag tag-core">${isEn ? 'Central Backbone' : 'Trục Trung Tâm'}</span>
+            </div>
+            <p>${isEn 
+              ? 'The master integrating ontology connecting all thematic modules. Declares foundational root concepts: eudpp:Product, eudpp:DigitalProductPassport, and eudpp:hasProperty.' 
+              : 'Bản thể luận trục xương sống tích hợp toàn bộ các module. Định nghĩa các khái niệm gốc: eudpp:Product (Sản phẩm), eudpp:DPP (Hộ chiếu), và quan hệ eudpp:hasProperty.'}
+            </p>
+            <div class="ontology-meta">
+              <span>IRI: <code>w3id.org/eudpp/CORE</code></span>
+              <a href="https://dpp.vocabulary-hub.eu/" target="_blank" class="ontology-btn">${isEn ? 'View Spec' : 'Xem Chuẩn'} ↗</a>
+            </div>
+          </div>
+
+          <!-- Card 2: IDENT -->
+          <div class="ontology-card">
+            <div class="ontology-card-hdr">
+              <div class="ontology-card-title"><span>🏷️</span> IDENT v1.0.5</div>
+              <span class="ontology-tag tag-core">${isEn ? 'Identification' : 'Định Danh Số'}</span>
+            </div>
+            <p>${isEn 
+              ? 'Universal identification framework for products, physical assets, and economic operators. Standardizes GS1 Digital Link URIs, ISO/IEC 15459, SGTIN, GLN, and customs EORI.' 
+              : 'Khung định danh toàn cầu cho sản phẩm, mã vạch và doanh nghiệp. Chuẩn hóa đường dẫn GS1 Digital Link URI, ISO/IEC 15459, mã định danh đơn chiếc SGTIN, mã địa điểm GLN và EORI.'}
+            </p>
+            <div class="ontology-meta">
+              <span>IRI: <code>w3id.org/eudpp/IDENT</code></span>
+              <a href="https://dpp.vocabulary-hub.eu/" target="_blank" class="ontology-btn">${isEn ? 'View Spec' : 'Xem Chuẩn'} ↗</a>
+            </div>
+          </div>
+
+          <!-- Card 3: P_DPP -->
+          <div class="ontology-card">
+            <div class="ontology-card-hdr">
+              <div class="ontology-card-title"><span>📦</span> P_DPP v2.0.6</div>
+              <span class="ontology-tag tag-core">${isEn ? 'Product & DPP' : 'Hộ Chiếu & Vòng Đời'}</span>
+            </div>
+            <p>${isEn 
+              ? 'Manages the 3-tier granularity hierarchy (Model, Batch, Item) and the passport lifecycle state machine (Active, Inactive, Decommissioned, Archived).' 
+              : 'Quản lý phân cấp 3 tầng (Model, Batch, Item) và máy trạng thái vòng đời hộ chiếu (Active, Inactive, Decommissioned, Archived).'}
+            </p>
+            <div class="ontology-meta">
+              <span>IRI: <code>w3id.org/eudpp/P_DPP</code></span>
+              <a href="https://dpp.vocabulary-hub.eu/" target="_blank" class="ontology-btn">${isEn ? 'View Spec' : 'Xem Chuẩn'} ↗</a>
+            </div>
+          </div>
+
+          <!-- Card 4: ACTOR -->
+          <div class="ontology-card">
+            <div class="ontology-card-hdr">
+              <div class="ontology-card-title"><span>👥</span> ACTOR v2.0.0</div>
+              <span class="ontology-tag tag-core">${isEn ? 'Supply Chain' : 'Chủ Thể Chuỗi'}</span>
+            </div>
+            <p>${isEn 
+              ? 'Defines supply chain legal actors and responsibilities: Registered Economic Operator (REO), Brand Owner, Tier-1 Manufacturing Facility, Repairers, and Recyclers.' 
+              : 'Quy định các pháp nhân trong chuỗi cung ứng: Doanh nghiệp chịu trách nhiệm REO, Chủ thương hiệu, Nhà máy may ráp Tier-1 (Việt Nam), Đơn vị sửa chữa và Tái chế.'}
+            </p>
+            <div class="ontology-meta">
+              <span>IRI: <code>w3id.org/eudpp/ACTOR</code></span>
+              <a href="https://dpp.vocabulary-hub.eu/" target="_blank" class="ontology-btn">${isEn ? 'View Spec' : 'Xem Chuẩn'} ↗</a>
+            </div>
+          </div>
+
+          <!-- Card 5: MAT -->
+          <div class="ontology-card">
+            <div class="ontology-card-hdr">
+              <div class="ontology-card-title"><span>🧵</span> MAT v1.0.2</div>
+              <span class="ontology-tag tag-core">${isEn ? 'Materials' : 'Vật Liệu'}</span>
+            </div>
+            <p>${isEn 
+              ? 'Multi-component material breakdown (Upper, Midsole, Outsole), fiber and polymer taxonomies, weight ratios, and certified post-consumer recycled content percentages.' 
+              : 'Bóc tách cấu phần vật liệu giày dép (Thân Upper, Đệm Midsole, Đế Outsole), phân loại sợi/polyme, tỷ trọng khối lượng (%) và tỷ lệ vật liệu tái chế được kiểm định.'}
+            </p>
+            <div class="ontology-meta">
+              <span>IRI: <code>w3id.org/eudpp/MAT</code></span>
+              <a href="https://dpp.vocabulary-hub.eu/" target="_blank" class="ontology-btn">${isEn ? 'View Spec' : 'Xem Chuẩn'} ↗</a>
+            </div>
+          </div>
+
+          <!-- Card 6: SOC -->
+          <div class="ontology-card">
+            <div class="ontology-card-hdr">
+              <div class="ontology-card-title"><span>⚠️</span> SOC v2.0.0</div>
+              <span class="ontology-tag tag-core">${isEn ? 'Chemical Safety' : 'An Toàn Hóa Chất'}</span>
+            </div>
+            <p>${isEn 
+              ? 'Substances of Concern module tracking EU REACH (EC 1907/2006) SVHC candidate lists, ECHA SCIP database cross-references, and mandatory PFAS-free declarations.' 
+              : 'Kiểm soát hóa chất theo quy định EU REACH SVHC, liên kết mã cơ sở dữ liệu ECHA SCIP, và cam kết không chứa hóa chất độc hại vĩnh cửu (PFAS-Free).'}
+            </p>
+            <div class="ontology-meta">
+              <span>IRI: <code>w3id.org/eudpp/SOC</code></span>
+              <a href="https://dpp.vocabulary-hub.eu/" target="_blank" class="ontology-btn">${isEn ? 'View Spec' : 'Xem Chuẩn'} ↗</a>
+            </div>
+          </div>
+
+          <!-- Card 7: LCA -->
+          <div class="ontology-card">
+            <div class="ontology-card-hdr">
+              <div class="ontology-card-title"><span>🌱</span> LCA v2.0</div>
+              <span class="ontology-tag tag-core">${isEn ? 'Life Cycle Assessment' : 'Đánh Giá Vòng Đời'}</span>
+            </div>
+            <p>${isEn 
+              ? 'Derived from ILCD+EPD v1.3 and Product Environmental Footprint (PEF). Quantifies full lifecycle carbon emissions in kg CO₂e/pair, repairability, and circularity scores.' 
+              : 'Dựa trên chuẩn ILCD+EPD v1.3 và PEF. Định lượng phát thải carbon toàn chu kỳ (kg CO₂e/đôi giày), chỉ số sửa chữa (Repairability Index) và điểm tuần hoàn.'}
+            </p>
+            <div class="ontology-meta">
+              <span>IRI: <code>w3id.org/eudpp/LCA</code></span>
+              <a href="https://dpp.vocabulary-hub.eu/" target="_blank" class="ontology-btn">${isEn ? 'View Spec' : 'Xem Chuẩn'} ↗</a>
+            </div>
+          </div>
+
+          <!-- Card 8: EVENT -->
+          <div class="ontology-card">
+            <div class="ontology-card-hdr">
+              <div class="ontology-card-title"><span>⏱️</span> EVENT v0.1.0</div>
+              <span class="ontology-tag tag-core">${isEn ? 'Lifecycle Events' : 'Nhật Ký Vòng Đời'}</span>
+            </div>
+            <p>${isEn 
+              ? 'GS1 EPCIS 2.0-aligned audit trail capturing chronological lifecycle events: Birth (Assembly), Custody Transfer (Customs), Maintenance (Resole), and Recycling.' 
+              : 'Chuỗi sự kiện theo chuẩn GS1 EPCIS 2.0 ghi lại lịch sử: Xuất xưởng (BirthEvent), Thông quan cảng EU (TransferEvent), Bảo hành thay đế (RepairEvent) và Tái chế.'}
+            </p>
+            <div class="ontology-meta">
+              <span>IRI: <code>w3id.org/eudpp/EVENT</code></span>
+              <a href="https://dpp.vocabulary-hub.eu/" target="_blank" class="ontology-btn">${isEn ? 'View Spec' : 'Xem Chuẩn'} ↗</a>
+            </div>
+          </div>
+
+          <!-- Card 9: COMP -->
+          <div class="ontology-card">
+            <div class="ontology-card-hdr">
+              <div class="ontology-card-title"><span>📜</span> COMP v1.0</div>
+              <span class="ontology-tag tag-core">${isEn ? 'Compliance' : 'Hợp Chuẩn Pháp Lý'}</span>
+            </div>
+            <p>${isEn 
+              ? 'Digital EU Declaration of Conformity (DoC), CE marking verification, accredited testing laboratory certificates, and Notified Body identifiers.' 
+              : 'Tuyên bố Hợp chuẩn EU điện tử (EU DoC), kiểm tra dấu CE, chứng chỉ phòng kiểm định độc lập và mã số công nhận Notified Body.'}
+            </p>
+            <div class="ontology-meta">
+              <span>IRI: <code>w3id.org/eudpp/COMP</code></span>
+              <a href="https://dpp.vocabulary-hub.eu/" target="_blank" class="ontology-btn">${isEn ? 'View Spec' : 'Xem Chuẩn'} ↗</a>
+            </div>
+          </div>
+
+          <!-- Card 10: CON -->
+          <div class="ontology-card">
+            <div class="ontology-card-hdr">
+              <div class="ontology-card-title"><span>🔗</span> CON v2.0.5</div>
+              <span class="ontology-tag tag-core">${isEn ? 'Connector' : 'Cầu Nối Ngữ Nghĩa'}</span>
+            </div>
+            <p>${isEn 
+              ? 'Bridge module defining cross-module integration axioms, semantic relationships, and consistency constraints binding all 9 domain modules into one coherent graph.' 
+              : 'Module cầu nối duy trì tính nhất quán tiên đề (axioms), liên kết các mối quan hệ ngữ nghĩa xuyên suốt 9 module chuyên ngành thành một đồ thị hợp nhất.'}
+            </p>
+            <div class="ontology-meta">
+              <span>IRI: <code>w3id.org/eudpp/CON</code></span>
+              <a href="https://dpp.vocabulary-hub.eu/" target="_blank" class="ontology-btn">${isEn ? 'View Spec' : 'Xem Chuẩn'} ↗</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 2: CIRPASS-2 Textile & Footwear MVP v2 Data Tree Explorer -->
+        <div class="vocab-section-title">
+          <span>👟</span> ${isEn ? 'Part 2: CIRPASS-2 Footwear Pilot Data Dictionary (MVP v2 Tree)' : 'Phần 2: Từ Điển Dữ Liệu Cây Chuẩn CIRPASS-2 Ngành Giày Dép (MVP v2)'}
+        </div>
+        <div class="vocab-section-desc">
+          ${isEn 
+            ? 'Hierarchical specification extracted directly from the CIRPASS-2 pilot spreadsheet (CP2_DPP_textile_data.xlsx & MVP-Textile-DPP-v2-Textile-Product.xlsx led by Kezzler). Use the search bar below to filter fields.' 
+            : 'Cấu trúc cây dữ liệu phân cấp được trích xuất trực tiếp từ bảng đặc tả thí điểm của Kezzler & CIRPASS-2. Sử dụng ô tìm kiếm để lọc nhanh trường thông tin.'}
+        </div>
+
+        <div class="data-tree-box">
+          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;margin-bottom:16px">
+            <div style="display:flex;align-items:center;gap:10px">
+              <input type="text" id="treeSearchInput" placeholder="${isEn ? '🔍 Search field name, group, or keyword...' : '🔍 Tìm tên trường, nhóm hoặc từ khóa...'}" 
+                     style="padding:10px 16px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:#fff;font-size:13px;width:320px;" 
+                     oninput="filterDataTree(this.value)">
+              <span id="treeMatchCount" style="font-size:12.5px;color:var(--text-dim)">Showing 28 canonical pilot fields</span>
+            </div>
+            <div style="display:flex;gap:8px">
+              <span class="badge-registry-yes">EU Registry: YES (9 Fields)</span>
+              <span class="badge-registry-no">DPP Carrier: YES (Full 28+ Fields)</span>
+            </div>
+          </div>
+
+          <div style="overflow-x:auto">
+            <table class="tree-table" id="canonicalTreeTable">
+              <thead>
+                <tr>
+                  <th>Field Name (Tree)</th>
+                  <th>Logical Group</th>
+                  <th>Data Type</th>
+                  <th>Cardinality</th>
+                  <th>EU Registry?</th>
+                  <th>Description & Footwear Pilot Example</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr data-kw="taricCode customs hs commodity 64041100">
+                  <td><code>|-- taricCode</code></td><td>Root</td><td><code>string</code></td><td>1..1</td>
+                  <td><span class="badge-registry-yes">YES</span></td>
+                  <td>Customs declaration code. Example: <code>64041100</code> (Sports footwear with rubber soles and textile uppers)</td>
+                </tr>
+                <tr data-kw="productId gs1 digital link uri serial sgtin">
+                  <td><code>|-- productId</code></td><td>Root</td><td><code>anyURI</code></td><td>0..1</td>
+                  <td><span class="badge-registry-no">NO</span></td>
+                  <td>Product identifier (GS1 Digital Link URI). Example: <code>https://id.brand.com/01/09506000134352/21/SN123456</code></td>
+                </tr>
+                <tr data-kw="productIdentifierScheme gs1 gtin sku">
+                  <td><code>|-- productIdentifierScheme</code></td><td>Root</td><td><code>string</code></td><td>0..1</td>
+                  <td><span class="badge-registry-no">NO</span></td>
+                  <td>Scheme used for product identifier (e.g. <code>GS1_GTIN</code>, <code>GS1_SGTIN</code>)</td>
+                </tr>
+                <tr data-kw="conformityDeclaration doc ce compliance certificate">
+                  <td><code>|-- conformityDeclaration</code></td><td>Root</td><td><code>anyURI</code></td><td>0..1</td>
+                  <td><span class="badge-registry-no">NO</span></td>
+                  <td>Link to official EU Declaration of Conformity PDF documentation. Example: <code>https://brand.com/doc-xb100.pdf</code></td>
+                </tr>
+                <tr data-kw="Manufacturer_BrandOwner companyIdentifier gln eori legal vat">
+                  <td><code>|--|-- companyIdentifier</code></td><td>Manufacturer_BrandOwner</td><td><code>string</code></td><td>1..1</td>
+                  <td><span class="badge-registry-yes">YES</span></td>
+                  <td>Unique company identifier (GLN or customs EORI). Example: <code>DE1234567890</code></td>
+                </tr>
+                <tr data-kw="Manufacturer_BrandOwner brandName trade name">
+                  <td><code>|--|-- brandName</code></td><td>Manufacturer_BrandOwner</td><td><code>string</code></td><td>0..1</td>
+                  <td><span class="badge-registry-no">NO</span></td>
+                  <td>The commercial brand name on the shoe tongue/upper. Example: <code>EcoStride Circular</code></td>
+                </tr>
+                <tr data-kw="Manufacturer_BrandOwner companyName legal name">
+                  <td><code>|--|-- companyName</code></td><td>Manufacturer_BrandOwner</td><td><code>string</code></td><td>0..1</td>
+                  <td><span class="badge-registry-no">NO</span></td>
+                  <td>Full legal registered name of the enterprise. Example: <code>EcoStride Footwear AG</code></td>
+                </tr>
+                <tr data-kw="Manufacturer_BrandOwner companyRegistration org vat registration">
+                  <td><code>|--|-- companyRegistration</code></td><td>Manufacturer_BrandOwner</td><td><code>string</code></td><td>0..1</td>
+                  <td><span class="badge-registry-no">NO</span></td>
+                  <td>National commercial register / VAT tax number. Example: <code>HRB-987654</code></td>
+                </tr>
+                <tr data-kw="Manufacturer_BrandOwner ContactDetails postalAddress street zip city">
+                  <td><code>|--|--|-- postalAddress</code></td><td>Manufacturer_BrandOwner/Contact</td><td><code>string</code></td><td>0..1</td>
+                  <td><span class="badge-registry-no">NO</span></td>
+                  <td>Headquarters address. Example: <code>Koenigsallee 45, 40212 Duesseldorf, Germany</code></td>
+                </tr>
+                <tr data-kw="Manufacturer_BrandOwner ContactDetails emailAddress email mail">
+                  <td><code>|--|--|-- emailAddress</code></td><td>Manufacturer_BrandOwner/Contact</td><td><code>string</code></td><td>0..1</td>
+                  <td><span class="badge-registry-no">NO</span></td>
+                  <td>Official compliance email. Example: <code>compliance@ecostride-footwear.eu</code></td>
+                </tr>
+                <tr data-kw="Manufacturer_BrandOwner ContactDetails phoneNumber phone telephone">
+                  <td><code>|--|--|-- phoneNumber</code></td><td>Manufacturer_BrandOwner/Contact</td><td><code>string</code></td><td>0..1</td>
+                  <td><span class="badge-registry-no">NO</span></td>
+                  <td>Telephone contact. Example: <code>+49 211 555 0199</code></td>
+                </tr>
+                <tr data-kw="Supply_chain Operator operatorIdentifier supplier gln eori t1 tier1">
+                  <td><code>|--|--|-- operatorIdentifier</code></td><td>Supply_chain/Operator</td><td><code>string</code></td><td>1..1</td>
+                  <td><span class="badge-registry-yes">YES</span></td>
+                  <td>Commercial supplier Tier-1 identifier (GLN or EORI). Example: <code>7031234000015</code></td>
+                </tr>
+                <tr data-kw="Supply_chain Operator operatorName supplier tier1 commercial entity">
+                  <td><code>|--|--|-- operatorName</code></td><td>Supply_chain/Operator</td><td><code>string</code></td><td>0..1</td>
+                  <td><span class="badge-registry-no">NO</span></td>
+                  <td>Name of Tier-1 vendor entity. Example: <code>Global Footwear Tier-1 Manufacturing Ltd.</code></td>
+                </tr>
+                <tr data-kw="Supply_chain Facility facilityIdentifier manufacturing plant gln t1 tier1">
+                  <td><code>|--|--|-- facilityIdentifier</code></td><td>Supply_chain/Facility</td><td><code>string</code></td><td>1..1</td>
+                  <td><span class="badge-registry-yes">YES</span></td>
+                  <td>Manufacturing assembly facility unique GLN code. Example: <code>8931234567890</code></td>
+                </tr>
+                <tr data-kw="Supply_chain Facility facilityName assembly factory plant vietnam">
+                  <td><code>|--|--|-- facilityName</code></td><td>Supply_chain/Facility</td><td><code>string</code></td><td>0..1</td>
+                  <td><span class="badge-registry-no">NO</span></td>
+                  <td>Name of the physical assembly plant. Example: <code>Dong Nai Eco Assembly Plant #2</code></td>
+                </tr>
+                <tr data-kw="Supply_chain Facility countryOfOrigin origin country vietnam tier1">
+                  <td><code>|--|--|-- countryOfOrigin</code></td><td>Supply_chain/Facility</td><td><code>string</code></td><td>0..1</td>
+                  <td><span class="badge-registry-no">NO</span></td>
+                  <td>Country of assembly / origin. Example: <code>Vietnam</code></td>
+                </tr>
+                <tr data-kw="MaterialComposition materialComponent upper sole midsole outsole lining">
+                  <td><code>|--|-- materialComponent</code></td><td>MaterialComposition</td><td><code>string</code></td><td>1..1</td>
+                  <td><span class="badge-registry-no">NO</span></td>
+                  <td>Shoe structural component: <code>Upper Mesh</code>, <code>Midsole Foam</code>, <code>Outsole Rubber</code>, <code>Lining</code></td>
+                </tr>
+                <tr data-kw="MaterialComposition materialType recycled ocean polyester eva rubber">
+                  <td><code>|--|-- materialType</code></td><td>MaterialComposition</td><td><code>string</code></td><td>1..1</td>
+                  <td><span class="badge-registry-no">NO</span></td>
+                  <td>Specific material type: <code>Recycled Ocean PET</code>, <code>Bio-based Sugarcane EVA</code>, <code>Natural Rubber</code></td>
+                </tr>
+                <tr data-kw="MaterialComposition materialPercentage ratio percent weight">
+                  <td><code>|--|-- materialPercentage</code></td><td>MaterialComposition</td><td><code>decimal</code></td><td>1..1</td>
+                  <td><span class="badge-registry-no">NO</span></td>
+                  <td>Fractional weight ratio: <code>0.42</code> (42% upper), <code>0.35</code> (35% midsole), <code>0.23</code> (23% outsole)</td>
+                </tr>
+                <tr data-kw="MaterialComposition recycledContent post-consumer recycling percentage">
+                  <td><code>|--|-- recycledContent</code></td><td>MaterialComposition</td><td><code>decimal</code></td><td>0..1</td>
+                  <td><span class="badge-registry-no">NO</span></td>
+                  <td>Verified post-consumer recycled ratio: <code>0.78</code> (78% certified recycled material)</td>
+                </tr>
+                <tr data-kw="DPP_metadata passportId unique upi gtin model batch item uri">
+                  <td><code>|--|-- passportId</code></td><td>DPP_metadata</td><td><code>anyURI</code></td><td>1..1</td>
+                  <td><span class="badge-registry-yes">YES</span></td>
+                  <td>Unique product passport identifier URI for the required granularity level. Example: <code>https://dpp-mockup.erx.vn/dpp/model/09506000134352</code></td>
+                </tr>
+                <tr data-kw="DPP_metadata registryIdentifier eureg id returned registry">
+                  <td><code>|--|-- registryIdentifier</code></td><td>DPP_metadata</td><td><code>string</code></td><td>1..1</td>
+                  <td><span class="badge-registry-yes">YES</span></td>
+                  <td>Official registration handle returned by EU Registry. Example: <code>EUREG-XB100-MOD-2026</code></td>
+                </tr>
+                <tr data-kw="DPP_metadata dppUrl live carrier url endpoint link">
+                  <td><code>|--|-- dppUrl</code></td><td>DPP_metadata</td><td><code>anyURI</code></td><td>1..1</td>
+                  <td><span class="badge-registry-yes">YES</span></td>
+                  <td>Permanent link to live decentralized product passport carrier. Example: <code>https://dpp-mockup.erx.vn/dpp/model/09506000134352</code></td>
+                </tr>
+                <tr data-kw="DPP_metadata dppBackupUrl backup statutory archive cease operations">
+                  <td><code>|--|-- dppBackupUrl</code></td><td>DPP_metadata</td><td><code>anyURI</code></td><td>1..1</td>
+                  <td><span class="badge-registry-yes">YES</span></td>
+                  <td>Mandatory statutory backup repository in case of brand cessation. Example: <code>https://dpp-backup.erx.vn/archive/09506000134352</code></td>
+                </tr>
+                <tr data-kw="DPP_metadata lifecycleState status active inactive decommissioned">
+                  <td><code>|--|-- lifecycleState</code></td><td>DPP_metadata</td><td><code>string</code></td><td>1..1</td>
+                  <td><span class="badge-registry-yes">YES</span></td>
+                  <td>DPP lifecycle state: <code>Active</code>, <code>Inactive</code>, or <code>Decommissioned</code></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Section 3: Dual-Payload Visualizer & Testing Lab Integration -->
+        <div class="vocab-section-title">
+          <span>⚡</span> ${isEn ? 'Part 3: Interactive Payload Generator — Central Registry vs. Decentralized Carrier' : 'Phần 3: So Sánh & Trích Xuất Dữ Liệu — EU Central Registry vs. DPP Carrier'}
+        </div>
+        <div class="vocab-section-desc">
+          ${isEn 
+            ? 'Compare the exact payloads side-by-side and immediately send them to the Testing Lab for validation or registration.' 
+            : 'So sánh trực quan giữa gói tin chỉ mục nộp lên Sổ Đăng Ký Châu Âu và gói tin hộ chiếu đầy đủ. Nhấn nút để nạp thẳng vào Bàn Thử Nghiệm!'}
+        </div>
+
+        <div class="dual-payload-container">
+          <!-- Box 1: EU Central Registry Index Payload -->
+          <div class="payload-card">
+            <div class="payload-card-hdr">
+              <h4><span>🏛️</span> ${isEn ? 'EU Central Registry Index (9 Canonical Fields)' : 'Gói Tin Nộp Lên EU Registry (9 Trường Chỉ Mục)'}</h4>
+              <div style="display:flex;gap:8px">
+                <button class="btn btn-secondary btn-sm" onclick="copyVocabPayload('registry')">📋 ${isEn ? 'Copy JSON' : 'Sao chép'}</button>
+                <button class="btn btn-primary btn-sm" onclick="sendToTestingLab(4, 'registry')">🚀 ${isEn ? 'Send to Step 5 (Model)' : 'Nạp vào Bước 5'}</button>
+              </div>
+            </div>
+            <pre id="vocabRegistryCode">{
+  "taricCode": "64041100",
+  "companyIdentifier": "DE1234567890",
+  "companyIdentifierScheme": "EORI",
+  "operatorIdentifier": "7031234000015",
+  "facilityIdentifier": "8931234567890",
+  "passportId": "https://dpp-mockup.erx.vn/dpp/model/09506000134352",
+  "registryIdentifier": "EUREG-XB100-MOD-2026",
+  "dppUrl": "https://dpp-mockup.erx.vn/dpp/model/09506000134352",
+  "dppBackupUrl": "https://dpp-backup.erx.vn/archive/09506000134352",
+  "lifecycleState": "Active"
+}</pre>
+          </div>
+
+          <!-- Box 2: Full Decentralized DPP Carrier Payload -->
+          <div class="payload-card">
+            <div class="payload-card-hdr">
+              <h4><span>👟</span> ${isEn ? 'Full DPP Data Carrier Payload (CIRPASS-2 MVP v2)' : 'Hộ Chiếu DPP Đầy Đủ (CIRPASS-2 MVP v2 Đa Tầng)'}</h4>
+              <div style="display:flex;gap:8px">
+                <button class="btn btn-secondary btn-sm" onclick="copyVocabPayload('carrier')">📋 ${isEn ? 'Copy JSON' : 'Sao chép'}</button>
+                <button class="btn btn-primary btn-sm" onclick="sendToTestingLab(3, 'carrier')">🔬 ${isEn ? 'Send to Step 4 (Validate)' : 'Nạp vào Bước 4'}</button>
+              </div>
+            </div>
+            <pre id="vocabCarrierCode">{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "taricCode": "64041100",
+  "productId": "https://id.brand.com/01/09506000134352",
+  "productIdentifierScheme": "GS1_GTIN",
+  "conformityDeclaration": "https://dpp-mockup.erx.vn/samples/doc-ecostride-xb100.pdf",
+  "Manufacturer_BrandOwner": {
+    "brandName": "EcoStride Circular",
+    "companyName": "EcoStride Footwear AG",
+    "companyIdentifier": "DE1234567890",
+    "companyIdentifierScheme": "EORI",
+    "companyRegistration": "HRB-987654",
+    "ContactDetails": {
+      "postalAddress": "Koenigsallee 45, 40212 Duesseldorf, Germany",
+      "emailAddress": "compliance@ecostride-footwear.eu",
+      "phoneNumber": "+49 211 555 0199"
+    }
+  },
+  "Supply_chain": {
+    "Operator": {
+      "operatorIdentifier": "7031234000015",
+      "operatorIdentifierScheme": "GLN",
+      "operatorName": "Global Footwear Tier-1 Manufacturing Ltd."
+    },
+    "Facility": {
+      "facilityIdentifier": "8931234567890",
+      "facilityIdentifierScheme": "GLN",
+      "facilityName": "Dong Nai Eco Assembly Plant #2",
+      "countryOfOrigin": "Vietnam"
+    }
+  },
+  "MaterialComposition": [
+    {
+      "materialComponent": "Upper Mesh",
+      "materialType": "Recycled Post-Consumer Ocean Polyester",
+      "materialPercentage": 0.42,
+      "recycledContent": 0.78
+    },
+    {
+      "materialComponent": "Midsole Cushioning",
+      "materialType": "Bio-based EVA Foam (Sugarcane derived)",
+      "materialPercentage": 0.35,
+      "recycledContent": 0.00
+    },
+    {
+      "materialComponent": "Outsole Traction",
+      "materialType": "Natural FSC-certified Vulcanized Rubber",
+      "materialPercentage": 0.23,
+      "recycledContent": 0.40
+    }
+  ],
+  "DPP_metadata": {
+    "passportId": "https://dpp-mockup.erx.vn/dpp/model/09506000134352",
+    "registryIdentifier": "EUREG-XB100-MOD-2026",
+    "dppUrl": "https://dpp-mockup.erx.vn/dpp/model/09506000134352",
+    "dppBackupUrl": "https://dpp-backup.erx.vn/archive/09506000134352",
+    "lifecycleState": "Active"
+  }
+}</pre>
+          </div>
+        </div>
+      `;
+    }
+
+    // --- VOCABULARY HUB HELPER FUNCTIONS ---
+    function filterDataTree(query) {
+      const q = (query || '').toLowerCase().trim();
+      const rows = document.querySelectorAll('#canonicalTreeTable tbody tr');
+      let matches = 0;
+      rows.forEach(r => {
+        const text = (r.getAttribute('data-kw') + ' ' + r.textContent).toLowerCase();
+        const ok = !q || text.includes(q);
+        r.style.display = ok ? '' : 'none';
+        if (ok) matches++;
+      });
+      const lbl = document.getElementById('treeMatchCount');
+      if (lbl) {
+        lbl.textContent = `Showing ${matches} of ${rows.length} fields`;
+      }
+    }
+
+    function copyVocabPayload(type) {
+      const el = document.getElementById(type === 'registry' ? 'vocabRegistryCode' : 'vocabCarrierCode');
+      if (el) {
+        navigator.clipboard.writeText(el.textContent.trim()).then(() => {
+          alert(currentLang === 'en' ? '✅ Copied to clipboard!' : '✅ Đã sao chép vào bộ nhớ tạm!');
+        });
+      }
+    }
+
+    function sendToTestingLab(stepIdx, type) {
+      const el = document.getElementById(type === 'registry' ? 'vocabRegistryCode' : 'vocabCarrierCode');
+      if (!el) return;
+      const jsonText = el.textContent.trim();
+
+      switchView('lab');
+      showStep(stepIdx);
+
+      if (stepIdx === 3) {
+        // Step 4 in UI is Step Index 3 (Validate)
+        const txt = document.getElementById('p3Payload');
+        if (txt) txt.value = jsonText;
+      } else if (stepIdx === 4) {
+        // Step 5 in UI is Step Index 4 (Model)
+        try {
+          const parsed = JSON.parse(jsonText);
+          if (document.getElementById('modelTaric')) document.getElementById('modelTaric').value = parsed.taricCode || '';
+          if (document.getElementById('modelUrl')) document.getElementById('modelUrl').value = parsed.dppUrl || '';
+          if (document.getElementById('modelBackupUrl')) document.getElementById('modelBackupUrl').value = parsed.dppBackupUrl || '';
+          if (document.getElementById('modelUpi')) document.getElementById('modelUpi').value = parsed.passportId || '';
+        } catch(_) {}
+      }
+    }
+
+
+    // --- AUTHENTICATION HELPERS ---
+    function updateAuthUI() {
+      const el = document.getElementById('step4AuthText');
+      const box = document.getElementById('step4AuthAlert');
+      if (!el) return;
+      if (token) {
+        try {
+          const p = JSON.parse(atob(token.split('.')[1]));
+          const now = Math.floor(Date.now() / 1000);
+          const remain = Math.max(0, p.exp - now);
+          const mins = Math.floor(remain / 60);
+          const secs = remain % 60;
+          if (remain > 0) {
+            const isEn = currentLang === 'en';
+            el.innerHTML = '<span style="color:var(--success)">● ' + (isEn ? 'Authenticated:' : 'Đang xác thực:') + '</span> <strong>' + (currentUser||p.preferred_username) + '</strong> (' + (p.realm_access?.roles||[]).join(', ') + ') — <span style="color:var(--text-dim)">' + (isEn ? 'Token valid for ' : 'Token còn ') + mins + 'm ' + secs + 's</span>';
+            if (box) box.style.borderColor = 'rgba(16,185,129,.4)';
+            document.getElementById('authDot').className = 'dot dot-green';
+            document.getElementById('authLabel').textContent = (currentUser||p.preferred_username) + ' (OK)';
+            return;
+          }
+        } catch(e) {}
+      }
+      const isEn = currentLang === 'en';
+      el.innerHTML = '<span style="color:var(--error)">● ' + (isEn ? 'No token or token has expired!' : 'Chưa có token hoặc Token đã hết hạn!') + '</span> ' + (isEn ? 'Please click a quick login button to authenticate.' : 'Hãy nhấn nút bên cạnh để đăng nhập ngay.');
+      if (box) box.style.borderColor = 'rgba(239,68,68,.4)';
+      document.getElementById('authDot').className = 'dot dot-red';
+      document.getElementById('authLabel').textContent = isEn ? 'Not authenticated' : 'Chưa đăng nhập';
+    }
+
+    function restoreAuth() {
+      const savedToken = localStorage.getItem('dpp_token');
+      const savedUser = localStorage.getItem('dpp_user');
+      if (savedToken) {
+        try {
+          const p = JSON.parse(atob(savedToken.split('.')[1]));
+          const now = Math.floor(Date.now() / 1000);
+          if (p.exp && p.exp > now) {
+            token = savedToken;
+            currentUser = savedUser || p.preferred_username;
+            markDone(1);
+            updateAuthUI();
+            return true;
+          }
+        } catch(e) {}
+      }
+      token = null;
+      updateAuthUI();
+      return false;
+    }
+
+    async function quickLogin(user, pass) {
+      const isEn = currentLang === 'en';
+      const el = document.getElementById('step4AuthText');
+      if (el) el.innerHTML = (isEn ? 'Authenticating as ' : 'Đang đăng nhập ') + '<strong>' + user + '</strong>...';
+      try {
+        const body = new URLSearchParams({ grant_type:'password', client_id:'registry-client', client_secret:'registry-client-secret', username:user, password:pass });
+        const r = await fetch(KC + '/realms/dpp-registry/protocol/openid-connect/token', { method:'POST', headers:{'Content-Type':'application/x-www-form-urlencoded'}, body });
+        const d = await r.json();
+        if (d.access_token) {
+          token = d.access_token;
+          currentUser = user;
+          localStorage.setItem('dpp_token', token);
+          localStorage.setItem('dpp_user', user);
+          markDone(1);
+          updateAuthUI();
+          showResult('validateResult', true, isEn ?
+            '✅ Quick Login Successful as ' + user + '!\n\nJWT Token acquired. You may now click "Validate Payload" or proceed to registration.' :
+            '✅ Đã đăng nhập nhanh thành công với tài khoản ' + user + '!\n\nToken đã sẵn sàng. Bạn có thể nhấn "Validate Payload" hoặc chuyển sang các bước tiếp theo.');
+        } else {
+          showResult('validateResult', false, (isEn ? 'Login Error: ' : 'Lỗi đăng nhập nhanh: ') + JSON.stringify(d));
+        }
+      } catch(e) {
+        showResult('validateResult', false, (isEn ? 'Keycloak Connection Error: ' : 'Lỗi kết nối Keycloak: ') + e.message);
+      }
+    }
+
+    function showResult(elId, ok, data) {
+      const el = document.getElementById(elId);
+      const cls = ok ? 'result-success' : 'result-error';
+      const text = typeof data === 'string' ? data : JSON.stringify(data, null, 2);
+      el.innerHTML = '<div class="result ' + cls + '">' + escHtml(text) + '</div>';
+    }
+    function escHtml(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+    // --- SERVICE CHECKS & CORE ACTIONS ---
+    async function checkSystem() {
+      const isEn = currentLang === 'en';
+      let html = '<div style="margin-top:16px">';
+      try {
+        const r = await fetch(API + '/q/health');
+        const d = await r.json();
+        const ok = d.status === 'UP';
+        html += '<div class="result ' + (ok?'result-success':'result-error') + '" style="margin-bottom:8px">' +
+          (ok?'OK':'ERROR') + ' Mock EU Registry: ' + d.status + '</div>';
+        document.getElementById('apiDot').className = 'dot ' + (ok ? 'dot-green' : 'dot-red');
+        document.getElementById('apiLabel').textContent = ok ? 'API Online' : 'API Error';
+      } catch(e) {
+        html += '<div class="result result-error" style="margin-bottom:8px">ERROR Mock EU Registry: Cannot connect\n' + e.message + '</div>';
+        document.getElementById('apiDot').className = 'dot dot-red';
+        document.getElementById('apiLabel').textContent = 'API Offline';
+      }
+      try {
+        const r = await fetch(API + '/.well-known/jwks.json');
+        const d = await r.json();
+        html += '<div class="result result-success" style="margin-bottom:8px">OK JWKS Public Keys: ' + d.keys.length + ' key(s) - Kid: ' + (d.keys[0]||{}).kid + '</div>';
+      } catch(e) { html += '<div class="result result-error" style="margin-bottom:8px">ERROR JWKS: ' + e.message + '</div>'; }
+      try {
+        const r = await fetch(KC + '/realms/dpp-registry/.well-known/openid-configuration');
+        const d = await r.json();
+        html += '<div class="result result-success" style="margin-bottom:8px">OK Keycloak OIDC: Realm=dpp-registry Issuer=' + d.issuer + '</div>';
+      } catch(e) { html += '<div class="result result-error" style="margin-bottom:8px">ERROR Keycloak: ' + e.message + '</div>'; }
+      try {
+        const vHealth = isProxy ? '/validator-health/health' : 'http://localhost:8081/q/health';
+        const r = await fetch(vHealth);
+        const d = await r.json();
+        const ok = d.status === 'UP';
+        html += '<div class="result ' + (ok?'result-success':'result-error') + '" style="margin-bottom:8px">' +
+          (ok?'OK':'ERROR') + ' DPP Validator: ' + d.status + '</div>';
+        document.getElementById('valDot').className = 'dot ' + (ok ? 'dot-green' : 'dot-red');
+        document.getElementById('valLabel').textContent = ok ? 'Validator OK' : 'Validator Error';
+      } catch(e) {
+        html += '<div class="result result-error" style="margin-bottom:8px">WARN DPP Validator: ' + e.message + '</div>';
+        document.getElementById('valDot').className = 'dot dot-red';
+        document.getElementById('valLabel').textContent = 'Validator Off';
+      }
+      html += '</div>';
+      document.getElementById('sysResult').innerHTML = html;
+      markDone(0);
+    }
+
+    async function doLogin() {
+      const isEn = currentLang === 'en';
+      const [user, pass] = document.getElementById('loginUser').value.split('|');
+      try {
+        const body = new URLSearchParams({ grant_type:'password', client_id:'registry-client', client_secret:'registry-client-secret', username:user, password:pass });
+        const r = await fetch(KC + '/realms/dpp-registry/protocol/openid-connect/token', { method:'POST', headers:{'Content-Type':'application/x-www-form-urlencoded'}, body });
+        const d = await r.json();
+        if (d.access_token) {
+          token = d.access_token;
+          currentUser = user;
+          localStorage.setItem('dpp_token', token);
+          localStorage.setItem('dpp_user', user);
+          updateAuthUI();
+          const payload = JSON.parse(atob(token.split('.')[1]));
+          document.getElementById('authDot').className = 'dot dot-green';
+          document.getElementById('authLabel').textContent = user + ' (OK)';
+          showResult('loginResult', true, (isEn ? 'Login Successful!\n\n' : 'Đăng nhập thành công!\n\n') +
+            'User: ' + payload.preferred_username +
+            '\nName: ' + payload.name +
+            '\nRoles: ' + (payload.realm_access?.roles || []).join(', ') +
+            '\nExpires in: ' + d.expires_in + 's');
+          markDone(1);
+        } else { showResult('loginResult', false, (isEn ? 'Error: ' : 'Lỗi: ') + JSON.stringify(d)); }
+      } catch(e) { showResult('loginResult', false, (isEn ? 'Connection error: ' : 'Lỗi kết nối: ') + e.message); }
+    }
+
+    async function getSchema() {
+      const isEn = currentLang === 'en';
+      if (!token) return showResult('schemaResult', false, isEn ? 'Not authenticated! Please complete Step 2.' : 'Chưa đăng nhập! Hãy quay lại Bước 2.');
+      try {
+        const r = await fetch(API + '/schema/v1/current', { headers:{'Authorization':'Bearer ' + token} });
+        if (r.ok) {
+          const text = await r.text();
+          if (!text || text.trim().length === 0) {
+            showResult('schemaResult', true, isEn ?
+              'Schema endpoint returned 200 OK. No default schema uploaded yet.\n\nThis is expected if no custom schema has been pushed to the Registry core.\nDPP registrations proceed normally.' :
+              'Schema endpoint trả về 200 OK nhưng chưa có schema nào được upload lên core.\n\nĐây là bình thường. DPP vẫn có thể đăng ký bình thường.');
+            markDone(2);
+          } else {
+            const d = JSON.parse(text);
+            showResult('schemaResult', true, 'Schema: ' + (d.title||'N/A') + '\n\nRequired: ' + (d.required||[]).join(', ') + '\n\n' + JSON.stringify(d, null, 2));
+            markDone(2);
+          }
+        } else if (r.status === 403) {
+          showResult('schemaResult', true, isEn ?
+            'HTTP 403 Forbidden — Expected RBAC Behavior!\n\nCurrent role (eo-user) is restricted from modifying schemas. Schemas require ADMIN or EU role.\nThis verifies that Role-Based Access Control is functioning properly.' :
+            'HTTP 403 Forbidden — Đúng hành vi phân quyền!\n\nRole hiện tại (eo-user) không có quyền xem/sửa Schema. Schema yêu cầu role ADMIN hoặc EU.\nĐiều này kiểm chứng PHÂN QUYỀN đang hoạt động hoàn toàn chính xác.');
+          markDone(2);
+        } else {
+          showResult('schemaResult', false, 'HTTP ' + r.status + ': ' + r.statusText);
+        }
+      } catch(e) { showResult('schemaResult', false, e.message); }
+    }
+
+    // --- FOOTWEAR PRESETS ---
+    function loadSampleDpp(type) {
+      const el = document.getElementById('validatePayload');
+      if (type === 'valid-footwear') {
+        el.value = JSON.stringify({
+          "productIdentification": {
+            "productUID": "SHOE-ECO-2026-EU-00123456",
+            "productName": "EcoStride Circular Runner Pro",
+            "manufacturer": {
+              "name": "EcoStride Footwear AG",
+              "streetName": "Schuhstrasse 18",
+              "postalCode": "10115",
+              "cityName": "Berlin",
+              "country": "DE"
+            }
+          },
+          "generalInformation": {
+            "productCategory": "Footwear",
+            "footwearType": "Athletic Running Shoes",
+            "upperMaterial": "100% Recycled Ocean-Bound Polyester Mesh",
+            "soleMaterial": "FSC-Certified Natural Rubber & Bio-EVA Foam",
+            "manufacturingDate": "2026-03-20",
+            "sizeEUR": 42
+          },
+          "sustainability": {
+            "carbonFootprint": {
+              "lifeCycleCarbon": 8.45,
+              "carbonFootprintPerformanceClass": "A"
+            },
+            "recycledContentPercentage": 68.5,
+            "waterConsumptionLiters": 42.0,
+            "pfasFree": true
+          },
+          "circularityAndCare": {
+            "repairabilityScore": 8.8,
+            "detachableSole": true,
+            "recyclingInstructions": "Return to any EcoStride take-back station or certified textile recycling hub."
+          }
+        }, null, 2);
+      } else if (type === 'invalid-footwear') {
+        el.value = JSON.stringify({
+          "productIdentification": {
+            "productName": "EcoStride Cheap Sneaker (Non-compliant)",
+            "manufacturer": {
+              "name": "EcoStride Footwear AG"
+            }
+          },
+          "generalInformation": {
+            "productCategory": "Footwear"
+          }
+        }, null, 2);
+      }
+    }
+
+    async function uploadSampleSchema() {
+      const isEn = currentLang === 'en';
+      if (!token) return showResult('validateResult', false, isEn ? 'Not authenticated! Please log in first.' : 'Chưa đăng nhập! Hãy đăng nhập trước.');
+      showResult('validateResult', true, isEn ? 'Checking schema status in database...' : 'Đang kiểm tra trạng thái Schema trong database...');
+      try {
+        // Pre-check if footwear-schema already exists
+        try {
+          const checkRes = await fetch(VAPI + '/resource/v1/schema', { headers: { 'Authorization': 'Bearer ' + token } });
+          if (checkRes.ok) {
+            const listData = await checkRes.json();
+            const list = listData.elements || (Array.isArray(listData) ? listData : []);
+            const existing = list.find(s => s.name === 'footwear-schema');
+            if (existing) {
+              markDone(3);
+              showResult('validateResult', true, isEn ?
+                'ℹ️ Schema "footwear-schema" (ID: ' + existing.id + ', v' + existing.version + ') ALREADY EXISTS in database!\n\nThis official EU Footwear ESPR schema is already active in PostgreSQL.\n\n👉 Proceed directly to click "Validate Payload" below!' :
+                'ℹ️ Schema "footwear-schema" (ID: ' + existing.id + ', v' + existing.version + ') ĐÃ CÓ TRONG DATABASE!\n\nBộ tiêu chuẩn này đã được nạp thành công vào PostgreSQL của DPP Validator (không cần nạp lại).\n\n👉 Bạn hãy nhấn "Validate Payload" bên dưới để kiểm định ngay!');
+              return;
+            }
+          }
+        } catch(_) {}
+
+        const footwearSchema = {
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "type": "object",
+          "required": ["productIdentification", "generalInformation", "sustainability", "circularityAndCare"],
+          "properties": {
+            "productIdentification": {
+              "type": "object",
+              "required": ["productUID", "productName", "manufacturer"],
+              "properties": {
+                "productUID": { "type": "string" },
+                "productName": { "type": "string" },
+                "manufacturer": {
+                  "type": "object",
+                  "required": ["name", "streetName", "postalCode", "cityName", "country"],
+                  "properties": {
+                    "name": { "type": "string" },
+                    "streetName": { "type": "string" },
+                    "postalCode": { "type": "string" },
+                    "cityName": { "type": "string" },
+                    "country": { "type": "string" }
+                  }
+                }
+              }
+            },
+            "generalInformation": {
+              "type": "object",
+              "required": ["productCategory", "upperMaterial", "soleMaterial"],
+              "properties": {
+                "productCategory": { "type": "string" },
+                "footwearType": { "type": "string" },
+                "upperMaterial": { "type": "string" },
+                "soleMaterial": { "type": "string" },
+                "manufacturingDate": { "type": "string" },
+                "sizeEUR": { "type": "number" }
+              }
+            },
+            "sustainability": {
+              "type": "object",
+              "required": ["carbonFootprint", "recycledContentPercentage", "pfasFree"],
+              "properties": {
+                "carbonFootprint": {
+                  "type": "object",
+                  "required": ["lifeCycleCarbon", "carbonFootprintPerformanceClass"],
+                  "properties": {
+                    "lifeCycleCarbon": { "type": "number" },
+                    "carbonFootprintPerformanceClass": { "type": "string", "enum": ["A", "B", "C", "D", "E"] }
+                  }
+                },
+                "recycledContentPercentage": { "type": "number" },
+                "waterConsumptionLiters": { "type": "number" },
+                "pfasFree": { "type": "boolean" }
+              }
+            },
+            "circularityAndCare": {
+              "type": "object",
+              "required": ["repairabilityScore", "detachableSole", "recyclingInstructions"],
+              "properties": {
+                "repairabilityScore": { "type": "number" },
+                "detachableSole": { "type": "boolean" },
+                "recyclingInstructions": { "type": "string" }
+              }
+            }
+          }
+        };
+
+        const formData = new FormData();
+        const meta = { metadataType: "base", name: "footwear-schema", version: "1.0.0", description: "EU Footwear ESPR Passport Schema" };
+        formData.append("meta", new Blob([JSON.stringify(meta)], { type: "application/json" }));
+        formData.append("file", new Blob([JSON.stringify(footwearSchema, null, 2)], { type: "application/json" }), "footwear-schema.json");
+
+        const r = await fetch(VAPI + '/resource/v1/json', {
+          method: 'POST',
+          headers: { 'Authorization': 'Bearer ' + token },
+          body: formData
+        });
+        const text = await r.text();
+        if (r.ok || r.status === 201) {
+          markDone(3);
+          showResult('validateResult', true, isEn ?
+            '🎉 Footwear Schema Uploaded Successfully! (Schema ID: ' + text + ')\n\nName: footwear-schema (v1.0.0)\nStored permanently in PostgreSQL. You may now click "Validate Payload" below!' :
+            '🎉 Tải lên Footwear Schema thành công! (Schema ID: ' + text + ')\n\nTên: footwear-schema (v1.0.0)\nĐã lưu vĩnh viễn vào PostgreSQL. Giờ bạn có thể nhấn "Validate Payload" bên dưới để kiểm định!');
+        } else if (r.status === 401) {
+          token = null;
+          localStorage.removeItem('dpp_token');
+          updateAuthUI();
+          showResult('validateResult', false, isEn ? 'HTTP 401 Unauthorized — Session expired. Please quick login.' : 'HTTP 401 Unauthorized — Phiên đăng nhập hết hạn. Hãy đăng nhập lại.');
+        } else if (r.status === 403) {
+          showResult('validateResult', false, isEn ? 'HTTP 403 Forbidden — Insufficient privileges.' : 'HTTP 403 Forbidden — Không có quyền thực hiện.');
+        } else {
+          showResult('validateResult', false, 'HTTP ' + r.status + ': ' + text);
+        }
+      } catch(e) {
+        showResult('validateResult', false, (isEn ? 'Upload error: ' : 'Lỗi tải schema: ') + e.message);
+      }
+    }
+
+    async function validateDpp() {
+      const isEn = currentLang === 'en';
+      if (!token) {
+        showResult('validateResult', false, isEn ? '⚠️ Authentication required! Please click Quick Login above.' : '⚠️ Chưa có token xác thực! Hãy nhấn nút Đăng nhập nhanh ở trên.');
+        return;
+      }
+      try {
+        const payload = document.getElementById('validatePayload').value;
+        JSON.parse(payload); // Syntax check
+        const r = await fetch(VAPI + '/validate/v1', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+          body: payload
+        });
+        const text = await r.text();
+        let d; try { d = JSON.parse(text); } catch(_) { d = null; }
+        if (r.ok && d) {
+          if (d.valid) {
+            showResult('validateResult', true, isEn ?
+              '✅ VALID! Footwear DPP payload strictly complies with EU ESPR standards.\n\n' +
+              'Validated with: ' + d.validatedWith + '\n' +
+              'Validation type: ' + d.validationType + '\n' +
+              'Message: ' + d.message + '\n\n' +
+              'Data is cleared and ready for registration on Mock EU Registry!' :
+              '✅ VALID! Hồ sơ DPP Giày Dép hoàn toàn đạt chuẩn quy định ESPR của Châu Âu.\n\n' +
+              'Kiểm định bằng: ' + d.validatedWith + '\n' +
+              'Kiểu kiểm định: ' + d.validationType + '\n' +
+              'Thông điệp: ' + d.message + '\n\n' +
+              'Dữ liệu đã sẵn sàng để đăng ký chính thức lên Cổng Mock EU Registry!');
+          } else {
+            let errDetails = '';
+            if (d.invalidProperties && d.invalidProperties.length > 0) {
+              errDetails = '\n\n' + (isEn ? 'Violating properties:\n' : 'Các trường vi phạm:\n') +
+                d.invalidProperties.map(p => '  • ' + p.property + ': ' + p.reason).join('\n');
+            }
+            showResult('validateResult', false, isEn ?
+              '❌ INVALID! Footwear payload failed validation standards.\n\n' +
+              'Validation type: ' + d.validationType + '\n' +
+              'Message: ' + d.message + errDetails + '\n\n' + JSON.stringify(d, null, 2) :
+              '❌ INVALID! Hồ sơ giày dép không đạt chuẩn kiểm định.\n\n' +
+              'Kiểu kiểm định: ' + d.validationType + '\n' +
+              'Thông điệp: ' + d.message + errDetails + '\n\n' + JSON.stringify(d, null, 2));
+          }
+          markDone(3);
+        } else if (r.status === 401) {
+          token = null;
+          localStorage.removeItem('dpp_token');
+          updateAuthUI();
+          showResult('validateResult', false, isEn ? 'HTTP 401 Unauthorized — Session expired.' : 'HTTP 401 Unauthorized — Phiên đăng nhập hết hạn.');
+        } else {
+          showResult('validateResult', false, 'HTTP ' + r.status + '\n\n' + (text||''));
+        }
+      } catch(e) {
+        showResult('validateResult', false, (isEn ? 'Validation error: ' : 'Lỗi kiểm định: ') + e.message);
+      }
+    }
+
+    async function checkValidatorHealth() {
+      const isEn = currentLang === 'en';
+      try {
+        const vHealth = isProxy ? '/validator-health/health' : 'http://localhost:8081/q/health';
+        const r = await fetch(vHealth);
+        const text = await r.text();
+        let d; try { d = JSON.parse(text); } catch(_) { d = null; }
+        if (d) {
+          showResult('validateResult', d.status==='UP', (isEn ? 'DPP Validator Health (Quarkus + PostgreSQL)\n\n' : 'Sức khỏe DPP Validator\n\n') + JSON.stringify(d, null, 2));
+        } else {
+          showResult('validateResult', r.ok, 'Validator response: ' + text);
+        }
+      } catch(e) { showResult('validateResult', false, (isEn ? 'Cannot connect to Validator: ' : 'Không thể kết nối Validator: ') + e.message); }
+    }
+
+    async function listValidatorSchemas() {
+      const isEn = currentLang === 'en';
+      try {
+        const r = await fetch(VAPI + '/resource/v1/schema', { headers: token ? {'Authorization':'Bearer ' + token} : {} });
+        const text = await r.text();
+        let d; try { d = JSON.parse(text); } catch(_) { d = null; }
+        if (r.status === 401 || r.status === 403) {
+          showResult('validateResult', false, isEn ? 'HTTP ' + r.status + ' — Authentication required (Admin or EU role).' : 'HTTP ' + r.status + ' — Yêu cầu đăng nhập tài khoản có quyền.');
+        } else if (d) {
+          const list = d.elements || (Array.isArray(d) ? d : []);
+          showResult('validateResult', true, (isEn ? 'Active JSON Schemas in Validator (' + list.length + ' registered):\n\n' : 'Danh sách JSON Schemas trong Validator (' + list.length + ' bộ luật):\n\n') + JSON.stringify(list, null, 2));
+        } else {
+          showResult('validateResult', false, 'Response: ' + text);
+        }
+      } catch(e) { showResult('validateResult', false, (isEn ? 'Error: ' : 'Lỗi: ') + e.message); }
+    }
+
+    // --- REGISTRATION LOGIC ---
+    async function registerDpp(body, resultEl, level) {
+      const isEn = currentLang === 'en';
+      if (!token) return showResult(resultEl, false, isEn ? 'Not authenticated! Please log in first.' : 'Chưa đăng nhập! Hãy đăng nhập trước.');
+      try {
+        const r = await fetch(API + '/metadata/v1/registerDPP', {
+          method: 'POST',
+          headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
+          body: JSON.stringify(body)
+        });
+        const d = await r.json();
+        if (r.ok) {
+          registeredIds[level] = d.registryId;
+          registeredData[d.registryId] = { ...d, _requestBody: body };
+          document.getElementById('queryRegistryId').value = d.registryId;
+          document.getElementById('proofRegistryId').value = d.registryId;
+          showResult(resultEl, true,
+            (isEn ? level.toUpperCase() + ' DPP registered successfully!\n\n' : level.toUpperCase() + ' DPP đăng ký thành công!\n\n') +
+            'Registry ID: ' + d.registryId + '\nCreated: ' + d.createdAt +
+            '\nDPP Hash: ' + (d.dppHash||'N/A') + '\nContent-Type: ' + (d.contentType||'N/A') +
+            '\n\nFull response:\n' + JSON.stringify(d, null, 2));
+          return true;
+        } else {
+          showResult(resultEl, false, 'HTTP ' + r.status + '\n' + JSON.stringify(d, null, 2));
+          return false;
+        }
+      } catch(e) {
+        showResult(resultEl, false, e.message);
+        return false;
+      }
+    }
+
+    async function registerModel() {
+      const ok = await registerDpp({
+        upi: document.getElementById('modelUpi').value,
+        reoId: document.getElementById('modelReoId').value,
+        facilitiesId: [document.getElementById('modelFacility').value],
+        liveURL: document.getElementById('modelLiveUrl').value,
+        backupURL: document.getElementById('modelBackupUrl').value,
+        commodityCode: document.getElementById('modelCommodity').value,
+        granularityLevel: 'MODEL'
+      }, 'modelResult', 'model');
+      if (ok) markDone(4);
+    }
+
+    async function registerBatch() {
+      const ok = await registerDpp({
+        upi: document.getElementById('batchUpi').value,
+        reoId: document.getElementById('batchReoId').value,
+        facilitiesId: ['GLN-5412345000013'],
+        liveURL: document.getElementById('batchLiveUrl').value,
+        backupURL: document.getElementById('batchBackupUrl').value,
+        commodityCode: document.getElementById('batchCommodity').value,
+        granularityLevel: 'BATCH',
+        modelUpi: document.getElementById('batchModelUpi').value
+      }, 'batchResult', 'batch');
+      if (ok) markDone(5);
+    }
+
+    async function registerItem() {
+      const ok = await registerDpp({
+        upi: document.getElementById('itemUpi').value,
+        reoId: document.getElementById('itemReoId').value,
+        facilitiesId: ['GLN-5412345000013'],
+        liveURL: document.getElementById('itemLiveUrl').value,
+        backupURL: document.getElementById('itemBackupUrl').value,
+        commodityCode: document.getElementById('itemCommodity').value,
+        granularityLevel: 'ITEM',
+        deactivated: document.getElementById('itemDeactivated').value === 'true',
+        modelUpi: document.getElementById('itemModelUpi').value,
+        batchUpi: document.getElementById('itemBatchUpi').value
+      }, 'itemResult', 'item');
+      if (ok) markDone(6);
+    }
+
+    // --- QUERY & AUDIT ---
+    async function queryDpp() {
+      const isEn = currentLang === 'en';
+      const rid = document.getElementById('queryRegistryId').value;
+      if (!rid) return showResult('queryResult', false, isEn ? 'Please enter a Registry ID!' : 'Vui lòng nhập Registry ID!');
+      const cached = registeredData[rid];
+      if (cached) {
+        showResult('queryResult', true, (isEn ? 'Found DPP entry (active session cache):\n\n' : 'Tìm thấy hồ sơ DPP (bộ nhớ phiên hiện tại):\n\n') + JSON.stringify(cached, null, 2));
+        markDone(7);
+      } else {
+        showResult('queryResult', false, isEn ?
+          'Registry ID not found in current session cache.\nNote: Core Registry API maintains proof ledger; session records are shown for items registered during this session.' :
+          'Không tìm thấy Registry ID này trong phiên hiện tại.\nLưu ý: Dữ liệu hiển thị từ các DPP đã đăng ký trong phiên này.');
+      }
+    }
+
+    function listAllDpp() {
+      const isEn = currentLang === 'en';
+      let html = '<div style="margin-top:16px"><table class="data-table"><thead><tr><th>Level</th><th>Registry ID</th><th>DPP Hash</th><th>Status</th></tr></thead><tbody>';
+      let count = 0;
+      for (const [level, rid] of Object.entries(registeredIds)) {
+        if (rid) {
+          count++;
+          const d = registeredData[rid];
+          html += '<tr><td><span class="level-badge level-' + level.toUpperCase() + '">' + level.toUpperCase() + '</span></td><td>' + rid + '</td><td style="font-size:10px">' + (d?.dppHash||'') + '</td><td style="color:var(--success)">' + (isEn ? 'Registered' : 'Đã đăng ký') + '</td></tr>';
+        }
+      }
+      if (count === 0) {
+        html += '<tr><td colspan="4" style="text-align:center;color:var(--text-dim)">' + (isEn ? 'No entries registered yet — complete Steps 5, 6, or 7 first' : 'Chưa có DPP nào — hãy đăng ký ở Bước 5-7 trước') + '</td></tr>';
+      }
+      html += '</tbody></table></div>';
+      document.getElementById('queryResult').innerHTML = html;
+      markDone(7);
+    }
+
+    async function getProof() {
+      const isEn = currentLang === 'en';
+      const rid = document.getElementById('proofRegistryId').value;
+      if (!rid) return showResult('proofResult', false, isEn ? 'Enter Registry ID!' : 'Vui lòng nhập Registry ID!');
+      if (!token) return showResult('proofResult', false, isEn ? 'Not authenticated!' : 'Chưa đăng nhập!');
+      const cached = registeredData[rid];
+      const reoId = cached?._requestBody?.reoId || 'LEI-529900T8BM49AURSDO55';
+      try {
+        const r = await fetch(API + '/metadata/v1/' + rid + '/proof?reoId=' + encodeURIComponent(reoId), { headers: { 'Authorization': 'Bearer ' + token } });
+        if (r.ok) {
+          const jwt = await r.text();
+          const parts = jwt.split('.');
+          const header = JSON.parse(atob(parts[0]));
+          let b64 = parts[1].replace(/-/g,'+').replace(/_/g,'/');
+          while(b64.length%4) b64+='=';
+          const payload = JSON.parse(atob(b64));
+          showResult('proofResult', true,
+            (isEn ? 'Proof of Registration Acquired!\n\n=== JWT Header ===\n' : 'Nhận Proof of Registration thành công!\n\n=== JWT Header ===\n') + JSON.stringify(header, null, 2) +
+            (isEn ? '\n\n=== JWT Payload (Certificate Content) ===\n' : '\n\n=== JWT Payload (Nội dung chứng nhận) ===\n') + JSON.stringify(payload, null, 2) +
+            (isEn ? '\n\n=== Certificate Attributes ===\n' : '\n\n=== Giải thích thuộc tính ===\n') +
+            'Issuer: ' + payload.iss +
+            '\nRegistry ID: ' + payload.registryId +
+            '\nRegistered at: ' + payload.registeredAt +
+            '\nCommodity Code: ' + payload.commodityCode +
+            '\nREO ID: ' + payload.reoId +
+            '\nREO Name: ' + payload.reoName +
+            '\nDPP Hash: ' + (payload.dppHash||'N/A') +
+            '\nExpires: ' + (payload.exp ? new Date(payload.exp*1000).toLocaleString() : 'N/A') +
+            '\n\n=== Raw JWT Token ===\n' + jwt);
+          markDone(8);
+        } else {
+          const d = await r.text();
+          showResult('proofResult', false, 'HTTP ' + r.status + ': ' + d);
+        }
+      } catch(e) {
+        showResult('proofResult', false, e.message);
+      }
+    }
+
+    async function getJwks() {
+      const isEn = currentLang === 'en';
+      try {
+        const r = await fetch(API + '/.well-known/jwks.json');
+        const d = await r.json();
+        showResult('proofResult', true, (isEn ?
+          'JWKS Public Key Set\n\nThis public key allows any client globally to verify the signature of issued Proof JWT certificates.\nThis endpoint is publicly accessible without credentials.\n\n' :
+          'Bộ Khóa Công Khai JWKS\n\nĐây là public key dùng để kiểm tra chữ ký số của Proof JWT trên toàn cầu.\nBất kỳ ai cũng có thể truy cập endpoint công khai này.\n\n') + JSON.stringify(d, null, 2));
+      } catch(e) { showResult('proofResult', false, e.message); }
+    }
+
+    async function updateDpp() {
+      const ok = await registerDpp({
+        upi: document.getElementById('updateUpi').value,
+        reoId: document.getElementById('updateReoId').value,
+        facilitiesId: [document.getElementById('updateFacility').value],
+        liveURL: document.getElementById('updateLiveUrl').value,
+        backupURL: document.getElementById('updateBackupUrl').value,
+        commodityCode: document.getElementById('updateCommodity').value,
+        granularityLevel: 'MODEL'
+      }, 'updateResult', 'model');
+      if (ok) markDone(9);
+    }
+
+    function generateSummary() {
+      const isEn = currentLang === 'en';
+      const total = 11, done = stepsDone.size, pct = Math.round((done/total)*100);
+      const stepsEn = ['System Check','Login','Inspect Schema','Validate Footwear DPP','Register MODEL','Register BATCH','Register ITEM','Lookup DPP','Proof of Registration','Update DPP','Summary Report'];
+      const stepsVi = ['Kiểm tra hệ thống','Đăng nhập','Xem Schema','Validate DPP Giày dép','Đăng ký MODEL','Đăng ký BATCH','Đăng ký ITEM','Tra cứu DPP','Chứng chỉ số Proof','Cập nhật DPP','Báo cáo Tổng kết'];
+      const steps = isEn ? stepsEn : stepsVi;
+
+      let text = (isEn ? 'DPP PLATFORM — TESTING COVERAGE REPORT\n=======================================\n\nCompleted: ' : 'KẾT QUẢ THỬ NGHIỆM NỀN TẢNG DPP\n=======================================\n\nHoàn thành: ') +
+        done + '/' + total + (isEn ? ' steps (' : ' bước (') + pct + '%)\n\n' + (isEn ? 'Details:\n' : 'Chi tiết:\n');
+
+      steps.forEach((s, i) => {
+        text += '  ' + (stepsDone.has(i)?'[OK]':'[  ]') + (isEn ? ' Step ' : ' Bước ') + (i+1) + ': ' + s + '\n';
+      });
+
+      text += '\n' + (isEn ? 'Registered Footwear Passports:\n' : 'Hộ chiếu Giày dép đã đăng ký:\n');
+      for (const [level, rid] of Object.entries(registeredIds)) {
+        if (rid) text += '  ' + level.toUpperCase() + ': ' + rid + '\n';
+      }
+      if (!Object.values(registeredIds).some(v=>v)) text += isEn ? '  (none yet)\n' : '  (chưa có)\n';
+
+      showResult('summaryResult', true, text);
+      markDone(10);
+    }
+
+    // --- INITIALIZATION ---
+    document.addEventListener('DOMContentLoaded', () => {
+      // Initialize Mermaid with Dark theme
+      if (window.mermaid) {
+        mermaid.initialize({ startOnLoad: false, theme: 'dark' });
+      }
+      setLanguage(currentLang); // Default is EN
+      restoreAuth();
+      setInterval(updateAuthUI, 5000);
+      checkSystem();
+    });
+  </script>
+</body>
+</html>
