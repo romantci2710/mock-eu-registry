@@ -259,8 +259,63 @@
     .bp-table tr:hover td { background:rgba(255,255,255,0.02); }
 
     .mermaid-box {
-      background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);
-      padding:20px;margin:20px 0;display:flex;justify-content:center;overflow-x:auto;
+      background: #080d1a;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 36px 28px;
+      margin: 28px 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow-x: auto;
+      box-shadow: inset 0 2px 16px rgba(0,0,0,0.5);
+    }
+    .mermaid-box svg {
+      width: 100% !important;
+      max-width: 1050px !important;
+      height: auto !important;
+      min-width: 680px !important;
+      display: block !important;
+      margin: 0 auto !important;
+    }
+    .mermaid-box svg .node rect,
+    .mermaid-box svg .node circle,
+    .mermaid-box svg .node polygon {
+      stroke-width: 2.5px !important;
+    }
+    .mermaid-box svg .label,
+    .mermaid-box svg .nodeLabel,
+    .mermaid-box svg span {
+      font-size: 15.5px !important;
+      line-height: 1.6 !important;
+    }
+    .mermaid-box svg .cluster rect {
+      stroke-width: 2px !important;
+      stroke-dasharray: 6 4 !important;
+      fill: rgba(15, 23, 42, 0.6) !important;
+    }
+    .mermaid-box svg .cluster-label span,
+    .mermaid-box svg .cluster-label text {
+      font-size: 16px !important;
+      font-weight: 700 !important;
+      color: #93c5fd !important;
+    }
+    .mermaid-box svg .edgeLabel {
+      font-size: 13.5px !important;
+      font-weight: 600 !important;
+      background-color: #1e293b !important;
+      color: #93c5fd !important;
+      padding: 4px 10px !important;
+      border-radius: 6px !important;
+      border: 1px solid rgba(59, 130, 246, 0.3) !important;
+    }
+    .mermaid-box svg .edgePath path {
+      stroke-width: 2.5px !important;
+      stroke: #60a5fa !important;
+    }
+    .mermaid-box svg .marker {
+      fill: #60a5fa !important;
+      stroke: #60a5fa !important;
     }
 
     /* --- VIEW 3: VOCABULARY HUB & ONTOLOGIES --- */
@@ -1007,11 +1062,11 @@
         tabLabelMro: "SIMILARITY & MRO Engine"
       },
       vi: {
-        hdrTitle: "Nền tảng DPP — Bàn Thử Nghiệm & Toàn Tập Blueprint",
+        hdrTitle: "Nền tảng DPP — Bàn Thử Nghiệm & Hướng Dẫn Sử Dụng",
         hdrSubtitle: "Hộ chiếu Sản phẩm Kỹ thuật số | Thí điểm Ngành Giày Dép ESPR | Registry + Validator",
         tabLabelLab: "Bàn Thử Nghiệm",
-        tabLabelBlueprint: "Toàn Tập Blueprint",
-        tabLabelVocab: "Từ điển & Bản thể luận DPP",
+        tabLabelBlueprint: "Hướng Dẫn Sử Dụng",
+        tabLabelVocab: "Từ điển & Mô hình Dữ Liệu DPP",
         tabLabelMro: "Thuật toán & Vật tư MRO",
         sbTitle: "Kịch bản Thử nghiệm",
         sbStep0: "Kiểm tra hệ thống",
@@ -1131,7 +1186,7 @@
         btnSummary: "Tạo báo cáo",
 
         // Blueprint TOC
-        bpTocHeader: "📑 Mục Lục Toàn Tập Blueprint",
+        bpTocHeader: "📑 Mục Lục Hướng Dẫn Sử Dụng",
         bpNav1: "1. DPP là gì & Quy chuẩn Giày dép ESPR?",
         bpNav2: "2. Kiến trúc 5 Thành phần liên hoàn",
         bpNav3: "3. Phân quyền & Các vai trò tham gia",
@@ -1299,12 +1354,12 @@ graph TB
             <div class="mermaid-box">
               <pre class="mermaid">
 graph TD
-    M["🏷️ Level 1: MODEL (Product Line)<br/>e.g. Model 'EcoStride Circular Runner XB-100'<br/><i>Contains: Brand name, HS Code 64041100, Base Upper & Sole Composition</i>"]
-    B["📦 Level 2: BATCH (Production Lot)<br/>e.g. Lot #BATCH-2026-09 (Manufactured Sept 2026)<br/><i>Contains: Assembly plant GLN, vulcanization lot date, dye batch</i>"]
-    I["👟 Level 3: ITEM (Individual Physical Pair)<br/>e.g. Serial #SN-SHOE-00123456 (Size EUR 42)<br/><i>Contains: Unique QR code serialized UID, repair log</i>"]
+    M["<b>🏷️ LEVEL 1: MODEL (Master Product Line Template)</b><br/><b>Real-World Example:</b> Sneaker Model 'EcoStride Circular Runner XB-100'<br/><i>Contains: Brand owner GLN/EORI, TARIC/HS Code 64041100, Base Upper & Sole Circularity Ratios</i>"]
+    B["<b>📦 LEVEL 2: BATCH (Factory Production Lot Run)</b><br/><b>Real-World Example:</b> Production Lot #BATCH-2026-09 (Manufactured Sept 2026)<br/><i>Contains: Tier-1 plant GLN 8931234567890, Lot release date, Bio-EVA foam & vulcanized rubber dye lot</i>"]
+    I["<b>👟 LEVEL 3: ITEM (Individual Serialized Physical Shoe)</b><br/><b>Real-World Example:</b> Physical shoe UID #SN-SHOE-00123456 (EUR Size 42)<br/><i>Contains: GS1 Digital Link QR code on tongue tag, In-service repair log, Statutory recycling status</i>"]
 
-    M --> B
-    B --> I
+    M ==>|Inherits base model attributes| B
+    B ==>|Identifies each physical item| I
               </pre>
             </div>
             <ul>
@@ -1358,17 +1413,17 @@ graph TD
             <p>It is vital to distinguish between the <strong>Central EU Registry Ledger</strong> and the <strong>Consumer Passport Web UI</strong>:</p>
             <div class="mermaid-box">
               <pre class="mermaid">
-graph LR
-    subgraph "1. Central EU Registry (This Platform)"
-        R["Legal Verification & Ledger<br/><i>(For Customs, Auditors, and Brand Legal Teams)</i><br/>Stores: UPI, HS Code, Registration Date, Cryptographic Proof JWT"]
+graph TB
+    subgraph S1 ["🏛️ 1. CENTRAL EU REGISTRY NOTARY LEDGER (THIS PLATFORM)"]
+        R["<b>📜 Legal Registration & Cryptographic Proof Notary</b><br/><i>(For European Customs, Market Surveillance Authorities & Enterprise Audit Teams)</i><br/><b>Stores:</b> Unique Passport Identifier (UPI), TARIC Code 64041100, Date, RSA Digital Signature Proof JWT"]
     end
 
-    subgraph "2. Consumer Passport Web UI (Live URL)"
-        P["Brand Consumer Web Application<br/><i>(For Shoppers Scanning Tongue/Box QR Code)</i><br/>Displays: Materials, Eco-score, Sizing, Detachable Sole Repair Guide"]
+    subgraph S2 ["🌐 2. CONSUMER PASSPORT WEB EXPERIENCE (LIVE URL APPLICATION)"]
+        P["<b>👟 Interactive Brand Consumer Web Portal</b><br/><i>(For Shoppers Scanning QR Code on Tongue Label or Packaging)</i><br/><b>Displays:</b> 42% Ocean Recycled Mesh, Bio-EVA Cushioning, Detachable Sole Repair Guide & Return Hubs"]
     end
 
-    QR["Consumer scans QR on shoe tongue"] --> P
-    Customs["Customs officer checks EU database"] --> R
+    Customs["👮 EU Customs Officer & Compliance Auditor"] ==>|Verifies statutory ledger| R
+    QR["📱 Shopper scans QR on shoe tongue / box"] ==>|Launches mobile web experience| P
               </pre>
             </div>
             <ul>
@@ -1462,7 +1517,7 @@ graph LR
       } else {
         area.innerHTML = `
           <div class="bp-hero">
-            <h2>🇪🇺 Digital Product Passport (DPP) — Toàn Tập Blueprint</h2>
+            <h2>🇪🇺 Digital Product Passport (DPP) — Hướng Dẫn Sử Dụng</h2>
             <p>Cẩm nang vận hành kiến trúc hệ thống chuẩn Châu Âu, sử dụng ngành Giày Dép (Nhóm ưu tiên hàng đầu theo luật ESPR) làm ví dụ thực tế xuyên suốt — viết riêng cho người không chuyên về dữ liệu & công nghệ.</p>
           </div>
 
@@ -1545,12 +1600,12 @@ graph TB
             <div class="mermaid-box">
               <pre class="mermaid">
 graph TD
-    M["🏷️ Cấp 1: MODEL (Dòng sản phẩm)<br/>VD: Mẫu giày 'EcoStride Circular Runner XB-100'<br/><i>Chứa: Tên mẫu, Mã hải quan HS 64041100, Tỷ lệ chất liệu vải & đế chung</i>"]
-    B["📦 Cấp 2: BATCH (Lô sản xuất)<br/>VD: Lô hàng #BATCH-2026-09 (Sản xuất tháng 09/2026)<br/><i>Chứa: Mã nhà máy lắp ráp GLN, ngày xuất xưởng của cả lô, mẻ nhuộm vải</i>"]
-    I["👟 Cấp 3: ITEM (Từng đôi giày cụ thể)<br/>VD: Đôi giày số serial #SN-SHOE-00123456 (Cỡ 42)<br/><i>Chứa: Mã QR định danh độc nhất trên tem giày, lịch sử sửa chữa/thu hồi</i>"]
+    M["<b>🏷️ CẤP 1: MODEL (Dòng Sản Phẩm Tiêu Biểu)</b><br/><b>Ví dụ thực tế:</b> Mẫu giày thể thao 'EcoStride Circular Runner XB-100'<br/><i>Chứa: Tên thương hiệu, Mã hải quan TARIC/HS 64041100, Bóc tách tỷ lệ vải tái chế & đế cao su tự nhiên</i>"]
+    B["<b>📦 CẤP 2: BATCH (Lô Hàng Sản Xuất Nhà Máy)</b><br/><b>Ví dụ thực tế:</b> Lô xuất xưởng #BATCH-2026-09 (Sản xuất tháng 09/2026 tại Việt Nam)<br/><i>Chứa: Mã xưởng Tier-1 GLN 8931234567890, Ngày kiểm định lô, Mẻ vật liệu EVA & vải nhuộm</i>"]
+    I["<b>👟 CẤP 3: ITEM (Từng Đôi Giày Vật Lý Cụ Thể)</b><br/><b>Ví dụ thực tế:</b> Đôi giày số serial duy nhất #SN-SHOE-00123456 (Cỡ 42 EUR)<br/><i>Chứa: Mã QR GS1 Digital Link in trên tem lưỡi gà, Lịch sử bảo hành, Thay đế & Tái chế</i>"]
 
-    M --> B
-    B --> I
+    M ==>|Kế thừa thông số Model chung| B
+    B ==>|Định danh từng đôi giày riêng biệt| I
               </pre>
             </div>
             <ul>
@@ -1604,17 +1659,17 @@ graph TD
             <p>Cần phân biệt rõ 2 màn hình hiển thị hoàn toàn khác nhau:</p>
             <div class="mermaid-box">
               <pre class="mermaid">
-graph LR
-    subgraph "1. Cổng Đăng ký EU Registry (Hệ thống này)"
-        R["Sổ bộ đăng kiểm & Chứng nhận số<br/><i>(Dành cho Hải quan EU, Kiểm toán & Doanh nghiệp)</i><br/>Lưu trữ: Mã số đăng ký, ngày cấp, trạng thái pháp lý, Proof JWT chống giả"]
+graph TB
+    subgraph S1 ["🏛️ 1. CỔNG ĐĂNG KÝ TRUNG TÂM EU REGISTRY (HỆ THỐNG NÀY)"]
+        R["<b>📜 Sổ bộ Đăng kiểm Pháp lý & Chứng nhận Số EU</b><br/><i>(Dành riêng cho Hải quan EU, Cơ quan Giám sát Thị trường & Ban Pháp chế Doanh nghiệp)</i><br/><b>Lưu trữ:</b> Mã định danh UPI, Mã Hải quan TARIC 64041100, Ngày cấp, Proof JWT ký số RSA chống giả mạo"]
     end
 
-    subgraph "2. Trang Web Hộ chiếu Người dùng (Live URL)"
-        P["Trang Web chi tiết của thương hiệu giày<br/><i>(Dành cho Khách hàng quét mã QR trên tem giày)</i><br/>Hiển thị: Thành phần vải tái chế, độ bền đế giày, cách tháo đế sửa chữa"]
+    subgraph S2 ["🌐 2. TRANG WEB HỘ CHIẾU NGƯỜI TIÊU DÙNG (CONSUMER PASSPORT LIVE URL)"]
+        P["<b>👟 Web App Hộ Chiếu Tương Tác Của Thương Hiệu Giày</b><br/><i>(Dành cho Khách hàng quét mã QR in trên tem lưỡi gà hoặc vỏ hộp giày)</i><br/><b>Hiển thị:</b> Tỷ lệ 42% vải lưới tái chế, Đế cao su sinh học, Hướng dẫn tháo đế sửa chữa & trạm thu hồi"]
     end
 
-    QR["Khách quét mã QR trên lưỡi gà/hộp giày"] --> P
-    Customs["Hải quan kiểm tra cổng EU"] --> R
+    Customs["👮 Cán bộ Hải quan & Kiểm toán tra cứu dữ liệu EU"] ==>|Tra cứu Notary Ledger| R
+    QR["📱 Người tiêu dùng quét mã QR trên tem giày"] ==>|Mở Web App di động| P
               </pre>
             </div>
             <ul>
@@ -1656,7 +1711,7 @@ graph LR
             <table class="bp-table">
               <thead><tr><th>Dịch vụ</th><th>Đường link Public</th><th>Ý nghĩa & Hướng dẫn</th></tr></thead>
               <tbody>
-                <tr><td>🖥️ <strong>Testing Dashboard</strong></td><td><a href="https://dpp-mockup.erx.vn" target="_blank" style="color:var(--accent-hover)">https://dpp-mockup.erx.vn</a></td><td>Giao diện điều khiển, thử nghiệm 11 bước và xem tài liệu blueprint</td></tr>
+                <tr><td>🖥️ <strong>Testing Dashboard</strong></td><td><a href="https://dpp-mockup.erx.vn" target="_blank" style="color:var(--accent-hover)">https://dpp-mockup.erx.vn</a></td><td>Giao diện điều khiển, thử nghiệm 11 bước và xem tài liệu hướng dẫn</td></tr>
                 <tr><td>🏥 <strong>Registry Health</strong></td><td><a href="https://dpp-mockup.erx.vn/q/health" target="_blank" style="color:var(--accent-hover)">.../q/health</a></td><td>Kiểm tra trạng thái máy chủ EU Registry & kết nối Database (<code>UP</code>)</td></tr>
                 <tr><td>🔬 <strong>Validator Health</strong></td><td><a href="https://dpp-mockup.erx.vn/validator-health/health" target="_blank" style="color:var(--accent-hover)">.../validator-health/health</a></td><td>Kiểm tra máy chủ kiểm định tiêu chuẩn DPP Validator (<code>UP</code>)</td></tr>
                 <tr><td>🔑 <strong>Khóa công khai JWKS</strong></td><td><a href="https://dpp-mockup.erx.vn/.well-known/jwks.json" target="_blank" style="color:var(--accent-hover)">.../.well-known/jwks.json</a></td><td>Bộ khóa công khai dùng để xác minh chữ ký điện tử Proof</td></tr>
@@ -1668,10 +1723,10 @@ graph LR
 
           <!-- Section 11 -->
           <section id="bp-sec11" class="bp-section">
-            <h2>📚 Phần 11: Kiến trúc Ngữ nghĩa Châu Âu & 10 Bản thể luận Cốt lõi (EUDPP CORE)</h2>
+            <h2>📚 Phần 11: Kiến trúc Ngữ nghĩa Châu Âu & 10 Mô hình Dữ liệu Cốt lõi (EUDPP CORE)</h2>
             <p>Hộ chiếu Sản phẩm Kỹ thuật số Châu Âu vận hành dựa trên khung ngữ nghĩa chính thức được công bố tại <strong><a href="https://dpp.vocabulary-hub.eu/" target="_blank" style="color:var(--accent-hover)">dpp.vocabulary-hub.eu</a></strong> (do Viện TNO, Kezzler và Consortium CIRPASS-2 điều hành trên nền tảng Semantic Treehouse).</p>
             <div class="bp-alert bp-alert-note">
-              <strong>Nguồn chuẩn hóa duy nhất:</strong> 10 bản thể luận EUDPP CORE là bộ quy chuẩn ngữ nghĩa bắt buộc áp dụng chung cho tất cả 27 quốc gia EU, đảm bảo hải quan, cơ quan kiểm định thị trường và người tiêu dùng đều đọc hiểu đồng nhất.
+              <strong>Nguồn chuẩn hóa duy nhất:</strong> 10 mô hình dữ liệu EUDPP CORE là bộ quy chuẩn ngữ nghĩa bắt buộc áp dụng chung cho tất cả 27 quốc gia EU, đảm bảo hải quan, cơ quan kiểm định thị trường và người tiêu dùng đều đọc hiểu đồng nhất.
             </div>
             <table class="bp-table">
               <thead><tr><th>Tên Module</th><th>Phiên bản</th><th>Phạm vi & Vai trò trong Hộ chiếu DPP</th><th>Thuộc tính & Chuẩn áp dụng</th></tr></thead>
@@ -1685,7 +1740,7 @@ graph LR
                 <tr><td><code>LCA</code></td><td>v2.0</td><td>Đánh giá tác động môi trường, chỉ số carbon PEF và tính tuần hoàn</td><td>ILCD+EPD v1.3, PEF (kg CO₂e/đôi giày), Điểm sửa chữa</td></tr>
                 <tr><td><code>EVENT</code></td><td>v0.1.0</td><td>Nhật ký dòng sự kiện vòng đời vật lý theo chuẩn quốc tế GS1 EPCIS</td><td>GS1 EPCIS 2.0 (BirthEvent, RepairEvent, RecyclingEvent)</td></tr>
                 <tr><td><code>COMP</code></td><td>v1.0</td><td>Hồ sơ chứng minh tuân thủ pháp lý và chứng chỉ phòng thí nghiệm độc lập</td><td>Tuyên bố Hợp chuẩn EU (DoC PDF), Mã Notified Body</td></tr>
-                <tr><td><code>CON</code></td><td>v2.0.5</td><td>Module cầu nối duy trì sự nhất quán tiên đề giữa các ontology</td><td>Cầu nối ngữ nghĩa tích hợp liên miền dữ liệu</td></tr>
+                <tr><td><code>CON</code></td><td>v2.0.5</td><td>Module cầu nối duy trì sự nhất quán tiên đề giữa các mô hình dữ liệu</td><td>Cầu nối ngữ nghĩa tích hợp liên miền dữ liệu</td></tr>
               </tbody>
             </table>
           </section>
@@ -1711,10 +1766,16 @@ graph LR
       setTimeout(() => {
         try {
           if (window.mermaid) {
-            mermaid.run({ querySelector: '.mermaid' });
+            mermaid.run({ querySelector: '.mermaid' }).then(() => {
+              document.querySelectorAll('.mermaid-box svg').forEach(svg => {
+                svg.style.maxWidth = '100%';
+                svg.style.width = '100%';
+                svg.removeAttribute('height');
+              });
+            });
           }
         } catch(_) {}
-      }, 50);
+      }, 60);
     }
 
     // --- VOCABULARY HUB & ONTOLOGIES RENDERER (EN & VI) ---
@@ -1728,10 +1789,10 @@ graph LR
         <!-- Hero Header -->
         <div class="vocab-hero">
           <div class="vocab-hero-text">
-            <h2>${isEn ? '📚 EU DPP Vocabulary Hub & Semantic Architecture' : '📚 Cổng Từ Điển & Bản Thể Luận Hộ Chiếu Kỹ Thuật Số Châu Âu'}</h2>
+            <h2>${isEn ? '📚 EU DPP Vocabulary Hub & Semantic Architecture' : '📚 Cổng Từ Điển & Mô Hình Dữ Liệu Hộ Chiếu Kỹ Thuật Số Châu Âu'}</h2>
             <p>${isEn 
               ? 'Official CIRPASS-2 Semantic Framework on Semantic Treehouse (TNO & Kezzler). Serving as the single source of truth for European cross-sector ontologies and priority Footwear/Textile data models under ESPR.' 
-              : 'Khung ngữ nghĩa chuẩn hóa chính thức của dự án CIRPASS-2 trên nền tảng Semantic Treehouse (do Viện TNO và Kezzler điều hành). Đây là nguồn chuẩn hóa ngữ nghĩa duy nhất cho các bản thể luận liên ngành và mô hình hộ chiếu ngành Dệt may & Giày dép theo quy định ESPR.'}
+              : 'Khung ngữ nghĩa chuẩn hóa chính thức của dự án CIRPASS-2 trên nền tảng Semantic Treehouse (do Viện TNO và Kezzler điều hành). Đây là nguồn chuẩn hóa ngữ nghĩa duy nhất cho các mô hình dữ liệu liên ngành và mô hình hộ chiếu ngành Dệt may & Giày dép theo quy định ESPR.'}
             </p>
           </div>
           <div style="display:flex;flex-direction:column;gap:10px;align-items:flex-end">
@@ -1744,12 +1805,12 @@ graph LR
 
         <!-- Section 1: 10 EUDPP CORE Ontologies -->
         <div class="vocab-section-title">
-          <span>🏛️</span> ${isEn ? 'Part 1: 10 EUDPP Horizontal Core Ontologies' : 'Phần 1: 10 Bản thể luận Cốt lõi Liên ngành (EUDPP CORE)'}
+          <span>🏛️</span> ${isEn ? 'Part 1: 10 EUDPP Horizontal Core Ontologies' : 'Phần 1: 10 Mô hình Dữ liệu Cốt lõi Liên ngành (EUDPP CORE)'}
         </div>
         <div class="vocab-section-desc">
           ${isEn 
             ? 'These 10 core modular ontologies govern semantic interoperability across all European Member States, enabling automated cross-border validation by EU Customs and Market Surveillance Authorities.' 
-            : '10 module bản thể luận cốt lõi này quy định khả năng liên thông ngữ nghĩa giữa tất cả các quốc gia thành viên EU, cho phép Hải quan và Cơ quan giám sát thị trường kiểm tra tự động.'}
+            : '10 module mô hình dữ liệu cốt lõi này quy định khả năng liên thông ngữ nghĩa giữa tất cả các quốc gia thành viên EU, cho phép Hải quan và Cơ quan giám sát thị trường kiểm tra tự động.'}
         </div>
 
         <div class="ontology-grid">
@@ -1761,7 +1822,7 @@ graph LR
             </div>
             <p>${isEn 
               ? 'The master integrating ontology connecting all thematic modules. Declares foundational root concepts: eudpp:Product, eudpp:DigitalProductPassport, and eudpp:hasProperty.' 
-              : 'Bản thể luận trục xương sống tích hợp toàn bộ các module. Định nghĩa các khái niệm gốc: eudpp:Product (Sản phẩm), eudpp:DPP (Hộ chiếu), và quan hệ eudpp:hasProperty.'}
+              : 'Mô hình dữ liệu trục xương sống tích hợp toàn bộ các module. Định nghĩa các khái niệm gốc: eudpp:Product (Sản phẩm), eudpp:DPP (Hộ chiếu), và quan hệ eudpp:hasProperty.'}
             </p>
             <div class="ontology-meta">
               <span>IRI: <code>w3id.org/eudpp/CORE</code></span>
@@ -2999,7 +3060,27 @@ graph LR
     document.addEventListener('DOMContentLoaded', () => {
       // Initialize Mermaid with Dark theme
       if (window.mermaid) {
-        mermaid.initialize({ startOnLoad: false, theme: 'dark' });
+        mermaid.initialize({
+          startOnLoad: false,
+          theme: 'dark',
+          themeVariables: {
+            fontSize: '16px',
+            fontFamily: 'Inter, system-ui, -apple-system, sans-serif',
+            primaryColor: '#1e3a8a',
+            primaryTextColor: '#ffffff',
+            primaryBorderColor: '#3b82f6',
+            lineColor: '#60a5fa',
+            secondaryColor: '#1e293b',
+            tertiaryColor: '#0f172a'
+          },
+          flowchart: {
+            useMaxWidth: false,
+            htmlLabels: true,
+            curve: 'basis',
+            nodeSpacing: 50,
+            rankSpacing: 55
+          }
+        });
       }
       setLanguage(currentLang); // Default is EN
       restoreAuth();
