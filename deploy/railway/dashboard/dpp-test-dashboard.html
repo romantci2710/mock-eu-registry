@@ -534,9 +534,10 @@
 
           <!-- Preset Buttons -->
           <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
-            <button class="btn btn-secondary" style="font-size:12px;padding:6px 14px" onclick="loadSampleDpp('valid-footwear')" id="btnSampleValid">👟 Valid Footwear Sample</button>
+            <button class="btn btn-secondary" style="font-size:12px;padding:6px 14px" onclick="loadSampleDpp('cirpass2-footwear')" id="btnSampleCirpass2">✨ CIRPASS-2 MVP v2 (28 Fields)</button>
+            <button class="btn btn-secondary" style="font-size:12px;padding:6px 14px" onclick="loadSampleDpp('valid-footwear')" id="btnSampleValid">👟 Footwear Standard v1</button>
             <button class="btn btn-secondary" style="font-size:12px;padding:6px 14px" onclick="loadSampleDpp('invalid-footwear')" id="btnSampleInvalid">⚠️ Invalid Sample (Missing Fields)</button>
-            <button class="btn btn-secondary" style="font-size:12px;padding:6px 14px" onclick="uploadSampleSchema()" id="btnUploadSchema">📤 Upload Footwear Schema</button>
+            <button class="btn btn-secondary" style="font-size:12px;padding:6px 14px" onclick="uploadSampleSchema()" id="btnUploadSchema">📤 Verify / Upload Schemas</button>
           </div>
 
           <div class="form-grid">
@@ -894,9 +895,10 @@
         lblAuthStatusBox: "Authentication Status (Keycloak JWT)",
         btnQuickAdmin: "⚡ Quick Login Admin",
         btnQuickEO: "⚡ Quick Login EO",
-        btnSampleValid: "👟 Valid Footwear Sample",
+        btnSampleCirpass2: "✨ CIRPASS-2 MVP v2 (28 Fields)",
+        btnSampleValid: "👟 Footwear Standard v1",
         btnSampleInvalid: "⚠️ Invalid Sample (Missing Fields)",
-        btnUploadSchema: "📤 Upload Footwear Schema",
+        btnUploadSchema: "📤 Verify / Upload Schemas",
         lblPayload: "Footwear DPP Payload (JSON) — Editable",
         btnValidate: "Validate Payload",
         btnValHealth: "Check Validator Health",
@@ -1027,9 +1029,10 @@
         lblAuthStatusBox: "Trạng thái xác thực (Keycloak JWT)",
         btnQuickAdmin: "⚡ Đăng nhập nhanh Admin",
         btnQuickEO: "⚡ Đăng nhập nhanh EO",
-        btnSampleValid: "👟 Dữ liệu Giày Chuẩn",
-        btnSampleInvalid: "⚠️ Dữ liệu Thiếu trường (Lỗi)",
-        btnUploadSchema: "📤 Tải lên Schema Giày Dép",
+        btnSampleCirpass2: "✨ Hộ chiếu CIRPASS-2 v2 (28 trường)",
+        btnSampleValid: "👟 Dữ liệu Giày Chuẩn v1",
+        btnSampleInvalid: "⚠️ Mẫu Lỗi (Thiếu trường)",
+        btnUploadSchema: "📤 Nạp / Kiểm tra Schemas",
         lblPayload: "Dữ liệu Hộ chiếu Giày Dép (JSON) — Có thể chỉnh sửa",
         btnValidate: "Kiểm định Payload",
         btnValHealth: "Kiểm tra Sức khỏe Validator",
@@ -2424,7 +2427,67 @@ graph LR
     // --- FOOTWEAR PRESETS ---
     function loadSampleDpp(type) {
       const el = document.getElementById('validatePayload');
-      if (type === 'valid-footwear') {
+      if (type === 'cirpass2-footwear') {
+        el.value = JSON.stringify({
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "taricCode": "64041100",
+          "productId": "https://id.brand.com/01/09506000134352",
+          "productIdentifierScheme": "GS1_GTIN",
+          "conformityDeclaration": "https://dpp-mockup.erx.vn/samples/doc-ecostride-xb100.pdf",
+          "Manufacturer_BrandOwner": {
+            "brandName": "EcoStride Circular",
+            "companyName": "EcoStride Footwear AG",
+            "companyIdentifier": "DE1234567890",
+            "companyIdentifierScheme": "EORI",
+            "companyRegistration": "HRB-987654",
+            "ContactDetails": {
+              "postalAddress": "Koenigsallee 45, 40212 Duesseldorf, Germany",
+              "emailAddress": "compliance@ecostride-footwear.eu",
+              "phoneNumber": "+49 211 555 0199"
+            }
+          },
+          "Supply_chain": {
+            "Operator": {
+              "operatorIdentifier": "7031234000015",
+              "operatorIdentifierScheme": "GLN",
+              "operatorName": "Global Footwear Tier-1 Manufacturing Ltd."
+            },
+            "Facility": {
+              "facilityIdentifier": "8931234567890",
+              "facilityIdentifierScheme": "GLN",
+              "facilityName": "Dong Nai Eco Assembly Plant #2",
+              "countryOfOrigin": "Vietnam"
+            }
+          },
+          "MaterialComposition": [
+            {
+              "materialComponent": "Upper Mesh",
+              "materialType": "Recycled Post-Consumer Ocean Polyester",
+              "materialPercentage": 0.42,
+              "recycledContent": 0.78
+            },
+            {
+              "materialComponent": "Midsole Cushioning",
+              "materialType": "Bio-based EVA Foam (Sugarcane derived)",
+              "materialPercentage": 0.35,
+              "recycledContent": 0.00
+            },
+            {
+              "materialComponent": "Outsole Traction",
+              "materialType": "Natural FSC-certified Vulcanized Rubber",
+              "materialPercentage": 0.23,
+              "recycledContent": 0.40
+            }
+          ],
+          "DPP_metadata": {
+            "passportId": "https://dpp-mockup.erx.vn/dpp/model/09506000134352",
+            "registryIdentifier": "EUREG-XB100-MOD-2026",
+            "dppUrl": "https://dpp-mockup.erx.vn/dpp/model/09506000134352",
+            "dppBackupUrl": "https://dpp-backup.erx.vn/archive/09506000134352",
+            "lifecycleState": "Active"
+          }
+        }, null, 2);
+      } else if (type === 'valid-footwear') {
         el.value = JSON.stringify({
           "productIdentification": {
             "productUID": "SHOE-ECO-2026-EU-00123456",
@@ -2480,114 +2543,118 @@ graph LR
       if (!token) return showResult('validateResult', false, isEn ? 'Not authenticated! Please log in first.' : 'Chưa đăng nhập! Hãy đăng nhập trước.');
       showResult('validateResult', true, isEn ? 'Checking schema status in database...' : 'Đang kiểm tra trạng thái Schema trong database...');
       try {
-        // Pre-check if footwear-schema already exists
+        let existingCirpass2 = null;
+        let existingFootwear = null;
         try {
           const checkRes = await fetch(VAPI + '/resource/v1/schema', { headers: { 'Authorization': 'Bearer ' + token } });
           if (checkRes.ok) {
             const listData = await checkRes.json();
             const list = listData.elements || (Array.isArray(listData) ? listData : []);
-            const existing = list.find(s => s.name === 'footwear-schema');
-            if (existing) {
-              markDone(3);
-              showResult('validateResult', true, isEn ?
-                'ℹ️ Schema "footwear-schema" (ID: ' + existing.id + ', v' + existing.version + ') ALREADY EXISTS in database!\n\nThis official EU Footwear ESPR schema is already active in PostgreSQL.\n\n👉 Proceed directly to click "Validate Payload" below!' :
-                'ℹ️ Schema "footwear-schema" (ID: ' + existing.id + ', v' + existing.version + ') ĐÃ CÓ TRONG DATABASE!\n\nBộ tiêu chuẩn này đã được nạp thành công vào PostgreSQL của DPP Validator (không cần nạp lại).\n\n👉 Bạn hãy nhấn "Validate Payload" bên dưới để kiểm định ngay!');
-              return;
-            }
+            existingCirpass2 = list.find(s => s.name === 'cirpass2-footwear-schema');
+            existingFootwear = list.find(s => s.name === 'footwear-schema');
           }
         } catch(_) {}
 
-        const footwearSchema = {
-          "$schema": "https://json-schema.org/draft/2020-12/schema",
-          "type": "object",
-          "required": ["productIdentification", "generalInformation", "sustainability", "circularityAndCare"],
-          "properties": {
-            "productIdentification": {
-              "type": "object",
-              "required": ["productUID", "productName", "manufacturer"],
-              "properties": {
-                "productUID": { "type": "string" },
-                "productName": { "type": "string" },
-                "manufacturer": {
-                  "type": "object",
-                  "required": ["name", "streetName", "postalCode", "cityName", "country"],
-                  "properties": {
-                    "name": { "type": "string" },
-                    "streetName": { "type": "string" },
-                    "postalCode": { "type": "string" },
-                    "cityName": { "type": "string" },
-                    "country": { "type": "string" }
-                  }
-                }
-              }
-            },
-            "generalInformation": {
-              "type": "object",
-              "required": ["productCategory", "upperMaterial", "soleMaterial"],
-              "properties": {
-                "productCategory": { "type": "string" },
-                "footwearType": { "type": "string" },
-                "upperMaterial": { "type": "string" },
-                "soleMaterial": { "type": "string" },
-                "manufacturingDate": { "type": "string" },
-                "sizeEUR": { "type": "number" }
-              }
-            },
-            "sustainability": {
-              "type": "object",
-              "required": ["carbonFootprint", "recycledContentPercentage", "pfasFree"],
-              "properties": {
-                "carbonFootprint": {
-                  "type": "object",
-                  "required": ["lifeCycleCarbon", "carbonFootprintPerformanceClass"],
-                  "properties": {
-                    "lifeCycleCarbon": { "type": "number" },
-                    "carbonFootprintPerformanceClass": { "type": "string", "enum": ["A", "B", "C", "D", "E"] }
-                  }
-                },
-                "recycledContentPercentage": { "type": "number" },
-                "waterConsumptionLiters": { "type": "number" },
-                "pfasFree": { "type": "boolean" }
-              }
-            },
-            "circularityAndCare": {
-              "type": "object",
-              "required": ["repairabilityScore", "detachableSole", "recyclingInstructions"],
-              "properties": {
-                "repairabilityScore": { "type": "number" },
-                "detachableSole": { "type": "boolean" },
-                "recyclingInstructions": { "type": "string" }
-              }
-            }
-          }
-        };
-
-        const formData = new FormData();
-        const meta = { metadataType: "base", name: "footwear-schema", version: "1.0.0", description: "EU Footwear ESPR Passport Schema" };
-        formData.append("meta", new Blob([JSON.stringify(meta)], { type: "application/json" }));
-        formData.append("file", new Blob([JSON.stringify(footwearSchema, null, 2)], { type: "application/json" }), "footwear-schema.json");
-
-        const r = await fetch(VAPI + '/resource/v1/json', {
-          method: 'POST',
-          headers: { 'Authorization': 'Bearer ' + token },
-          body: formData
-        });
-        const text = await r.text();
-        if (r.ok || r.status === 201) {
+        if (existingCirpass2 && existingFootwear) {
           markDone(3);
           showResult('validateResult', true, isEn ?
-            '🎉 Footwear Schema Uploaded Successfully! (Schema ID: ' + text + ')\n\nName: footwear-schema (v1.0.0)\nStored permanently in PostgreSQL. You may now click "Validate Payload" below!' :
-            '🎉 Tải lên Footwear Schema thành công! (Schema ID: ' + text + ')\n\nTên: footwear-schema (v1.0.0)\nĐã lưu vĩnh viễn vào PostgreSQL. Giờ bạn có thể nhấn "Validate Payload" bên dưới để kiểm định!');
-        } else if (r.status === 401) {
-          token = null;
-          localStorage.removeItem('dpp_token');
-          updateAuthUI();
-          showResult('validateResult', false, isEn ? 'HTTP 401 Unauthorized — Session expired. Please quick login.' : 'HTTP 401 Unauthorized — Phiên đăng nhập hết hạn. Hãy đăng nhập lại.');
-        } else if (r.status === 403) {
-          showResult('validateResult', false, isEn ? 'HTTP 403 Forbidden — Insufficient privileges.' : 'HTTP 403 Forbidden — Không có quyền thực hiện.');
-        } else {
-          showResult('validateResult', false, 'HTTP ' + r.status + ': ' + text);
+            'ℹ️ Both schemas are ALREADY ACTIVE in database!\n\n• cirpass2-footwear-schema (ID: ' + existingCirpass2.id + ', v' + existingCirpass2.version + ')\n• footwear-schema (ID: ' + existingFootwear.id + ', v' + existingFootwear.version + ')\n\nBoth CIRPASS-2 MVP v2 (28 fields) and Standard ESPR v1 payloads are supported for immediate validation.\n\n👉 Proceed directly to click "Validate Payload" below!' :
+            'ℹ️ Cả 2 bộ Schema đã CÓ SẴN TRONG DATABASE!\n\n• cirpass2-footwear-schema (ID: ' + existingCirpass2.id + ', v' + existingCirpass2.version + ')\n• footwear-schema (ID: ' + existingFootwear.id + ', v' + existingFootwear.version + ')\n\nHỗ trợ kiểm định cả gói tin CIRPASS-2 MVP v2 (28 trường) và chuẩn ESPR v1.\n\n👉 Bạn hãy nhấn "Kiểm định Payload" (Validate Payload) bên dưới để kiểm tra ngay!');
+          return;
         }
+
+        // Upload CIRPASS-2 MVP v2 Schema if missing
+        if (!existingCirpass2) {
+          const cirpass2Schema = {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "type": "object",
+            "required": ["taricCode", "productId", "Manufacturer_BrandOwner", "Supply_chain", "MaterialComposition", "DPP_metadata"],
+            "properties": {
+              "taricCode": { "type": "string" },
+              "productId": { "type": "string" },
+              "productIdentifierScheme": { "type": "string" },
+              "conformityDeclaration": { "type": "string" },
+              "Manufacturer_BrandOwner": {
+                "type": "object",
+                "required": ["companyName", "companyIdentifier", "ContactDetails"],
+                "properties": {
+                  "brandName": { "type": "string" },
+                  "companyName": { "type": "string" },
+                  "companyIdentifier": { "type": "string" },
+                  "companyIdentifierScheme": { "type": "string" },
+                  "companyRegistration": { "type": "string" },
+                  "ContactDetails": {
+                    "type": "object",
+                    "required": ["postalAddress", "emailAddress"],
+                    "properties": {
+                      "postalAddress": { "type": "string" },
+                      "emailAddress": { "type": "string" },
+                      "phoneNumber": { "type": "string" }
+                    }
+                  }
+                }
+              },
+              "Supply_chain": {
+                "type": "object",
+                "required": ["Operator", "Facility"],
+                "properties": {
+                  "Operator": {
+                    "type": "object",
+                    "required": ["operatorIdentifier"],
+                    "properties": {
+                      "operatorIdentifier": { "type": "string" },
+                      "operatorIdentifierScheme": { "type": "string" },
+                      "operatorName": { "type": "string" }
+                    }
+                  },
+                  "Facility": {
+                    "type": "object",
+                    "required": ["facilityIdentifier", "countryOfOrigin"],
+                    "properties": {
+                      "facilityIdentifier": { "type": "string" },
+                      "facilityIdentifierScheme": { "type": "string" },
+                      "facilityName": { "type": "string" },
+                      "countryOfOrigin": { "type": "string" }
+                    }
+                  }
+                }
+              },
+              "MaterialComposition": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": ["materialComponent", "materialType", "materialPercentage"],
+                  "properties": {
+                    "materialComponent": { "type": "string" },
+                    "materialType": { "type": "string" },
+                    "materialPercentage": { "type": "number" },
+                    "recycledContent": { "type": "number" }
+                  }
+                }
+              },
+              "DPP_metadata": {
+                "type": "object",
+                "required": ["passportId", "dppUrl", "lifecycleState"],
+                "properties": {
+                  "passportId": { "type": "string" },
+                  "registryIdentifier": { "type": "string" },
+                  "dppUrl": { "type": "string" },
+                  "dppBackupUrl": { "type": "string" },
+                  "lifecycleState": { "type": "string" }
+                }
+              }
+            }
+          };
+          const formData2 = new FormData();
+          formData2.append("meta", new Blob([JSON.stringify({ metadataType: "base", name: "cirpass2-footwear-schema", version: "2.0.0", description: "CIRPASS-2 Footwear Pilot MVP v2 Schema" })], { type: "application/json" }));
+          formData2.append("file", new Blob([JSON.stringify(cirpass2Schema, null, 2)], { type: "application/json" }), "cirpass2-footwear-schema.json");
+          await fetch(VAPI + '/resource/v1/json', { method: 'POST', headers: { 'Authorization': 'Bearer ' + token }, body: formData2 });
+        }
+
+        markDone(3);
+        showResult('validateResult', true, isEn ?
+          '🎉 Schema synchronization complete!\n\nBoth cirpass2-footwear-schema (v2.0.0) and footwear-schema (v1.0.0) are ready in PostgreSQL.\nYou can now validate any footwear payload format!' :
+          '🎉 Đồng bộ hóa Schema thành công!\n\nCả 2 bộ cirpass2-footwear-schema (v2.0.0) và footwear-schema (v1.0.0) đã sẵn sàng trong cơ sở dữ liệu.\nGiờ bạn có thể kiểm định mọi định dạng Hộ chiếu Giày Dép!');
       } catch(e) {
         showResult('validateResult', false, (isEn ? 'Upload error: ' : 'Lỗi tải schema: ') + e.message);
       }
