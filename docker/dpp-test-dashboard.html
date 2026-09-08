@@ -222,7 +222,7 @@
 
     .blueprint-content {
       flex:1;padding:36px 48px;overflow-y:auto;scroll-behavior:smooth;
-      max-width:1050px;margin:0 auto;line-height:1.75;
+      max-width:1200px;margin:0 auto;line-height:1.75;
     }
     .bp-hero {
       background:linear-gradient(135deg, rgba(59,130,246,0.1) 0%, rgba(0,51,153,0.15) 100%);
@@ -272,9 +272,9 @@
     }
     .mermaid-box svg {
       width: 100% !important;
-      max-width: 1050px !important;
+      max-width: 100% !important;
       height: auto !important;
-      min-width: 680px !important;
+      min-width: 750px !important;
       display: block !important;
       margin: 0 auto !important;
     }
@@ -286,31 +286,31 @@
     .mermaid-box svg .label,
     .mermaid-box svg .nodeLabel,
     .mermaid-box svg span {
-      font-size: 15.5px !important;
+      font-size: 17px !important;
       line-height: 1.6 !important;
     }
     .mermaid-box svg .cluster rect {
-      stroke-width: 2px !important;
+      stroke-width: 2.5px !important;
       stroke-dasharray: 6 4 !important;
-      fill: rgba(15, 23, 42, 0.6) !important;
+      fill: rgba(15, 23, 42, 0.7) !important;
     }
     .mermaid-box svg .cluster-label span,
     .mermaid-box svg .cluster-label text {
-      font-size: 16px !important;
+      font-size: 18px !important;
       font-weight: 700 !important;
       color: #93c5fd !important;
     }
     .mermaid-box svg .edgeLabel {
-      font-size: 13.5px !important;
+      font-size: 15px !important;
       font-weight: 600 !important;
       background-color: #1e293b !important;
       color: #93c5fd !important;
-      padding: 4px 10px !important;
-      border-radius: 6px !important;
-      border: 1px solid rgba(59, 130, 246, 0.3) !important;
+      padding: 6px 14px !important;
+      border-radius: 8px !important;
+      border: 1px solid rgba(59, 130, 246, 0.4) !important;
     }
     .mermaid-box svg .edgePath path {
-      stroke-width: 2.5px !important;
+      stroke-width: 2.8px !important;
       stroke: #60a5fa !important;
     }
     .mermaid-box svg .marker {
@@ -1661,15 +1661,14 @@ graph TD
               <pre class="mermaid">
 graph TB
     subgraph S1 ["🏛️ 1. CỔNG ĐĂNG KÝ TRUNG TÂM EU REGISTRY (HỆ THỐNG NÀY)"]
-        R["<b>📜 Sổ bộ Đăng kiểm Pháp lý & Chứng nhận Số EU</b><br/><i>(Dành riêng cho Hải quan EU, Cơ quan Giám sát Thị trường & Ban Pháp chế Doanh nghiệp)</i><br/><b>Lưu trữ:</b> Mã định danh UPI, Mã Hải quan TARIC 64041100, Ngày cấp, Proof JWT ký số RSA chống giả mạo"]
+        Customs["👮 <b>Cán bộ Hải quan & Kiểm toán tra cứu dữ liệu EU</b>"]
+        Customs ==>|Tra cứu Notary Ledger| R["<b>📜 Sổ bộ Đăng kiểm Pháp lý & Chứng nhận Số EU</b><br/><i>(Dành riêng cho Hải quan EU & Ban Pháp chế)</i><br/>• <b>Mã định danh:</b> UPI & TARIC 64041100<br/>• <b>Bằng chứng số:</b> Proof JWT ký số RSA chống giả mạo"]
     end
 
-    subgraph S2 ["🌐 2. TRANG WEB HỘ CHIẾU NGƯỜI TIÊU DÙNG (CONSUMER PASSPORT LIVE URL)"]
-        P["<b>👟 Web App Hộ Chiếu Tương Tác Của Thương Hiệu Giày</b><br/><i>(Dành cho Khách hàng quét mã QR in trên tem lưỡi gà hoặc vỏ hộp giày)</i><br/><b>Hiển thị:</b> Tỷ lệ 42% vải lưới tái chế, Đế cao su sinh học, Hướng dẫn tháo đế sửa chữa & trạm thu hồi"]
+    subgraph S2 ["🌐 2. TRANG WEB HỘ CHIẾU NGƯỜI TIÊU DÙNG (LIVE URL)"]
+        QR["📱 <b>Người tiêu dùng quét mã QR trên tem giày</b>"]
+        QR ==>|Mở Web App di động| P["<b>👟 Web App Hộ Chiếu Tương Tác Của Thương Hiệu Giày</b><br/><i>(Dành cho Khách hàng quét mã QR trên tem / vỏ hộp)</i><br/>• <b>Vật liệu:</b> 42% vải lưới tái chế, Đế cao su sinh học<br/>• <b>Tuần hoàn:</b> Hướng dẫn tháo đế sửa chữa & trạm thu hồi"]
     end
-
-    Customs["👮 Cán bộ Hải quan & Kiểm toán tra cứu dữ liệu EU"] ==>|Tra cứu Notary Ledger| R
-    QR["📱 Người tiêu dùng quét mã QR trên tem giày"] ==>|Mở Web App di động| P
               </pre>
             </div>
             <ul>
@@ -3270,7 +3269,7 @@ ${treeRowsHtml}
           startOnLoad: false,
           theme: 'dark',
           themeVariables: {
-            fontSize: '16px',
+            fontSize: '17px',
             fontFamily: 'Inter, system-ui, -apple-system, sans-serif',
             primaryColor: '#1e3a8a',
             primaryTextColor: '#ffffff',
