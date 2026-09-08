@@ -2153,11 +2153,31 @@ graph LR
       }
     }
 
+    // --- TOAST NOTIFICATION SYSTEM ---
+    function showToast(message, type = 'success') {
+      let container = document.getElementById('toastContainer');
+      if (!container) {
+        container = document.createElement('div');
+        container.id = 'toastContainer';
+        container.style.cssText = 'position:fixed;bottom:24px;right:24px;z-index:99999;display:flex;flex-direction:column;gap:10px;pointer-events:none;';
+        document.body.appendChild(container);
+      }
+      const toast = document.createElement('div');
+      toast.style.cssText = 'background:#1e293b;color:#fff;border:1px solid ' + (type==='success'?'rgba(16,185,129,.6)':'rgba(59,130,246,.6)') + ';box-shadow:0 12px 30px rgba(0,0,0,.6);border-radius:8px;padding:12px 18px;font-size:13px;font-weight:600;display:flex;align-items:center;gap:10px;animation:slideInToast .25s ease-out;pointer-events:auto;transition:all .3s ease;';
+      toast.innerHTML = `<span style="font-size:16px">${type==='success'?'🚀':'ℹ️'}</span> <div>${message}</div>`;
+      container.appendChild(toast);
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateY(12px)';
+        setTimeout(() => toast.remove(), 300);
+      }, 3500);
+    }
+
     function copyVocabPayload(type) {
       const el = document.getElementById(type === 'registry' ? 'vocabRegistryCode' : 'vocabCarrierCode');
       if (el) {
         navigator.clipboard.writeText(el.textContent.trim()).then(() => {
-          alert(currentLang === 'en' ? '✅ Copied to clipboard!' : '✅ Đã sao chép vào bộ nhớ tạm!');
+          showToast(currentLang === 'en' ? '✅ Copied JSON to clipboard!' : '✅ Đã sao chép JSON vào bộ nhớ tạm!');
         });
       }
     }
@@ -2167,23 +2187,53 @@ graph LR
       if (!el) return;
       const jsonText = el.textContent.trim();
 
+      // 1. Switch back to Testing Lab view
       switchView('lab');
+
+      // 2. Activate the target step
       showStep(stepIdx);
 
+      // 3. Smooth scroll to top so user clearly sees the target step panel
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+
+      // 4. Populate the data
       if (stepIdx === 3) {
-        // Step 4 in UI is Step Index 3 (Validate)
-        const txt = document.getElementById('p3Payload');
-        if (txt) txt.value = jsonText;
+        // Step 4 in UI is Step Index 3 (Validate Footwear DPP)
+        const txt = document.getElementById('validatePayload');
+        if (txt) {
+          txt.value = jsonText;
+          txt.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          txt.style.borderColor = 'var(--primary)';
+          txt.style.boxShadow = '0 0 0 4px rgba(59,130,246,0.4)';
+          setTimeout(() => {
+            txt.style.borderColor = '';
+            txt.style.boxShadow = '';
+          }, 2500);
+        }
       } else if (stepIdx === 4) {
-        // Step 5 in UI is Step Index 4 (Model)
+        // Step 5 in UI is Step Index 4 (Register MODEL DPP)
         try {
           const parsed = JSON.parse(jsonText);
-          if (document.getElementById('modelTaric')) document.getElementById('modelTaric').value = parsed.taricCode || '';
-          if (document.getElementById('modelUrl')) document.getElementById('modelUrl').value = parsed.dppUrl || '';
+          if (document.getElementById('modelCommodity')) document.getElementById('modelCommodity').value = parsed.taricCode || '';
+          if (document.getElementById('modelLiveUrl')) document.getElementById('modelLiveUrl').value = parsed.dppUrl || '';
           if (document.getElementById('modelBackupUrl')) document.getElementById('modelBackupUrl').value = parsed.dppBackupUrl || '';
-          if (document.getElementById('modelUpi')) document.getElementById('modelUpi').value = parsed.passportId || '';
+          if (document.getElementById('modelUpi')) document.getElementById('modelUpi').value = parsed.passportId || parsed.registryIdentifier || '';
+          if (document.getElementById('modelReoId') && parsed.companyIdentifier) document.getElementById('modelReoId').value = parsed.companyIdentifier;
+          if (document.getElementById('modelFacility') && parsed.facilityIdentifier) document.getElementById('modelFacility').value = parsed.facilityIdentifier;
+
+          const panel = document.getElementById('step4');
+          if (panel) {
+            panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
         } catch(_) {}
       }
+
+      // 5. Provide instant visual confirmation toast
+      const isEn = currentLang === 'en';
+      const msg = stepIdx === 3 
+        ? (isEn ? '✅ CIRPASS-2 Footwear Payload loaded into Step 4 (Validator)!' : '✅ Đã nạp Hộ chiếu Footwear MVP v2 vào Bước 4 (Thẩm định)!')
+        : (isEn ? '✅ EU Registry Index fields loaded into Step 5 (Model Registration)!' : '✅ Đã nạp 9 trường chỉ mục EU Registry vào Bước 5 (Đăng ký Model)!');
+      showToast(msg);
     }
 
 
