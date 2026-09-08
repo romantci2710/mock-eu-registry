@@ -2142,82 +2142,53 @@ ORDER BY preliminary_score DESC LIMIT <span class="c-num">5</span>;</code></pre>
       const isEn = currentCourseLang === 'en';
 
       if (stepNum === 1) {
-        box.innerHTML = (isEn ? '// Mandatory schema required paths (' + d.R + ' total):
-' : '// Danh sách ' + d.R + ' trường bắt buộc trích xuất từ Schema:
-') + 
-          d.reqPaths.map((p, i) => '[' + (i+1) + '] ' + p).join('
-');
+        box.textContent = (isEn ? '// Mandatory schema required paths (' + d.R + ' total):\n' : '// Danh sách ' + d.R + ' trường bắt buộc trích xuất từ Schema:\n') + 
+          d.reqPaths.map((p, i) => '[' + (i+1) + '] ' + p).join('\n');
       } else if (stepNum === 2) {
-        box.innerHTML = (isEn ? '// Payload properties provided in test data (' + d.I + ' total):
-' : '// Danh sách ' + d.I + ' trường tìm thấy trong Payload gửi lên:
-') + 
-          d.inputPaths.map((p, i) => '[' + (i+1) + '] ' + p).join('
-');
+        box.textContent = (isEn ? '// Payload properties provided in test data (' + d.I + ' total):\n' : '// Danh sách ' + d.I + ' trường tìm thấy trong Payload gửi lên:\n') + 
+          d.inputPaths.map((p, i) => '[' + (i+1) + '] ' + p).join('\n');
       } else if (stepNum === 3) {
-        box.innerHTML = (isEn ? '// Exact overlapping matches found (' + d.M + ' total):
-' : '// Có ' + d.M + ' trường trùng khớp hoàn toàn giữa 2 bên:
-') + 
-          (d.matched.length > 0 ? d.matched.map((p, i) => '✅ [' + (i+1) + '] ' + p).join('
-') : (isEn ? 'No overlapping paths found.' : 'Không có trường nào trùng khớp.'));
+        box.textContent = (isEn ? '// Exact overlapping matches found (' + d.M + ' total):\n' : '// Có ' + d.M + ' trường trùng khớp hoàn toàn giữa 2 bên:\n') + 
+          (d.matched.length > 0 ? d.matched.map((p, i) => '✅ [' + (i+1) + '] ' + p).join('\n') : (isEn ? 'No overlapping paths found.' : 'Không có trường nào trùng khớp.'));
       } else if (stepNum === 4) {
         if (isEn) {
-          box.innerHTML = '// STEP-BY-STEP ARITHMETIC BREAKDOWN:
-' +
-'1. Mandatory Schema Paths (R)      = ' + d.R + '
-' +
-'2. Inbound Payload Paths (I)        = ' + d.I + '
-' +
-'3. Overlapping Matches (M)          = ' + d.M + '
-' +
-'4. Extra / Unmatched Fields (I - M) = ' + (d.I - d.M) + '
-
-' +
-'👉 EQUATION 1: Precision
-' +
-'   Precision = M / I = ' + d.M + ' / ' + d.I + ' = ' + d.precision.toFixed(4) + '
-
-' +
-'👉 EQUATION 2: Weighted Jaccard
-' +
-'   Denominator = R + ' + d.penalty.toFixed(2) + ' * (I - M) = ' + d.R + ' + ' + d.penalty.toFixed(2) + ' * ' + (d.I - d.M) + ' = ' + d.denominator.toFixed(4) + '
-' +
-'   Jaccard     = M / Denominator = ' + d.M + ' / ' + d.denominator.toFixed(4) + ' = ' + d.jaccard.toFixed(4) + '
-
-' +
-'👉 FINAL GATING DECISION:
-' +
-'   Final Score = MAX( ' + d.precision.toFixed(4) + ', ' + d.jaccard.toFixed(4) + ' ) = ' + d.finalScore.toFixed(4) + '
-' +
-'   Compared to threshold ' + d.threshold.toFixed(2) + ': ' + (d.finalScore >= d.threshold ? 'QUALIFIED (PASS)' : 'REJECTED (FAIL)');
+          box.textContent = [
+            '// STEP-BY-STEP ARITHMETIC BREAKDOWN:',
+            '1. Mandatory Schema Paths (R)      = ' + d.R,
+            '2. Inbound Payload Paths (I)        = ' + d.I,
+            '3. Overlapping Matches (M)          = ' + d.M,
+            '4. Extra / Unmatched Fields (I - M) = ' + (d.I - d.M),
+            '',
+            '👉 EQUATION 1: Precision',
+            '   Precision = M / I = ' + d.M + ' / ' + d.I + ' = ' + d.precision.toFixed(4),
+            '',
+            '👉 EQUATION 2: Weighted Jaccard',
+            '   Denominator = R + ' + d.penalty.toFixed(2) + ' * (I - M) = ' + d.R + ' + ' + d.penalty.toFixed(2) + ' * ' + (d.I - d.M) + ' = ' + d.denominator.toFixed(4),
+            '   Jaccard     = M / Denominator = ' + d.M + ' / ' + d.denominator.toFixed(4) + ' = ' + d.jaccard.toFixed(4),
+            '',
+            '👉 FINAL GATING DECISION:',
+            '   Final Score = MAX( ' + d.precision.toFixed(4) + ', ' + d.jaccard.toFixed(4) + ' ) = ' + d.finalScore.toFixed(4),
+            '   Compared to threshold ' + d.threshold.toFixed(2) + ': ' + (d.finalScore >= d.threshold ? 'QUALIFIED (PASS)' : 'REJECTED (FAIL)')
+          ].join('\n');
         } else {
-          box.innerHTML = '// BẢNG TÍNH SỐ HỌC CHI TIẾT TỪNG BƯỚC:
-' +
-'1. Số trường bắt buộc (R)           = ' + d.R + '
-' +
-'2. Số trường gửi lên (I)            = ' + d.I + '
-' +
-'3. Số trường trùng khớp (M)        = ' + d.M + '
-' +
-'4. Số trường gửi thừa (I - M)       = ' + (d.I - d.M) + '
-
-' +
-'👉 PHÉP TÍNH 1: Độ chuẩn xác (Precision)
-' +
-'   Precision = M / I = ' + d.M + ' / ' + d.I + ' = ' + d.precision.toFixed(4) + '
-
-' +
-'👉 PHÉP TÍNH 2: Weighted Jaccard
-' +
-'   Mẫu số   = R + ' + d.penalty.toFixed(2) + ' * (I - M) = ' + d.R + ' + ' + d.penalty.toFixed(2) + ' * ' + (d.I - d.M) + ' = ' + d.denominator.toFixed(4) + '
-' +
-'   Jaccard  = M / Mẫu số = ' + d.M + ' / ' + d.denominator.toFixed(4) + ' = ' + d.jaccard.toFixed(4) + '
-
-' +
-'👉 KẾT QUẢ CUỐI CÙNG:
-' +
-'   Final Score = MAX( ' + d.precision.toFixed(4) + ', ' + d.jaccard.toFixed(4) + ' ) = ' + d.finalScore.toFixed(4) + '
-' +
-'   So với ngưỡng ' + d.threshold.toFixed(2) + ': ' + (d.finalScore >= d.threshold ? 'ĐẠT (QUALIFIED)' : 'KHÔNG ĐẠT (REJECTED)');
+          box.textContent = [
+            '// BẢNG TÍNH SỐ HỌC CHI TIẾT TỪNG BƯỚC:',
+            '1. Số trường bắt buộc (R)           = ' + d.R,
+            '2. Số trường gửi lên (I)            = ' + d.I,
+            '3. Số trường trùng khớp (M)        = ' + d.M,
+            '4. Số trường gửi thừa (I - M)       = ' + (d.I - d.M),
+            '',
+            '👉 PHÉP TÍNH 1: Độ chuẩn xác (Precision)',
+            '   Precision = M / I = ' + d.M + ' / ' + d.I + ' = ' + d.precision.toFixed(4),
+            '',
+            '👉 PHÉP TÍNH 2: Weighted Jaccard',
+            '   Mẫu số   = R + ' + d.penalty.toFixed(2) + ' * (I - M) = ' + d.R + ' + ' + d.penalty.toFixed(2) + ' * ' + (d.I - d.M) + ' = ' + d.denominator.toFixed(4),
+            '   Jaccard  = M / Mẫu số = ' + d.M + ' / ' + d.denominator.toFixed(4) + ' = ' + d.jaccard.toFixed(4),
+            '',
+            '👉 KẾT QUẢ CUỐI CÙNG:',
+            '   Final Score = MAX( ' + d.precision.toFixed(4) + ', ' + d.jaccard.toFixed(4) + ' ) = ' + d.finalScore.toFixed(4),
+            '   So với ngưỡng ' + d.threshold.toFixed(2) + ': ' + (d.finalScore >= d.threshold ? 'ĐẠT (QUALIFIED)' : 'KHÔNG ĐẠT (REJECTED)')
+          ].join('\n');
         }
       }
     }
